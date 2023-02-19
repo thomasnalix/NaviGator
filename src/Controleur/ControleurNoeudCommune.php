@@ -48,8 +48,20 @@ class ControleurNoeudCommune extends ControleurGenerique
         ]);
     }
 
+    public static function map(): void
+    {
+        $noeudsCommunes = (new NoeudCommuneRepository())->recuperer();     //appel au modèle pour gerer la BD
+        ControleurNoeudCommune::afficherVue('map.html', [
+            "noeudsCommunes" => $noeudsCommunes,
+            "pagetitle" => "Carte des Noeuds Routiers",
+            "cheminVueBody" => "map.html"
+        ]);
+    }
+
     public static function plusCourtChemin(): void
     {
+        echo (" Appel de la fonction - " . date("H:i:s")) . "<br>";
+        $now = date_create();
         $parametres = [
             "pagetitle" => "Plus court chemin",
             "cheminVueBody" => "noeudCommune/plusCourtChemin.php",
@@ -59,7 +71,6 @@ class ControleurNoeudCommune extends ControleurGenerique
         if (!empty($_POST)) {
             $nomCommuneDepart = $_POST["nomCommuneDepart"];
             $nomCommuneArrivee = $_POST["nomCommuneArrivee"];
-
             $noeudCommuneRepository = new NoeudCommuneRepository();
             /** @var NoeudCommune $noeudCommuneDepart */
             $noeudCommuneDepart = $noeudCommuneRepository->recupererPar(["nom_comm" => $nomCommuneDepart])[0];
@@ -73,15 +84,18 @@ class ControleurNoeudCommune extends ControleurGenerique
             $noeudRoutierArriveeGid = $noeudRoutierRepository->recupererPar([
                 "id_rte500" => $noeudCommuneArrivee->getId_nd_rte()
             ])[0]->getGid();
-
             $pcc = new PlusCourtChemin($noeudRoutierDepartGid, $noeudRoutierArriveeGid);
             $distance = $pcc->calculer();
-
             $parametres["nomCommuneDepart"] = $nomCommuneDepart;
             $parametres["nomCommuneArrivee"] = $nomCommuneArrivee;
             $parametres["distance"] = $distance;
         }
 
+        echo " Fin de la fonction - " . date("H:i:s") . "<br>";
+        echo '=> Interval fonction : ' . (date_diff(date_create(),$now))->format('%H:%I:%S') . '<br>';
+
         ControleurNoeudCommune::afficherVue('vueGenerale.php', $parametres);
     }
+
+
 }

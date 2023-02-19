@@ -24,7 +24,6 @@ abstract class AbstractRepository
         SELECT $champsSelect FROM $nomTable LIMIT $limit;
         SQL;
         $pdoStatement = ConnexionBaseDeDonnees::getPdo()->query($requeteSQL);
-
         $objets = [];
         foreach ($pdoStatement as $objetFormatTableau) {
             $objets[] = $this->construireDepuisTableau($objetFormatTableau);
@@ -41,7 +40,6 @@ abstract class AbstractRepository
     {
         $nomTable = $this->getNomTable();
         $champsSelect = implode(", ", $this->getNomsColonnes());
-
         $partiesWhere = array_map(function ($nomcolonne) {
             return "$nomcolonne = :$nomcolonne";
         }, array_keys($critereSelection));
@@ -52,12 +50,10 @@ abstract class AbstractRepository
         SQL;
         $pdoStatement = ConnexionBaseDeDonnees::getPdo()->prepare($requeteSQL);
         $pdoStatement->execute($critereSelection);
-
         $objets = [];
         foreach ($pdoStatement as $objetFormatTableau) {
             $objets[] = $this->construireDepuisTableau($objetFormatTableau);
         }
-
         return $objets;
     }
 

@@ -20,7 +20,7 @@ class NoeudCommuneRepository extends AbstractRepository
 
     protected function getNomTable(): string
     {
-        return 'noeud_commune';
+        return 'nalixt.noeud_commune';
     }
 
     protected function getNomClePrimaire(): string

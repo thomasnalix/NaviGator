@@ -16,22 +16,22 @@ class PlusCourtChemin
     ) {
     }
 
-    public function calculer(bool $affichageDebug = false): float
-    {
+    public function calculer(bool $affichageDebug = false): float {
+        // Genere un console.log() dans le navigateur
         $noeudRoutierRepository = new NoeudRoutierRepository();
+        $noeud = [];
 
         // Distance en km, table indexé par NoeudRoutier::gid
         $this->distances = [$this->noeudRoutierDepartGid => 0];
 
         $this->noeudsALaFrontiere[$this->noeudRoutierDepartGid] = true;
 
-        while (count($this->noeudsALaFrontiere) !== 0) {
-            $noeudRoutierGidCourant = $this->noeudALaFrontiereDeDistanceMinimale();
+        $itetarion = 0;
 
-            // Fini
-            if ($noeudRoutierGidCourant === $this->noeudRoutierArriveeGid) {
-                return $this->distances[$noeudRoutierGidCourant];
-            }
+        while (count($this->noeudsALaFrontiere) !== 0) {
+
+            $itetarion++;
+            $noeudRoutierGidCourant = $this->noeudALaFrontiereDeDistanceMinimale();
 
             // Enleve le noeud routier courant de la frontiere
             unset($this->noeudsALaFrontiere[$noeudRoutierGidCourant]);
@@ -43,6 +43,7 @@ class PlusCourtChemin
             foreach ($voisins as $voisin) {
                 $noeudVoisinGid = $voisin["noeud_routier_gid"];
                 $distanceTroncon = $voisin["longueur"];
+
                 $distanceProposee = $this->distances[$noeudRoutierGidCourant] + $distanceTroncon;
 
                 if (!isset($this->distances[$noeudVoisinGid]) || $distanceProposee < $this->distances[$noeudVoisinGid]) {
@@ -50,11 +51,21 @@ class PlusCourtChemin
                     $this->noeudsALaFrontiere[$noeudVoisinGid] = true;
                 }
             }
+
+            // Fini
+            if ($noeudRoutierGidCourant === $this->noeudRoutierArriveeGid) {
+                echo "Itérations : " . $itetarion . "<br>";
+                return $this->distances[$noeudRoutierGidCourant];
+            }
         }
+        return -1;
     }
+
 
     private function noeudALaFrontiereDeDistanceMinimale()
     {
+        $now = date_create();
+
         $noeudRoutierDistanceMinimaleGid = -1;
         $distanceMinimale = PHP_INT_MAX;
         foreach ($this->noeudsALaFrontiere as $noeudRoutierGid => $valeur) {
@@ -63,6 +74,8 @@ class PlusCourtChemin
                 $distanceMinimale = $this->distances[$noeudRoutierGid];
             }
         }
+
+        //echo '=> Interval noeudALaFrontiereDeDistanceMinimale : ' . (date_diff(date_create(),$now))->format('%H:%I:%S') . '<br>';
         return $noeudRoutierDistanceMinimaleGid;
     }
 }

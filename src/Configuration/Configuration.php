@@ -30,7 +30,7 @@ class Configuration
     public static function getDureeExpirationSession() : string
     {
         // Durée d'expiration des sessions en secondes
-        return 120;
+        return 1200;
     }
 
     public static function getAbsoluteURL() : string

@@ -22,7 +22,7 @@ class TronconRouteRepository extends AbstractRepository
 
     protected function getNomTable(): string
     {
-        return 'troncon_route';
+        return 'nalixt.troncon_route';
     }
 
     protected function getNomClePrimaire(): string

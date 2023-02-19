@@ -20,7 +20,7 @@ class NoeudRoutierRepository extends AbstractRepository
 
     protected function getNomTable(): string
     {
-        return 'noeud_routier';
+        return 'nalixt.noeud_routier';
     }
 
     protected function getNomClePrimaire(): string
@@ -61,25 +61,17 @@ class NoeudRoutierRepository extends AbstractRepository
      **/
     public function getVoisins(int $noeudRoutierGid): array
     {
+        $now = date_create();
         $requeteSQL = <<<SQL
-            (select  nr2.gid as noeud_routier_gid, tr.gid as troncon_gid, tr.longueur
-            from noeud_routier nr, troncon_route tr, noeud_routier nr2
-            where (st_distancesphere(nr.geom, st_startpoint(tr.geom)) < 1
-                and st_distancesphere(nr2.geom, st_endpoint(tr.geom)) < 1
-                and  nr.gid = :gidTag)
-            )
-            union
-            (select  nr2.gid as noeud_routier_gid, tr.gid as troncon_gid, tr.longueur
-            from noeud_routier nr, troncon_route tr, noeud_routier nr2
-            where (st_distancesphere(nr2.geom, st_startpoint(tr.geom)) < 1
-                and st_distancesphere(nr.geom, st_endpoint(tr.geom)) < 1
-                and  nr.gid = :gidTag)
-            );
+            SELECT noeud_routier_gid_2 as noeud_routier_gid, troncon_gid, longueur
+            FROM nalixt.calcul_noeud_troncon
+            WHERE noeud_routier_gid = :gidTag;
         SQL;
         $pdoStatement = ConnexionBaseDeDonnees::getPdo()->prepare($requeteSQL);
         $pdoStatement->execute(array(
             "gidTag" => $noeudRoutierGid
         ));
+        //echo '=> Interval getVoisins : ' . (date_diff(date_create(),$now))->format('%H:%I:%S') . '<br>';
         return $pdoStatement->fetchAll(PDO::FETCH_ASSOC);
     }
 }
