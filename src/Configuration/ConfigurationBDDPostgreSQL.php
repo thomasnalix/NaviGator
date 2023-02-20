@@ -8,16 +8,16 @@ use PDO;
 class ConfigurationBDDPostgreSQL implements ConfigurationBDDInterface
 {
     private string $nomBDD = "iut";
-    private string $hostname = "162.38.222.142";
+    private string $hostname = "localhost";
 
     public function getLogin(): string
     {
-        throw new Exception("Login BDD non renseigné !");
+        return "postgres";
     }
 
     public function getMotDePasse(): string
     {
-        throw new Exception("Mot de passe BDD non renseigné !");
+        return "05092022";
     }
 
     public function getDSN() : string{

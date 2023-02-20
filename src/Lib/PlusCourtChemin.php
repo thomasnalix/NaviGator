@@ -5,16 +5,14 @@ namespace App\PlusCourtChemin\Lib;
 use App\PlusCourtChemin\Modele\DataObject\NoeudRoutier;
 use App\PlusCourtChemin\Modele\Repository\NoeudRoutierRepository;
 
-class PlusCourtChemin
-{
+class PlusCourtChemin {
     private array $distances;
     private array $noeudsALaFrontiere;
 
     public function __construct(
         private int $noeudRoutierDepartGid,
         private int $noeudRoutierArriveeGid
-    ) {
-    }
+    ) { }
 
     public function calculer(bool $affichageDebug = false): float {
         // Genere un console.log() dans le navigateur
@@ -35,8 +33,8 @@ class PlusCourtChemin
             unset($this->noeudsALaFrontiere[$noeudRoutierGidCourant]);
 
             /** @var NoeudRoutier $noeudRoutierCourant */
-            $noeudRoutierCourant = $noeudRoutierRepository->recupererParClePrimaire($noeudRoutierGidCourant);
-
+            //$noeudRoutierCourant = $noeudRoutierRepository->recupererParClePrimaire($noeudRoutierGidCourant);
+            $noeudRoutierCourant = $noeudRoutierRepository->getNoeudRoutier($noeudRoutierGidCourant);
             $voisins = $noeudRoutierCourant->getVoisins();
             foreach ($voisins as $voisin) {
                 $noeudVoisinGid = $voisin["noeud_routier_gid"];

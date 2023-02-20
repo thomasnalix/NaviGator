@@ -13,10 +13,11 @@ class NoeudRoutierRepository extends AbstractRepository
     {
         return new NoeudRoutier(
             $noeudRoutierTableau["gid"],
-            $noeudRoutierTableau["id_rte500"],
-            null
+            //$noeudRoutierTableau["id_rte500"],
         );
     }
+
+
 
     protected function getNomTable(): string
     {
@@ -30,7 +31,7 @@ class NoeudRoutierRepository extends AbstractRepository
 
     protected function getNomsColonnes(): array
     {
-        return ["gid", "id_rte500"];
+        return ["gid"]; // "id_rte500"
     }
 
     // On bloque l'ajout, la màj et la suppression pour ne pas modifier la table
@@ -59,9 +60,30 @@ class NoeudRoutierRepository extends AbstractRepository
      * @param int $noeudRoutierGid
      * @return String[][]
      **/
-    public function getVoisins(int $noeudRoutierGid): array
-    {
+//    public function getVoisins(int $noeudRoutierGid): array
+//    {
+//
+//        $requeteSQL = <<<SQL
+//            SELECT noeud_routier_gid_2 as noeud_routier_gid, troncon_gid, longueur
+//            FROM nalixt.calcul_noeud_troncon
+//            WHERE noeud_routier_gid = :gidTag;
+//        SQL;
+//        $pdoStatement = ConnexionBaseDeDonnees::getPdo()->prepare($requeteSQL);
+//        $pdoStatement->execute(array(
+//            "gidTag" => $noeudRoutierGid
+//        ));
+//
+//        return $pdoStatement->fetchAll(PDO::FETCH_ASSOC);
+//    }
 
+
+    /**
+     * Renvoi un noeud routier avec ses voisins
+     * @param int $noeudRoutierGidCourant
+     * @return NoeudRoutier
+     */
+    public function getNoeudRoutier(int $noeudRoutierGidCourant): NoeudRoutier
+    {
         $requeteSQL = <<<SQL
             SELECT noeud_routier_gid_2 as noeud_routier_gid, troncon_gid, longueur
             FROM nalixt.calcul_noeud_troncon
@@ -69,9 +91,10 @@ class NoeudRoutierRepository extends AbstractRepository
         SQL;
         $pdoStatement = ConnexionBaseDeDonnees::getPdo()->prepare($requeteSQL);
         $pdoStatement->execute(array(
-            "gidTag" => $noeudRoutierGid
+            "gidTag" => $noeudRoutierGidCourant
         ));
+        $voisins = $pdoStatement->fetchAll(PDO::FETCH_ASSOC);
 
-        return $pdoStatement->fetchAll(PDO::FETCH_ASSOC);
+        return new NoeudRoutier($noeudRoutierGidCourant, $voisins);
     }
 }
