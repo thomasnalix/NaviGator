@@ -61,7 +61,7 @@ class NoeudRoutierRepository extends AbstractRepository
      **/
     public function getVoisins(int $noeudRoutierGid): array
     {
-        $now = date_create();
+
         $requeteSQL = <<<SQL
             SELECT noeud_routier_gid_2 as noeud_routier_gid, troncon_gid, longueur
             FROM nalixt.calcul_noeud_troncon
@@ -71,7 +71,7 @@ class NoeudRoutierRepository extends AbstractRepository
         $pdoStatement->execute(array(
             "gidTag" => $noeudRoutierGid
         ));
-        //echo '=> Interval getVoisins : ' . (date_diff(date_create(),$now))->format('%H:%I:%S') . '<br>';
+
         return $pdoStatement->fetchAll(PDO::FETCH_ASSOC);
     }
 }

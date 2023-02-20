@@ -26,20 +26,18 @@ class PlusCourtChemin
 
         $this->noeudsALaFrontiere[$this->noeudRoutierDepartGid] = true;
 
-        $itetarion = 0;
-
+        $iteration = 0;
         while (count($this->noeudsALaFrontiere) !== 0) {
 
-            $itetarion++;
-            $noeudRoutierGidCourant = $this->noeudALaFrontiereDeDistanceMinimale();
-
+            $iteration++;
+            $noeudRoutierGidCourant = $this->noeudALaFrontiereDeDistanceMinimale();;
             // Enleve le noeud routier courant de la frontiere
             unset($this->noeudsALaFrontiere[$noeudRoutierGidCourant]);
 
             /** @var NoeudRoutier $noeudRoutierCourant */
             $noeudRoutierCourant = $noeudRoutierRepository->recupererParClePrimaire($noeudRoutierGidCourant);
-            $voisins = $noeudRoutierCourant->getVoisins();
 
+            $voisins = $noeudRoutierCourant->getVoisins();
             foreach ($voisins as $voisin) {
                 $noeudVoisinGid = $voisin["noeud_routier_gid"];
                 $distanceTroncon = $voisin["longueur"];
@@ -54,7 +52,7 @@ class PlusCourtChemin
 
             // Fini
             if ($noeudRoutierGidCourant === $this->noeudRoutierArriveeGid) {
-                echo "Itérations : " . $itetarion . "<br>";
+                echo "Itérations : " . $iteration . "<br>";
                 return $this->distances[$noeudRoutierGidCourant];
             }
         }
@@ -62,10 +60,7 @@ class PlusCourtChemin
     }
 
 
-    private function noeudALaFrontiereDeDistanceMinimale()
-    {
-        $now = date_create();
-
+    private function noeudALaFrontiereDeDistanceMinimale() {
         $noeudRoutierDistanceMinimaleGid = -1;
         $distanceMinimale = PHP_INT_MAX;
         foreach ($this->noeudsALaFrontiere as $noeudRoutierGid => $valeur) {
@@ -74,8 +69,6 @@ class PlusCourtChemin
                 $distanceMinimale = $this->distances[$noeudRoutierGid];
             }
         }
-
-        //echo '=> Interval noeudALaFrontiereDeDistanceMinimale : ' . (date_diff(date_create(),$now))->format('%H:%I:%S') . '<br>';
         return $noeudRoutierDistanceMinimaleGid;
     }
 }

@@ -7,6 +7,7 @@ use PDOException;
 
 abstract class AbstractRepository
 {
+
     protected abstract function getNomTable(): string;
     protected abstract function getNomClePrimaire(): string;
     protected abstract function getNomsColonnes(): array;
@@ -59,22 +60,20 @@ abstract class AbstractRepository
 
     public function recupererParClePrimaire(string $valeurClePrimaire): ?AbstractDataObject
     {
+
         $nomTable = $this->getNomTable();
         $nomClePrimaire = $this->getNomClePrimaire();
         $sql = "SELECT * from $nomTable WHERE $nomClePrimaire=:clePrimaireTag";
         // Préparation de la requête
         $pdoStatement = ConnexionBaseDeDonnees::getPdo()->prepare($sql);
-
         $values = array(
             "clePrimaireTag" => $valeurClePrimaire,
         );
         // On donne les valeurs et on exécute la requête
         $pdoStatement->execute($values);
-
+        //echo "Temps de requête: " . (microtime(true) - $now) . "ms<br>";
         // On récupère les résultats comme précédemment
-        // Note: fetch() renvoie false si pas de voiture correspondante
         $objetFormatTableau = $pdoStatement->fetch();
-
         if ($objetFormatTableau !== false) {
             return $this->construireDepuisTableau($objetFormatTableau);
         }

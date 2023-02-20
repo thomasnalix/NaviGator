@@ -61,7 +61,7 @@ class ControleurNoeudCommune extends ControleurGenerique
     public static function plusCourtChemin(): void
     {
         echo (" Appel de la fonction - " . date("H:i:s")) . "<br>";
-        $now = date_create();
+        $now = microtime(true);
         $parametres = [
             "pagetitle" => "Plus court chemin",
             "cheminVueBody" => "noeudCommune/plusCourtChemin.php",
@@ -69,6 +69,8 @@ class ControleurNoeudCommune extends ControleurGenerique
 
 
         if (!empty($_POST)) {
+
+            $now = microtime(true);
             $nomCommuneDepart = $_POST["nomCommuneDepart"];
             $nomCommuneArrivee = $_POST["nomCommuneArrivee"];
             $noeudCommuneRepository = new NoeudCommuneRepository();
@@ -85,6 +87,7 @@ class ControleurNoeudCommune extends ControleurGenerique
                 "id_rte500" => $noeudCommuneArrivee->getId_nd_rte()
             ])[0]->getGid();
             $pcc = new PlusCourtChemin($noeudRoutierDepartGid, $noeudRoutierArriveeGid);
+
             $distance = $pcc->calculer();
             $parametres["nomCommuneDepart"] = $nomCommuneDepart;
             $parametres["nomCommuneArrivee"] = $nomCommuneArrivee;
@@ -92,7 +95,7 @@ class ControleurNoeudCommune extends ControleurGenerique
         }
 
         echo " Fin de la fonction - " . date("H:i:s") . "<br>";
-        echo '=> Interval fonction : ' . (date_diff(date_create(),$now))->format('%H:%I:%S') . '<br>';
+        echo '=> Interval fonction : ' . microtime(true) - $now . 'ms<br>';
 
         ControleurNoeudCommune::afficherVue('vueGenerale.php', $parametres);
     }
