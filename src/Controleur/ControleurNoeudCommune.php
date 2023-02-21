@@ -51,10 +51,10 @@ class ControleurNoeudCommune extends ControleurGenerique
     public static function map(): void
     {
         $noeudsCommunes = (new NoeudCommuneRepository())->recuperer();     //appel au modèle pour gerer la BD
-        ControleurNoeudCommune::afficherVue('map.html', [
+        ControleurNoeudCommune::afficherVue('map.php', [
             "noeudsCommunes" => $noeudsCommunes,
             "pagetitle" => "Carte des Noeuds Routiers",
-            "cheminVueBody" => "map.html"
+            "cheminVueBody" => "map.php"
         ]);
     }
 
@@ -87,11 +87,12 @@ class ControleurNoeudCommune extends ControleurGenerique
                 "id_rte500" => $noeudCommuneArrivee->getId_nd_rte()
             ])[0]->getGid();
             $pcc = new PlusCourtChemin($noeudRoutierDepartGid, $noeudRoutierArriveeGid);
-
             $distance = $pcc->calculer();
             $parametres["nomCommuneDepart"] = $nomCommuneDepart;
             $parametres["nomCommuneArrivee"] = $nomCommuneArrivee;
             $parametres["distance"] = $distance;
+
+            // ControleurGenerique::afficherVue('map.php', ["chemin" => $pcc->getCheminChoisi()]);
         }
 
         echo " Fin de la fonction - " . date("H:i:s") . "<br>";

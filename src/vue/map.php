@@ -30,7 +30,7 @@
 
     // Afficher la carte avec la couche
     let map = new ol.Map({
-        target: 'map',
+        target: 'map.php',
         layers: [
             new ol.layer.Tile({
                 source: new ol.source.OSM()
