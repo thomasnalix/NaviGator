@@ -96,7 +96,7 @@ class ControleurNoeudCommune extends ControleurGenerique
         }
 
         echo " Fin de la fonction - " . date("H:i:s") . "<br>";
-        echo '=> Interval fonction : ' . microtime(true) - $now . 'ms<br>';
+        echo '=> Interval fonction : ' . (microtime(true) - $now) . ' secondes<br>';
 
         ControleurNoeudCommune::afficherVue('vueGenerale.php', $parametres);
     }

@@ -10,7 +10,21 @@ class PlusCourtChemin {
     private array $noeudsALaFrontiere;
     private array $cheminChoisi;
 
-    private array $noeudsRoutierCache; // gid => [voisins]
+    /**
+     * Construit comme suit:
+     * [
+     *     numDepartement => [
+     *         gid => [
+     *             ...
+     *         ],
+     *         gid2 => [
+     *             ...
+     *         ]
+     *     ],
+     *     numDepartement2 => [ ... ]
+     * ]
+     */
+    private array $noeudsRoutierCache;
 
     public function __construct(
         private int $noeudRoutierDepartGid,
@@ -38,13 +52,18 @@ class PlusCourtChemin {
             // Enleve le noeud routier courant de la frontiere
             unset($this->noeudsALaFrontiere[$noeudRoutierGidCourant]);
 
-            // si pas en cache on l'ajoute
-            if (!isset($this->noeudsRoutierCache[$noeudRoutierGidCourant])) {
+            $numDepartementNoeud = $this->getNumDepartement($noeudRoutierGidCourant);
+            if ($numDepartementNoeud === '' || !isset($this->noeudsRoutierCache[$numDepartementNoeud][$noeudRoutierGidCourant])) {
+                $this->supprimerAncienDepartement();
                 $this->noeudsRoutierCache += $noeudRoutierRepository->getNoeudsRoutierRegion($noeudRoutierGidCourant);
-                echo "Node pas trouvé en cache : " . $noeudRoutierGidCourant . "<br>";
+                $numDepartementNoeud = $this->getNumDepartement($noeudRoutierGidCourant);
+                //echo "Node pas trouvé en cache : " . $noeudRoutierGidCourant . "<br>";
+                // taille en mémoire de $this->noeudsRoutierCache en mb
+                echo "Mémoire utilisé : " . (memory_get_usage() / 1024 / 1024) . " mb<br>";
+                echo "Nombre de noeuds en cache pour département " . $numDepartementNoeud . ": "  . count($this->noeudsRoutierCache[$numDepartementNoeud]) . " noeuds<br>";
             }
 
-            foreach ($this->noeudsRoutierCache[$noeudRoutierGidCourant] as $voisin) {
+            foreach ($this->noeudsRoutierCache[$numDepartementNoeud][$noeudRoutierGidCourant] as $voisin) {
                 $noeudVoisinGid = $voisin["noeud_routier_gid"];
                 $distanceTroncon = $voisin["longueur"];
 
@@ -111,6 +130,16 @@ class PlusCourtChemin {
         return -1;
     }
 
+    private function getNumDepartement($noeudRoutierGidCourant) {
+        $numDepartement = '';
+        for ($i = 0; $i < count($this->noeudsRoutierCache); $i++) {
+            $key = array_keys($this->noeudsRoutierCache)[$i];
+            if (isset($this->noeudsRoutierCache[$key][$noeudRoutierGidCourant]))
+                $numDepartement = $key;
+        }
+        return $numDepartement;
+    }
+
     private function noeudALaFrontiereDeDistanceMinimale() {
         $noeudRoutierDistanceMinimaleGid = -1;
         $distanceMinimale = PHP_INT_MAX;
@@ -125,5 +154,13 @@ class PlusCourtChemin {
 
     public function getCheminChoisi(): array {
         return $this->cheminChoisi;
+    }
+
+    private function supprimerAncienDepartement() {
+        if (count($this->noeudsRoutierCache) > 5) {
+            $key = array_keys($this->noeudsRoutierCache)[0];
+            echo "Suppression de l'ancien département : " . $key . "<br>";
+            array_shift($this->noeudsRoutierCache);
+        }
     }
 }

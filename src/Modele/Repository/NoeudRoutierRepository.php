@@ -102,9 +102,11 @@ class NoeudRoutierRepository extends AbstractRepository
          * 2 6 ...
          * Et construit un tableau de noeuds routiers avec leurs voisins tel que :
          * [
-         *     1 => [2, 3, 4],
-         *     2 => [5, 6],
-         *     ...
+         *     numDepartement => [
+         *          1 => [2, 3, 4],
+         *          2 => [5, 6],
+         *     ],
+         *     numDepartement2 => [ ... ],
          * ]
          */
         $noeudsRoutierRegionAvecVoisins = [];
@@ -114,14 +116,12 @@ class NoeudRoutierRepository extends AbstractRepository
             $tronconGid = $noeudRoutierRegion["troncon_gid"];
             $longueur = $noeudRoutierRegion["longueur"];
             $tronconCoord = $noeudRoutierRegion["troncon_coord"];
-            if (!isset($noeudsRoutierRegionAvecVoisins[$noeudRoutierGid])) {
-                $noeudsRoutierRegionAvecVoisins[$noeudRoutierGid] = [];
-            }
-            $noeudsRoutierRegionAvecVoisins[$noeudRoutierGid][] = [
+            $departements = $noeudRoutierRegion["departements"];
+            $noeudsRoutierRegionAvecVoisins[$departements][$noeudRoutierGid][] = [
                 "noeud_routier_gid" => $noeudRoutierGid2,
                 "troncon_gid" => $tronconGid,
                 "longueur" => $longueur,
-                "troncon_coord" => $tronconCoord
+                "troncon_coord" => $tronconCoord,
             ];
         }
         return $noeudsRoutierRegionAvecVoisins;
