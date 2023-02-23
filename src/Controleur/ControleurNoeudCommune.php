@@ -51,10 +51,10 @@ class ControleurNoeudCommune extends ControleurGenerique
     public static function map(): void
     {
         $noeudsCommunes = (new NoeudCommuneRepository())->recuperer();     //appel au modèle pour gerer la BD
-        ControleurNoeudCommune::afficherVue('map.php', [
+        ControleurNoeudCommune::afficherVue('map.html', [
             "noeudsCommunes" => $noeudsCommunes,
             "pagetitle" => "Carte des Noeuds Routiers",
-            "cheminVueBody" => "map.php"
+            "cheminVueBody" => "map.html"
         ]);
     }
 
@@ -80,19 +80,26 @@ class ControleurNoeudCommune extends ControleurGenerique
             $noeudCommuneArrivee = $noeudCommuneRepository->recupererPar(["nom_comm" => $nomCommuneArrivee])[0];
 
             $noeudRoutierRepository = new NoeudRoutierRepository();
-            $noeudRoutierDepartGid = $noeudRoutierRepository->recupererPar([
-                "id_rte500" => $noeudCommuneDepart->getId_nd_rte()
-            ])[0]->getGid();
-            $noeudRoutierArriveeGid = $noeudRoutierRepository->recupererPar([
-                "id_rte500" => $noeudCommuneArrivee->getId_nd_rte()
-            ])[0]->getGid();
-            $pcc = new PlusCourtChemin($noeudRoutierDepartGid, $noeudRoutierArriveeGid);
-            $distance = $pcc->calculer();
+//            $noeudRoutierDepartGid = $noeudRoutierRepository->recupererPar([
+//                "id_rte500" => $noeudCommuneDepart->getId_nd_rte()
+//            ])[0]->getGid();
+//            $noeudRoutierArriveeGid = $noeudRoutierRepository->recupererPar([
+//                "id_rte500" => $noeudCommuneArrivee->getId_nd_rte()
+//            ])[0]->getGid();
+//            $pcc = new PlusCourtChemin($noeudRoutierDepartGid, $noeudRoutierArriveeGid);
+//            $distance = $pcc->calculer();
+            $noeudRoutierDepart = $noeudRoutierRepository->recupererNoeudRoutier($noeudCommuneDepart->getId_nd_rte());
+            $noeudRoutierArrivee = $noeudRoutierRepository->recupererNoeudRoutier($noeudCommuneArrivee->getId_nd_rte());
+
+
+            $pcc = new PlusCourtChemin($noeudRoutierDepart, $noeudRoutierArrivee);
+            $distance = $pcc->calculerAStar();
+
             $parametres["nomCommuneDepart"] = $nomCommuneDepart;
             $parametres["nomCommuneArrivee"] = $nomCommuneArrivee;
             $parametres["distance"] = $distance;
 
-            // ControleurGenerique::afficherVue('map.php', ["chemin" => $pcc->getCheminChoisi()]);
+            // ControleurGenerique::afficherVue('map.html', ["chemin" => $pcc->getCheminChoisi()]);
         }
 
         echo " Fin de la fonction - " . date("H:i:s") . "<br>";
