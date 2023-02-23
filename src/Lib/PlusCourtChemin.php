@@ -73,10 +73,9 @@ class PlusCourtChemin
             $now = microtime(true);
             $numDepartementNoeud = $this->getNumDepartement($noeudRoutierGidCourant);
             if ($numDepartementNoeud === '') {
-                $this->noeudsRoutierCache += $noeudRoutierRepository->getNoeudsRoutierRegion($noeudRoutierGidCourant);
+                $this->noeudsRoutierCache += $noeudRoutierRepository->getNoeudsRoutierDepartement($noeudRoutierGidCourant);
                 $numDepartementNoeud = $this->getNumDepartement($noeudRoutierGidCourant);
                 $this->supprimerAncienDepartement();
-                $this->saveToBDD($fScore);
             }
             $tempsFinale += microtime(true) - $now;
 
@@ -101,13 +100,6 @@ class PlusCourtChemin
         echo "Itérations : " . $iteration . "<br>";
         return -1;
     }
-
-    private function saveToBDD($fScore) {
-        $requeteSQL = "SELECT * FROM nalixt.noeud_routier WHERE gid IN (:gids)";
-        $requeteSQL = str_replace(":gids", implode(",", array_values($fScore)), $requeteSQL);
-        echo $requeteSQL . "<br>";
-    }
-
 
     private function getHeuristique($noeud): float {
         $coordsArrivee = explode(";", $this->noeudRoutierArrivee->getCoords());

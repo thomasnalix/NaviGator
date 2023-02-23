@@ -82,7 +82,7 @@ class NoeudRoutierRepository extends AbstractRepository
      * @return une array avec en clé un noeud routier et en valeur un tableau de voisins
      * TODO: explorer la piste des groupes avec un GROUP BY côté SQL pour accélérer le traitement en PHP ?
      */
-    public function getNoeudsRoutierRegion(int $noeudRoutierGid) : array {
+    public function getNoeudsRoutierDepartement(int $noeudRoutierGid) : array {
         $requeteSQL = <<<SQL
             SELECT * FROM nalixt.calcul_noeud_troncon
             WHERE num_departement = (SELECT num_departement FROM nalixt.calcul_noeud_troncon
