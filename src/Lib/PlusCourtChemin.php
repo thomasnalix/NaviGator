@@ -8,10 +8,6 @@ use App\PlusCourtChemin\Modele\Repository\NoeudRoutierRepository;
 
 class PlusCourtChemin
 {
-    private array $distances;
-
-    private array $noeudsALaFrontiere;
-    private array $cheminChoisi;
 
     /**
      * Construit comme suit:
@@ -30,70 +26,16 @@ class PlusCourtChemin
     private array $noeudsRoutierCache;
 
     public function __construct(
-//        private int $noeudRoutierDepartGid,
-//        private int $noeudRoutierArriveeGid
         private NoeudRoutier $noeudRoutierDepart,
         private NoeudRoutier $noeudRoutierArrivee
-    )
-    {
-    }
-
-//     VERSION AVEC LE GIGA CACHE
-//    public function calculer(bool $affichageDebug = false): float {
-//        $noeudRoutierRepository = new NoeudRoutierRepository();
-//
-//        // Distance en km, table indexé par NoeudRoutier::gid
-//        $this->distances = [$this->noeudRoutierDepartGid => 0];
-//
-//        $this->cheminChoisi = [];
-//
-//        $this->noeudsRoutierCache = [];
-//
-//        $this->noeudsALaFrontiere[$this->noeudRoutierDepartGid] = true;
-//
-//        $iteration = 0;
-//        while (count($this->noeudsALaFrontiere) !== 0) {
-//
-//            $iteration++;
-//            $noeudRoutierGidCourant = $this->noeudALaFrontiereDeDistanceMinimale();
-//            // Enleve le noeud routier courant de la frontiere
-//            unset($this->noeudsALaFrontiere[$noeudRoutierGidCourant]);
-//
-//            $numDepartementNoeud = $this->getNumDepartement($noeudRoutierGidCourant);
-//            if ($numDepartementNoeud === '' || !isset($this->noeudsRoutierCache[$numDepartementNoeud][$noeudRoutierGidCourant])) {
-//                $this->supprimerAncienDepartement();
-//                $this->noeudsRoutierCache += $noeudRoutierRepository->getNoeudsRoutierRegion($noeudRoutierGidCourant);
-//                $numDepartementNoeud = $this->getNumDepartement($noeudRoutierGidCourant);
-//                //echo "Node pas trouvé en cache : " . $noeudRoutierGidCourant . "<br>";
-//                // taille en mémoire de $this->noeudsRoutierCache en mb
-//                echo "Mémoire utilisé : " . (memory_get_usage() / 1024 / 1024) . " mb<br>";
-//                echo "Nombre de noeuds en cache pour département " . $numDepartementNoeud . ": "  . count($this->noeudsRoutierCache[$numDepartementNoeud]) . " noeuds<br>";
-//            }
-//
-//            foreach ($this->noeudsRoutierCache[$numDepartementNoeud][$noeudRoutierGidCourant] as $voisin) {
-//                $noeudVoisinGid = $voisin["noeud_routier_gid"];
-//                $distanceTroncon = $voisin["longueur"];
-//
-//                $distanceProposee = $this->distances[$noeudRoutierGidCourant] + $distanceTroncon;
-//
-//                if (!isset($this->distances[$noeudVoisinGid]) || $distanceProposee < $this->distances[$noeudVoisinGid]) {
-//                    $this->cheminChoisi[] = $voisin["troncon_coord"];
-//                    $this->distances[$noeudVoisinGid] = $distanceProposee;
-//                    $this->noeudsALaFrontiere[$noeudVoisinGid] = true;
-//                }
-//            }
-//
-//            // Fini
-//            if ($noeudRoutierGidCourant === $this->noeudRoutierArriveeGid) {
-//                echo "Itérations : " . $iteration . "<br>";
-//                return $this->distances[$noeudRoutierGidCourant];
-//            }
-//        }
-//        return -1;
-//    }
-
+    ) { }
 
     function calculerAStar(): float {
+
+        $noeudRoutierRepository = new NoeudRoutierRepository();
+
+        $this->noeudsRoutierCache = [];
+
         $openSet = [$this->noeudRoutierDepart->getGid()];
 
         $cameFrom = [];
@@ -108,14 +50,12 @@ class PlusCourtChemin
         while (count($openSet) > 0) {
 
             $iteration++;
-            $now = microtime(true);
-            asort($fScore);
-            $tempsFinale += microtime(true) - $now;
             $noeudRoutierGidCourant = null;
-            foreach ($fScore as $gid => $distance) {
-                if (in_array($gid, $openSet)) {
+            $distanceMin = INF;
+            foreach ($openSet as $gid) {
+                if ($fScore[$gid] < $distanceMin) {
+                    $distanceMin = $fScore[$gid];
                     $noeudRoutierGidCourant = $gid;
-                    break;
                 }
             }
 
@@ -123,37 +63,40 @@ class PlusCourtChemin
             if ($noeudRoutierGidCourant == $this->noeudRoutierArrivee->getGid()) {
                 echo "Itérations : " . $iteration . "<br>";
                 echo "Temps final : " . $tempsFinale . "<br>";
-                return $this->reconstructPath($cameFrom, $noeudRoutierGidCourant, $cost);
+                return $this->reconstruireChemin($cameFrom, $noeudRoutierGidCourant, $cost);
             }
 
+            // TODO: trouver un moyen plus rapide pour supprimer un élément d'un tableau sans réindexer ?
             unset($openSet[array_search($noeudRoutierGidCourant, $openSet)]);
 
+            $now = microtime(true);
+            $numDepartementNoeud = $this->getNumDepartement($noeudRoutierGidCourant);
+            if ($numDepartementNoeud === '' || !isset($this->noeudsRoutierCache[$numDepartementNoeud][$noeudRoutierGidCourant])) {
+                $this->supprimerAncienDepartement();
+                $this->noeudsRoutierCache += $noeudRoutierRepository->getNoeudsRoutierRegion($noeudRoutierGidCourant);
+                $numDepartementNoeud = $this->getNumDepartement($noeudRoutierGidCourant);
+            }
+            $tempsFinale += microtime(true) - $now;
 
-            $noeudRoutierRepository = new NoeudRoutierRepository();
-            $noeudRoutierCourant = $noeudRoutierRepository->getNoeudRoutier($noeudRoutierGidCourant);
-            $neighbors = $noeudRoutierCourant->getVoisins();
-
+            $neighbors = $this->noeudsRoutierCache[$numDepartementNoeud][$noeudRoutierGidCourant];
 
             foreach ($neighbors as $neighbor) {
-                $tentativeGScore = $gScore[$noeudRoutierGidCourant] + $neighbor['longueur'];
-                $value = $gScore[$neighbor['noeud_routier_gid']] ?? PHP_INT_MAX;
-
+                $tentativeGScore = $gScore[$noeudRoutierGidCourant] + $neighbor['longueur_troncon'];
+                $value = $gScore[$neighbor['noeud_gid']] ?? PHP_INT_MAX;
                 if ($tentativeGScore < $value) {
-                    $cameFrom[$neighbor['noeud_routier_gid']] = $noeudRoutierGidCourant;
-                    $cost[$neighbor['noeud_routier_gid']] = $neighbor['longueur'];
+                    $cameFrom[$neighbor['noeud_gid']] = $noeudRoutierGidCourant;
+                    $cost[$neighbor['noeud_gid']] = $neighbor['longueur_troncon'];
 
-                    $gScore[$neighbor['noeud_routier_gid']] = $tentativeGScore;
+                    $gScore[$neighbor['noeud_gid']] = $tentativeGScore;
 
-                    $fScore[$neighbor['noeud_routier_gid']] = $tentativeGScore + $this->getHeuristique($neighbor['noeud_voisin_coord']);
-                    if (!array_key_exists($neighbor['noeud_routier_gid'], $openSet)) {
-                        $openSet[] = $neighbor['noeud_routier_gid'];
+                    $fScore[$neighbor['noeud_gid']] = $tentativeGScore + $this->getHeuristique($neighbor['noeud_coord']);
+                    if (!array_key_exists($neighbor['noeud_gid'], $openSet)) {
+                        $openSet[] = $neighbor['noeud_gid'];
                     }
                 }
             }
-
-
-
         }
+        echo "Itérations : " . $iteration . "<br>";
         return -1;
     }
 
@@ -177,7 +120,7 @@ class PlusCourtChemin
 
     }
 
-    private function reconstructPath(array $cameFrom, $current, $cost): float {
+    private function reconstruireChemin(array $cameFrom, $current, $cost): float {
         $total_path = [$current];
         $distance = 0;
         while (array_key_exists($current, $cameFrom)) {
@@ -190,77 +133,14 @@ class PlusCourtChemin
         return $distance;
     }
 
-
-    // VERSION SANS CACHE
-    public function calculer(bool $affichageDebug = false): float
-    {
-        $noeudRoutierRepository = new NoeudRoutierRepository();
-
-        // Distance en km, table indexé par NoeudRoutier::gid
-        $this->distances = [$this->noeudRoutierDepartGid => 0];
-
-        $this->cheminChoisi = [];
-
-        $this->noeudsALaFrontiere[$this->noeudRoutierDepartGid] = true;
-
-        $iteration = 0;
-        while (count($this->noeudsALaFrontiere) !== 0) {
-
-            $iteration++;
-            $noeudRoutierGidCourant = $this->noeudALaFrontiereDeDistanceMinimale();
-            // Enleve le noeud routier courant de la frontiere
-            unset($this->noeudsALaFrontiere[$noeudRoutierGidCourant]);
-
-            // NoeudRoutier $noeudRoutierCourant
-            // $noeudRoutierCourant = $noeudRoutierRepository->recupererParClePrimaire($noeudRoutierGidCourant);
-            $noeudRoutierCourant = $noeudRoutierRepository->getNoeudRoutier($noeudRoutierGidCourant);
-            $voisins = $noeudRoutierCourant->getVoisins();
-            foreach ($voisins as $voisin) {
-                $noeudVoisinGid = $voisin["noeud_routier_gid"];
-                $distanceTroncon = $voisin["longueur"];
-
-                $distanceProposee = $this->distances[$noeudRoutierGidCourant] + $distanceTroncon;
-
-                if (!isset($this->distances[$noeudVoisinGid]) || $distanceProposee < $this->distances[$noeudVoisinGid]) {
-                    $this->cheminChoisi[] = $voisin["troncon_coord"];
-                    $this->distances[$noeudVoisinGid] = $distanceProposee;
-                    $this->noeudsALaFrontiere[$noeudVoisinGid] = true;
-                }
-            }
-
-            // Fini
-            if ($noeudRoutierGidCourant === $this->noeudRoutierArriveeGid) {
-                echo "Itérations : " . $iteration . "<br>";
-                return $this->distances[$noeudRoutierGidCourant];
-            }
-        }
-        return -1;
-    }
-
     private function getNumDepartement($noeudRoutierGidCourant) {
         $numDepartement = '';
         for ($i = 0; $i < count($this->noeudsRoutierCache); $i++) {
             $key = array_keys($this->noeudsRoutierCache)[$i];
             if (isset($this->noeudsRoutierCache[$key][$noeudRoutierGidCourant]))
-                $numDepartement = $key;
+                return $key;
         }
         return $numDepartement;
-    }
-
-    private function noeudALaFrontiereDeDistanceMinimale() {
-        $noeudRoutierDistanceMinimaleGid = -1;
-        $distanceMinimale = PHP_INT_MAX;
-        foreach ($this->noeudsALaFrontiere as $noeudRoutierGid => $valeur) {
-            if ($this->distances[$noeudRoutierGid] < $distanceMinimale) {
-                $noeudRoutierDistanceMinimaleGid = $noeudRoutierGid;
-                $distanceMinimale = $this->distances[$noeudRoutierGid];
-            }
-        }
-        return $noeudRoutierDistanceMinimaleGid;
-    }
-
-    public function getCheminChoisi(): array {
-        return $this->cheminChoisi;
     }
 
     private function supprimerAncienDepartement() {
@@ -270,12 +150,5 @@ class PlusCourtChemin
             array_shift($this->noeudsRoutierCache);
         }
     }
-
-    private function debugTab($tab, $msg = "") {
-        echo "<div><p>" . $msg . "</p>";
-        print_r($tab);
-        echo "</div><br>";
-    }
-
 
 }

@@ -85,8 +85,8 @@ class NoeudRoutierRepository extends AbstractRepository
     public function getNoeudsRoutierRegion(int $noeudRoutierGid) : array {
         $requeteSQL = <<<SQL
             SELECT * FROM nalixt.calcul_noeud_troncon
-            WHERE departements = (SELECT departements FROM nalixt.calcul_noeud_troncon
-            WHERE noeud_routier_gid = :gidTag LIMIT 1);
+            WHERE num_departement = (SELECT num_departement FROM nalixt.calcul_noeud_troncon
+            WHERE noeud_courant_gid = :gidTag LIMIT 1);
         SQL;
         $pdoStatement = ConnexionBaseDeDonnees::getPdo()->prepare($requeteSQL);
         $now = microtime(true);
@@ -114,17 +114,19 @@ class NoeudRoutierRepository extends AbstractRepository
         $now = microtime(true);
         $noeudsRoutierRegionAvecVoisins = [];
         foreach ($noeudsRoutierRegion as $noeudRoutierRegion) {
-            $noeudRoutierGid = $noeudRoutierRegion["noeud_routier_gid"];
-            $noeudRoutierGid2 = $noeudRoutierRegion["noeud_routier_gid_2"];
+            $noeudCourantGid = $noeudRoutierRegion["noeud_courant_gid"];
+            $noeudVoisinGid = $noeudRoutierRegion["noeud_voisin_gid"];
+            $noeudVoisinCoord = $noeudRoutierRegion["noeud_voisin_coord"];
             $tronconGid = $noeudRoutierRegion["troncon_gid"];
-            $longueur = $noeudRoutierRegion["longueur"];
             $tronconCoord = $noeudRoutierRegion["troncon_coord"];
-            $departements = $noeudRoutierRegion["departements"];
-            $noeudsRoutierRegionAvecVoisins[$departements][$noeudRoutierGid][] = [
-                "noeud_routier_gid" => $noeudRoutierGid2,
+            $longueurTroncon = $noeudRoutierRegion["longueur_troncon"];
+            $numDepartement = $noeudRoutierRegion["num_departement"];
+            $noeudsRoutierRegionAvecVoisins[$numDepartement][$noeudCourantGid][] = [
+                "noeud_gid" => $noeudVoisinGid,
+                "noeud_coord" => $noeudVoisinCoord,
                 "troncon_gid" => $tronconGid,
-                "longueur" => $longueur,
                 "troncon_coord" => $tronconCoord,
+                "longueur_troncon" => $longueurTroncon,
             ];
         }
         echo "Temps de construction du tableau de noeuds routiers avec leurs voisins: " . (microtime(true) - $now) . "s<br>";
