@@ -75,6 +75,7 @@ class PlusCourtChemin
                 $this->supprimerAncienDepartement();
                 $this->noeudsRoutierCache += $noeudRoutierRepository->getNoeudsRoutierRegion($noeudRoutierGidCourant);
                 $numDepartementNoeud = $this->getNumDepartement($noeudRoutierGidCourant);
+                $this->debugTableau(array_keys($this->noeudsRoutierCache));
             }
             $tempsFinale += microtime(true) - $now;
 
@@ -149,6 +150,12 @@ class PlusCourtChemin
             echo "Suppression de l'ancien département : " . $key . "<br>";
             array_shift($this->noeudsRoutierCache);
         }
+    }
+
+    private function debugTableau($tableau){
+        echo "<pre>";
+        print_r($tableau);
+        echo "</pre>";
     }
 
 }
