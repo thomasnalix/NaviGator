@@ -4,6 +4,7 @@
 namespace App\PlusCourtChemin\Lib;
 
 use App\PlusCourtChemin\Modele\DataObject\NoeudRoutier;
+use App\PlusCourtChemin\Modele\Repository\ConnexionBaseDeDonnees;
 use App\PlusCourtChemin\Modele\Repository\NoeudRoutierRepository;
 
 class PlusCourtChemin
@@ -71,11 +72,11 @@ class PlusCourtChemin
 
             $now = microtime(true);
             $numDepartementNoeud = $this->getNumDepartement($noeudRoutierGidCourant);
-            if ($numDepartementNoeud === '' || !isset($this->noeudsRoutierCache[$numDepartementNoeud][$noeudRoutierGidCourant])) {
-                $this->supprimerAncienDepartement();
+            if ($numDepartementNoeud === '') {
                 $this->noeudsRoutierCache += $noeudRoutierRepository->getNoeudsRoutierRegion($noeudRoutierGidCourant);
                 $numDepartementNoeud = $this->getNumDepartement($noeudRoutierGidCourant);
-                $this->debugTableau(array_keys($this->noeudsRoutierCache));
+                $this->supprimerAncienDepartement();
+                $this->saveToBDD($fScore);
             }
             $tempsFinale += microtime(true) - $now;
 
@@ -101,6 +102,12 @@ class PlusCourtChemin
         return -1;
     }
 
+    private function saveToBDD($fScore) {
+        $requeteSQL = "SELECT * FROM nalixt.noeud_routier WHERE gid IN (:gids)";
+        $requeteSQL = str_replace(":gids", implode(",", array_values($fScore)), $requeteSQL);
+        echo $requeteSQL . "<br>";
+    }
+
 
     private function getHeuristique($noeud): float {
         $coordsArrivee = explode(";", $this->noeudRoutierArrivee->getCoords());
@@ -116,8 +123,7 @@ class PlusCourtChemin
         $dLon = deg2rad($lon2 - $lon1);
         $a = sin($dLat/2) * sin($dLat/2) + cos(deg2rad($lat1)) * cos(deg2rad($lat2)) * sin($dLon/2) * sin($dLon/2);
         $c = 2 * asin(sqrt($a));
-        $distance = $earthRadius * $c;
-        return $distance;
+        return $earthRadius * $c; // distance en kilomètres
 
     }
 
@@ -148,7 +154,8 @@ class PlusCourtChemin
         if (count($this->noeudsRoutierCache) > 5) {
             $key = array_keys($this->noeudsRoutierCache)[0];
             echo "Suppression de l'ancien département : " . $key . "<br>";
-            array_shift($this->noeudsRoutierCache);
+            unset($this->noeudsRoutierCache[$key]);
+            //$this->debugTableau(array_keys($this->noeudsRoutierCache));
         }
     }
 
