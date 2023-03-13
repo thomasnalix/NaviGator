@@ -74,7 +74,9 @@ class PlusCourtChemin
         $tempsFinaleVoisin = 0;
         while (!$openSet->isEmpty()) {
             $iteration++;
-            $noeudRoutierGidCourant = $openSet->getMinNode()->data->getGid();
+            $nodeData = $openSet->getMinNode()->data;
+            $noeudRoutierGidCourant = $nodeData->getGid();
+            //echo "MIN node : GID: " . $nodeData->getGid() . " // DISTANCE: " . $nodeData->getDistance() . "<br>";
 
             // Path found
             if ($noeudRoutierGidCourant == $this->noeudRoutierArrivee->getGid()) {
@@ -87,12 +89,7 @@ class PlusCourtChemin
                 return $chemin;
             }
 
-            $openSet->delete(new DataContainer($noeudRoutierGidCourant, $fScore[$noeudRoutierGidCourant]));
-//            echo "OpenSet : ";
-//            $openSet->echoTree();
-//            echo "<br>";
-
-            echo "Current node : " . $noeudRoutierGidCourant . "<br>";
+            $openSet->delete($nodeData);
 
             $now = microtime(true);
             $numDepartementNoeud = $this->getNumDepartement($noeudRoutierGidCourant);
