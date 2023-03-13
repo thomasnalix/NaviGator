@@ -3,6 +3,7 @@
 
 namespace App\PlusCourtChemin\Lib;
 
+use App\PlusCourtChemin\Modele\DataObject\DataContainer;
 use App\PlusCourtChemin\Modele\DataObject\NoeudRoutier;
 use App\PlusCourtChemin\Modele\Repository\NoeudRoutierRepository;
 
@@ -35,11 +36,31 @@ class PlusCourtChemin
 
     function calculerAStar(): float {
 
+//        $test = new BinarySearchTree();
+//        echo ($test->isEmpty() ? "Empty" : "Not empty") . "<br>";
+//        $test->insert(new DataContainer(20, 20));
+//        $test->insert(new DataContainer(2, 2));
+//        $test->insert(new DataContainer(3, 3));
+//        $test->insert(new DataContainer(4, 1.5));
+//        echo ($test->search(new DataContainer(3, 3)) ? "OK" : "KO") . "<br>";
+//        echo ($test->getMinNode()->data->getGid() == 4 ? "OK" : "KO") . "<br>";
+//        echo ($test->isEmpty() ? "Empty" : "Not empty") . "<br>";
+//        $test->echoTree();
+//        echo "<br>";
+//        $test->delete(new DataContainer(3, 3));
+//        $test->echoTree();
+//        $test->delete(new DataContainer(20, 20));
+//        $test->delete(new DataContainer(2, 2));
+//        $test->delete(new DataContainer(4, 1.5));
+//        echo ($test->isEmpty() ? "Empty" : "Not empty") . "<br>";
+//        return 0;
+
         $noeudRoutierRepository = new NoeudRoutierRepository();
 
         $this->noeudsRoutierCache = [];
 
-        $openSet = new BinarySearchTree($this->noeudRoutierDepart->getGid(), 0);
+        $openSet = new BinarySearchTree();
+        $openSet->insert(new DataContainer($this->noeudRoutierDepart->getGid(), 0));
 
         $cameFrom = [];
         $cost[$this->noeudRoutierDepart->getGid()] = 0;
@@ -53,7 +74,7 @@ class PlusCourtChemin
         $tempsFinaleVoisin = 0;
         while (!$openSet->isEmpty()) {
             $iteration++;
-            $noeudRoutierGidCourant = $openSet->()->key; // TODO CONTINUER ICI
+            $noeudRoutierGidCourant = $openSet->getMinNode()->data->getGid();
 
             // Path found
             if ($noeudRoutierGidCourant == $this->noeudRoutierArrivee->getGid()) {
@@ -66,7 +87,12 @@ class PlusCourtChemin
                 return $chemin;
             }
 
-            $openSet->delete($noeudRoutierGidCourant, $fScore[$noeudRoutierGidCourant]);
+            $openSet->delete(new DataContainer($noeudRoutierGidCourant, $fScore[$noeudRoutierGidCourant]));
+//            echo "OpenSet : ";
+//            $openSet->echoTree();
+//            echo "<br>";
+
+            echo "Current node : " . $noeudRoutierGidCourant . "<br>";
 
             $now = microtime(true);
             $numDepartementNoeud = $this->getNumDepartement($noeudRoutierGidCourant);
@@ -89,20 +115,15 @@ class PlusCourtChemin
                     $gScore[$neighbor['noeud_gid']] = $tentativeGScore;
 
                     $fScore[$neighbor['noeud_gid']] = $tentativeGScore + $this->getHeuristique($neighbor['noeud_coord']);
-                    $nodeValue = $fScore[$neighbor['noeud_gid']];
-                    if (!$openSet->exists($neighbor['noeud_gid'], $nodeValue))
-                        $openSet->insert($neighbor['noeud_gid'], $nodeValue);
+                    $dataContainer = new DataContainer($neighbor['noeud_gid'], $fScore[$neighbor['noeud_gid']]);
+                    if (!$openSet->search($dataContainer))
+                        $openSet->insert($dataContainer);
                 }
             }
             $tempsFinaleVoisin += microtime(true) - $now;
         }
         echo "Itérations : " . $iteration . "<br>";
         return -1;
-    }
-
-    private function removeFromCache($gid) {
-        $numDepartement = $this->getNumDepartement($gid);
-        unset($this->noeudsRoutierCache[$numDepartement][$gid]);
     }
 
     private function getHeuristique($noeud): float

@@ -2,73 +2,121 @@
 
 namespace App\PlusCourtChemin\Lib;
 
-class BinarySearchTree
-{
+use App\PlusCourtChemin\Modele\DataObject\DataContainer;
 
-    public $root;
+class BinarySearchTree {
+    public ?Node $root;
 
-    public function __construct($key, $value)
-    {
-        $this->root = new Node($key, $value);
+    function __construct() {
+        $this->root = null;
     }
 
-    public function search($value)
-    {
-        $node = $this->root;
+    function insert(DataContainer $data) {
+        $newNode = new Node($data);
 
-        while($node) {
-            if ($value > $node->value) {
-                $node = $node->right;
-            } elseif ($value < $node->value) {
-                $node = $node->left;
+        if ($this->root == null) {
+            $this->root = $newNode;
+            return;
+        }
+
+        $current = $this->root;
+
+        while (true) {
+            if ($data->getDistance() < $current->data->getDistance()) {
+                if ($current->leftChild == null) {
+                    $current->leftChild = $newNode;
+                    break;
+                } else {
+                    $current = $current->leftChild;
+                }
             } else {
-                break;
+                if ($current->rightChild == null) {
+                    $current->rightChild = $newNode;
+                    break;
+                } else {
+                    $current = $current->rightChild;
+                }
             }
+        }
+    }
+
+    function search(DataContainer $data) {
+        $current = $this->root;
+
+        while ($current != null) {
+            if ($data->getGid() == $current->data->getGid()) {
+                return true;
+            } else if ($data->getDistance() < $current->data->getDistance()) {
+                $current = $current->leftChild;
+            } else {
+                $current = $current->rightChild;
+            }
+        }
+
+        return false;
+    }
+
+    function delete(DataContainer $data) {
+        $this->root = $this->deleteNode($this->root, $data);
+    }
+
+    function deleteNode(?Node $node, DataContainer $data) {
+        if ($node == null) {
+            return null;
+        }
+        if ($data->getDistance() < $node->data->getDistance()) {
+            $node->leftChild = $this->deleteNode($node->leftChild, $data);
+        } else if ($data->getDistance() > $node->data->getDistance()) {
+            $node->rightChild = $this->deleteNode($node->rightChild, $data);
+        } else if ($data->getGid() == $node->data->getGid()) {
+            if ($node->leftChild == null && $node->rightChild == null) {
+                $node = null;
+            } else if ($node->leftChild == null) {
+                $node = $node->rightChild;
+            } else if ($node->rightChild == null) {
+                $node = $node->leftChild;
+            } else {
+                $minRight = $this->getMinNode($node->rightChild);
+                $node->data = $minRight->data;
+                $node->rightChild = $this->deleteNode($node->rightChild, $minRight->data);
+            }
+        } else {
+            $node->rightChild = $this->deleteNode($node->rightChild, $data);
         }
 
         return $node;
     }
 
-    public function insert($key, $value)
-    {
-        $node = $this->root;
-        if (!$node) {
-            return $this->root = new Node($key, $value);
+    function getMinNode($current = null) {
+        if ($current == null) $current = $this->root;
+
+        while ($current->leftChild != null) {
+            $current = $current->leftChild;
         }
 
-        while($node) {
-            if ($value > $node->value) {
-                if ($node->right) {
-                    $node = $node->right;
-                } else {
-                    $node = $node->right = new Node($key, $value, $node);
-                    break;
-                }
-            } elseif ($value < $node->value) {
-                if ($node->left) {
-                    $node = $node->left;
-                } else {
-                    $node = $node->left = new Node($value, $value, $node);
-                    break;
-                }
-            } else {
-                break;
-            }
-        }
-        return $node;
+        return $current;
     }
 
-    public function delete($value)
-    {
-        $node = $this->search($value);
-        if ($node) {
-            $node->delete();
-        }
+    function isEmpty() {
+        return $this->root == null;
     }
 
-    public function isEmpty()
-    {
-        return $this->root === null;
+    function echoTree($current = null) {
+        if ($current == null) $current = $this->root;
+        if ($current == null) {
+            echo "VIDE";
+            return;
+        }
+
+        if ($current->leftChild != null) {
+            $this->echoTree($current->leftChild);
+        }
+
+        echo $current->data->getGid() . " ";
+
+        if ($current->rightChild != null) {
+            $this->echoTree($current->rightChild);
+        }
     }
 
 }
