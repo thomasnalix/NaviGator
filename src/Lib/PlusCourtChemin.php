@@ -114,12 +114,17 @@ class PlusCourtChemin
         $lon1 = $coordsPoints[0];
 
         $earthRadius = 6371; // rayon de la Terre en kilomètres
-        $dLat = deg2rad($lat2 - $lat1);
-        $dLon = deg2rad($lon2 - $lon1);
+        $dLat = $this->deg2rad($lat2 - $lat1);
+        $dLon = $this->deg2rad($lon2 - $lon1);
         $a = sin($dLat / 2) * sin($dLat / 2) + cos(deg2rad($lat1)) * cos(deg2rad($lat2)) * sin($dLon / 2) * sin($dLon / 2);
         $c = 2 * asin(sqrt($a));
         return $earthRadius * $c; // distance en kilomètres
 
+    }
+
+    private function deg2rad($deg)
+    {
+        return $deg * 0.017453293; // 0.017453293 = pi/180
     }
 
     private function reconstruireChemin(array $cameFrom, $current, $cost): float
