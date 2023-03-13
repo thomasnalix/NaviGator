@@ -116,7 +116,9 @@ class PlusCourtChemin {
         $earthRadius = 6371; // rayon de la Terre en kilomètres
         $dLat = deg2rad($lat2 - $lat1);
         $dLon = deg2rad($lon2 - $lon1);
-        $a = sin($dLat / 2) * sin($dLat / 2) + cos(deg2rad($lat1)) * cos(deg2rad($lat2)) * sin($dLon / 2) * sin($dLon / 2);
+        $sinLat = sin($dLat / 2);
+        $sinLon = sin($dLon / 2);
+        $a = $sinLat * $sinLat + cos(deg2rad($lat1)) * cos(deg2rad($lat2)) * $sinLon * $sinLon;
         $c = 2 * asin(sqrt($a));
         return $earthRadius * $c; // distance en kilomètres
 
