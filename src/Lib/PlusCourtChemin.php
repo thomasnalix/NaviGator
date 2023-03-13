@@ -36,25 +36,6 @@ class PlusCourtChemin
 
     function calculerAStar(): float {
 
-//        $test = new BinarySearchTree();
-//        echo ($test->isEmpty() ? "Empty" : "Not empty") . "<br>";
-//        $test->insert(new DataContainer(20, 20));
-//        $test->insert(new DataContainer(2, 2));
-//        $test->insert(new DataContainer(3, 3));
-//        $test->insert(new DataContainer(4, 1.5));
-//        echo ($test->search(new DataContainer(3, 3)) ? "OK" : "KO") . "<br>";
-//        echo ($test->getMinNode()->data->getGid() == 4 ? "OK" : "KO") . "<br>";
-//        echo ($test->isEmpty() ? "Empty" : "Not empty") . "<br>";
-//        $test->echoTree();
-//        echo "<br>";
-//        $test->delete(new DataContainer(3, 3));
-//        $test->echoTree();
-//        $test->delete(new DataContainer(20, 20));
-//        $test->delete(new DataContainer(2, 2));
-//        $test->delete(new DataContainer(4, 1.5));
-//        echo ($test->isEmpty() ? "Empty" : "Not empty") . "<br>";
-//        return 0;
-
         $noeudRoutierRepository = new NoeudRoutierRepository();
 
         $this->noeudsRoutierCache = [];
@@ -76,7 +57,6 @@ class PlusCourtChemin
             $iteration++;
             $nodeData = $openSet->getMinNode()->data;
             $noeudRoutierGidCourant = $nodeData->getGid();
-            //echo "MIN node : GID: " . $nodeData->getGid() . " // DISTANCE: " . $nodeData->getDistance() . "<br>";
 
             // Path found
             if ($noeudRoutierGidCourant == $this->noeudRoutierArrivee->getGid()) {

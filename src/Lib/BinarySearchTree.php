@@ -101,22 +101,4 @@ class BinarySearchTree {
         return $this->root == null;
     }
 
-    function echoTree($current = null) {
-        if ($current == null) $current = $this->root;
-        if ($current == null) {
-            echo "VIDE";
-            return;
-        }
-
-        if ($current->leftChild != null) {
-            $this->echoTree($current->leftChild);
-        }
-
-        echo $current->data->getGid() . " ";
-
-        if ($current->rightChild != null) {
-            $this->echoTree($current->rightChild);
-        }
-    }
-
 }
