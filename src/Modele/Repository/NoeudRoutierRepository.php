@@ -115,6 +115,7 @@ class NoeudRoutierRepository extends AbstractRepository
         $noeudsRoutierRegionAvecVoisins = [];
         foreach ($noeudsRoutierRegion as $noeudRoutierRegion) {
             $noeudCourantGid = $noeudRoutierRegion["noeud_courant_gid"];
+            $noeudCourantCoord = $noeudRoutierRegion["noeud_courant_coord"];
             $noeudVoisinGid = $noeudRoutierRegion["noeud_voisin_gid"];
             $noeudVoisinCoord = $noeudRoutierRegion["noeud_voisin_coord"];
             $tronconGid = $noeudRoutierRegion["troncon_gid"];
@@ -123,6 +124,7 @@ class NoeudRoutierRepository extends AbstractRepository
             $numDepartement = $noeudRoutierRegion["num_departement"];
             $noeudsRoutierRegionAvecVoisins[$numDepartement][$noeudCourantGid][] = [
                 "noeud_gid" => $noeudVoisinGid,
+                "noeud_courant_coord" => $noeudCourantCoord,
                 "noeud_coord" => $noeudVoisinCoord,
                 "troncon_gid" => $tronconGid,
                 "troncon_coord" => $tronconCoord,
