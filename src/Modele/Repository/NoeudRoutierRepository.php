@@ -14,7 +14,6 @@ class NoeudRoutierRepository extends AbstractRepository
         return new NoeudRoutier(
             $noeudRoutierTableau["gid"],
             $noeudRoutierTableau["coords"]
-        //$noeudRoutierTableau["id_rte500"],
         );
     }
 
@@ -50,32 +49,6 @@ class NoeudRoutierRepository extends AbstractRepository
     {
         return false;
     }
-
-    /**
-     * Renvoie le tableau des voisins d'un noeud routier
-     *
-     * Chaque voisin est un tableau avec les 3 champs
-     * `noeud_routier_gid`, `troncon_gid`, `longueur`
-     *
-     * @param int $noeudRoutierGid
-     * @return String[][]
-     **/
-//    public function getVoisins(int $noeudRoutierGid): array
-//    {
-//
-//        $requeteSQL = <<<SQL
-//            SELECT noeud_routier_gid_2 as noeud_routier_gid, troncon_gid, longueur
-//            FROM nalixt.calcul_noeud_troncon
-//            WHERE noeud_routier_gid = :gidTag;
-//        SQL;
-//        $pdoStatement = ConnexionBaseDeDonnees::getPdo()->prepare($requeteSQL);
-//        $pdoStatement->execute(array(
-//            "gidTag" => $noeudRoutierGid
-//        ));
-//
-//        return $pdoStatement->fetchAll(PDO::FETCH_ASSOC);
-//    }
-
 
     /**
      * @param int $noeudRoutierGid
@@ -134,29 +107,6 @@ class NoeudRoutierRepository extends AbstractRepository
         echo "Temps de construction du tableau de noeuds routiers avec leurs voisins: " . (microtime(true) - $now) . "s<br>";
         return $noeudsRoutierRegionAvecVoisins;
     }
-
-
-    /**
-     * Renvoi un noeud routier avec ses voisins
-     * @param int $noeudRoutierGidCourant
-     * @return NoeudRoutier
-     */
-    public function getNoeudRoutier(int $noeudRoutierGidCourant): NoeudRoutier
-    {
-        $requeteSQL = <<<SQL
-            SELECT noeud_routier_gid_2 as noeud_routier_gid, troncon_gid, longueur, troncon_coord, noeud_coord, noeud_voisin_coord
-            FROM nalixt.calcul_noeud_troncon
-            WHERE noeud_courant = :gidTag;
-        SQL;
-        $pdoStatement = ConnexionBaseDeDonnees::getPdo()->prepare($requeteSQL);
-        $pdoStatement->execute(array(
-            "gidTag" => $noeudRoutierGidCourant
-        ));
-
-        $voisins = $pdoStatement->fetchAll(PDO::FETCH_ASSOC);
-        return new NoeudRoutier($noeudRoutierGidCourant, $voisins[0]['noeud_coord'], $voisins);
-    }
-
 
     /**
      * Renvoi les informations d'un noeud routier tel que le gid, et ses coordonnées (lat, long)
