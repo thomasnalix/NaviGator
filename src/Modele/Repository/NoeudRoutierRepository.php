@@ -94,7 +94,7 @@ class NoeudRoutierRepository extends AbstractRepository
             "gidTag" => $noeudRoutierGid
         ));
         $noeudsRoutierRegion = $pdoStatement->fetchAll(PDO::FETCH_ASSOC);
-        echo "Temps de récupération des noeuds routiers de la région: " . (microtime(true) - $now) . "s<br>";
+        echo "Temps de récupération des noeuds routiers du département : " . (microtime(true) - $now) . "s<br>";
         /**
          * On récup ça:
          * 1 2 ...

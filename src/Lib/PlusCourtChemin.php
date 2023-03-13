@@ -39,7 +39,7 @@ class PlusCourtChemin
 
         $this->noeudsRoutierCache = [];
 
-        $openSet = [$this->noeudRoutierDepart->getGid()];
+        $openSet = new BinarySearchTree(new Node($this->noeudRoutierDepart->getGid(), 0));
 
         $cameFrom = [];
         $cost[$this->noeudRoutierDepart->getGid()] = 0;
@@ -51,17 +51,19 @@ class PlusCourtChemin
         $iteration = 0;
         $tempsFinaleLoadUnlod = 0;
         $tempsFinaleVoisin = 0;
-        while (count($openSet) > 0) {
+        while ($openSet->size() > 0) {
 
             $iteration++;
-            $noeudRoutierGidCourant = null;
-            $distanceMin = INF;
-            foreach ($openSet as $gid) {
-                if ($fScore[$gid] < $distanceMin) {
-                    $distanceMin = $fScore[$gid];
-                    $noeudRoutierGidCourant = $gid;
-                }
-            }
+            // CODE TO OPTIMIZE:
+//            foreach ($openSet as $gid) {
+//                if ($fScore[$gid] < $distanceMin) {
+//                    $distanceMin = $fScore[$gid];
+//                    $noeudRoutierGidCourant = $gid;
+//                }
+//            }
+            $noeudRoutierGidCourant = $openSet->searchMin()->key;
+            echo "Taille: " . $openSet->size() . "<br>";
+            //echo "Noeud courant : " . $noeudRoutierGidCourant . "<br>";
 
             // Path found
             if ($noeudRoutierGidCourant == $this->noeudRoutierArrivee->getGid()) {
@@ -74,15 +76,13 @@ class PlusCourtChemin
                 return $chemin;
             }
 
-            // TODO: trouver un moyen plus rapide pour supprimer un élément d'un tableau sans réindexer ?
-            unset($openSet[array_search($noeudRoutierGidCourant, $openSet)]);
+            $openSet->delete($noeudRoutierGidCourant);
 
             $now = microtime(true);
             $numDepartementNoeud = $this->getNumDepartement($noeudRoutierGidCourant);
             if ($numDepartementNoeud === '') {
                 $this->noeudsRoutierCache += $noeudRoutierRepository->getNoeudsRoutierDepartement($noeudRoutierGidCourant);
                 $numDepartementNoeud = $this->getNumDepartement($noeudRoutierGidCourant);
-                //$this->supprimerAncienDepartement();
             }
             $tempsFinaleLoadUnlod += microtime(true) - $now;
 
@@ -99,8 +99,8 @@ class PlusCourtChemin
                     $gScore[$neighbor['noeud_gid']] = $tentativeGScore;
 
                     $fScore[$neighbor['noeud_gid']] = $tentativeGScore + $this->getHeuristique($neighbor['noeud_coord']);
-                    if (!array_key_exists($neighbor['noeud_gid'], $openSet)) {
-                        $openSet[] = $neighbor['noeud_gid'];
+                    if ($openSet->exists($neighbor['noeud_gid'])) {
+                        $openSet->insert(new Node($neighbor['noeud_gid'], $fScore[$neighbor['noeud_gid']]));
                     }
                 }
             }
@@ -158,14 +158,6 @@ class PlusCourtChemin
         }
         return $numDepartement;
     }
-
-//    private function supprimerAncienDepartement()
-//    {
-//        if (count($this->noeudsRoutierCache) > 5) {
-//            $key = array_keys($this->noeudsRoutierCache)[0];
-//            unset($this->noeudsRoutierCache[$key]);
-//        }
-//    }
 
     private function debugTableau($tableau)
     {
