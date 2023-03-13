@@ -39,7 +39,7 @@ class PlusCourtChemin
 
         $this->noeudsRoutierCache = [];
 
-        $openSet = new BinarySearchTree(new Node($this->noeudRoutierDepart->getGid(), 0));
+        $openSet = new BinarySearchTree($this->noeudRoutierDepart->getGid(), 0);
 
         $cameFrom = [];
         $cost[$this->noeudRoutierDepart->getGid()] = 0;
@@ -51,9 +51,9 @@ class PlusCourtChemin
         $iteration = 0;
         $tempsFinaleLoadUnlod = 0;
         $tempsFinaleVoisin = 0;
-        while ($openSet->size() > 0) {
+        while (!$openSet->isEmpty()) {
             $iteration++;
-            $noeudRoutierGidCourant = $openSet->searchMin()->key;
+            $noeudRoutierGidCourant = $openSet->()->key; // TODO CONTINUER ICI
 
             // Path found
             if ($noeudRoutierGidCourant == $this->noeudRoutierArrivee->getGid()) {
