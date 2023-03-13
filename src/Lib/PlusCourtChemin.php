@@ -52,18 +52,8 @@ class PlusCourtChemin
         $tempsFinaleLoadUnlod = 0;
         $tempsFinaleVoisin = 0;
         while ($openSet->size() > 0) {
-
             $iteration++;
-            // CODE TO OPTIMIZE:
-//            foreach ($openSet as $gid) {
-//                if ($fScore[$gid] < $distanceMin) {
-//                    $distanceMin = $fScore[$gid];
-//                    $noeudRoutierGidCourant = $gid;
-//                }
-//            }
             $noeudRoutierGidCourant = $openSet->searchMin()->key;
-            echo "Taille: " . $openSet->size() . "<br>";
-            //echo "Noeud courant : " . $noeudRoutierGidCourant . "<br>";
 
             // Path found
             if ($noeudRoutierGidCourant == $this->noeudRoutierArrivee->getGid()) {
@@ -76,7 +66,7 @@ class PlusCourtChemin
                 return $chemin;
             }
 
-            $openSet->delete($noeudRoutierGidCourant);
+            $openSet->delete($noeudRoutierGidCourant, $fScore[$noeudRoutierGidCourant]);
 
             $now = microtime(true);
             $numDepartementNoeud = $this->getNumDepartement($noeudRoutierGidCourant);
@@ -99,9 +89,9 @@ class PlusCourtChemin
                     $gScore[$neighbor['noeud_gid']] = $tentativeGScore;
 
                     $fScore[$neighbor['noeud_gid']] = $tentativeGScore + $this->getHeuristique($neighbor['noeud_coord']);
-                    if ($openSet->exists($neighbor['noeud_gid'])) {
-                        $openSet->insert(new Node($neighbor['noeud_gid'], $fScore[$neighbor['noeud_gid']]));
-                    }
+                    $nodeValue = $fScore[$neighbor['noeud_gid']];
+                    if (!$openSet->exists($neighbor['noeud_gid'], $nodeValue))
+                        $openSet->insert($neighbor['noeud_gid'], $nodeValue);
                 }
             }
             $tempsFinaleVoisin += microtime(true) - $now;

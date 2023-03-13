@@ -2,30 +2,33 @@
 
 namespace App\PlusCourtChemin\Lib;
 
+use mysql_xdevapi\BaseResult;
+
 class BinarySearchTree
 {
 
     private ?Node $root;
-    private int $size = 1;
+    private int $size = 0;
 
-    public function __construct(Node $root) {
+    public function __construct(Node $root = null)
+    {
         $this->root = $root;
+        if ($root !== null) $this->size++;
     }
 
-    public function insert(Node $node): void {
-        if ($this->root === null) {
+    public function insert(int $key, float $value): void {
+        $this->insertNode($this->root, new Node($key, $value));
+    }
+
+    private function insertNode(?Node $root, Node $node): void {
+        if ($root === null) {
             $this->root = $node;
             $this->size++;
-        } else {
-            $this->insertNode($this->root, $node);
+            return;
         }
-    }
-
-    private function insertNode(Node $root, Node $node): void {
         if ($node->value < $root->value) {
             if ($root->leftNode === null) {
                 $root->leftNode = $node;
-                $node->parent = $root;
                 $this->size++;
             } else {
                 $this->insertNode($root->leftNode, $node);
@@ -33,7 +36,6 @@ class BinarySearchTree
         } else {
             if ($root->rightNode === null) {
                 $root->rightNode = $node;
-                $node->parent = $root;
                 $this->size++;
             } else {
                 $this->insertNode($root->rightNode, $node);
@@ -42,77 +44,68 @@ class BinarySearchTree
     }
 
     public function searchMin(): ?Node {
+        if ($this->root === null) return null;
         return $this->searchMinNode($this->root);
     }
 
     private function searchMinNode(Node $root): ?Node {
-
-        if ($root->leftNode === null) {
-            return $root;
-        }
-
+        if ($root->leftNode === null) return $root;
         return $this->searchMinNode($root->leftNode);
     }
 
-    public function exists(int $value): bool {
-        return $this->getNodeByKey($this->root, $value) !== null;
+    public function exists(int $key, float $value): bool {
+        if ($this->root === null) return false;
+        return $this->getNodeByKeyValue($this->root, $key, $value) !== null;
     }
 
-    public function getByKey(int $key): ?Node {
-        return $this->getNodeByKey($this->root, $key);
-    }
-
-    private function getNodeByKey(Node $root, int $key): ?Node {
-        if ($root->key === $key) {
-            return $root;
-        }
-
-        if ($key < $root->value) {
-            if ($root->leftNode === null) {
-                return null;
-            }
-            return $this->getNodeByKey($root->leftNode, $key);
+    private function getNodeByKeyValue(?Node $root, int $key, float $value): ?Node {
+        if ($root === null) return null;
+        if ($root->key === $key) return $root;
+        if ($value < $root->value) {
+            return $this->getNodeByKeyValue($root->leftNode, $key, $value);
         } else {
-            if ($root->rightNode === null) {
-                return null;
-            }
-            return $this->getNodeByKey($root->rightNode, $key);
+            return $this->getNodeByKeyValue($root->rightNode, $key, $value);
         }
     }
 
-    public function delete(int $key): void {
-        $this->deleteNode($this->root, $this->getByKey($key));
+    public function delete(int $key, float $value): void {
+        if ($this->root === null) return;
+        $this->deleteNode($this->root, $key, $value);
     }
 
-    private function deleteNode(Node $root, Node $targetNode): void {
-        if ($targetNode->leftNode === null && $targetNode->rightNode === null) {
-            if ($targetNode->parent === null) {
+    private function deleteNode(Node $root, int $key, float $value): void {
+        if ($value < $root->value) {
+            if ($root->leftNode === null) return;
+            if ($root->leftNode->key === $key) {
+                $root->leftNode = null;
+                $this->size--;
+            } else {
+                $this->deleteNode($root->leftNode, $key, $value);
+            }
+        } else if ($value > $root->value) {
+            if ($root->rightNode === null) return;
+            if ($root->rightNode->key === $key) {
+                $root->rightNode = null;
+                $this->size--;
+            } else {
+                $this->deleteNode($root->rightNode, $key, $value);
+            }
+        } else {
+            if ($root->leftNode === null && $root->rightNode === null) {
                 $this->root = null;
-            } else if ($targetNode->parent->leftNode === $targetNode) {
-                $targetNode->parent->leftNode = null;
+                $this->size--;
+            } else if ($root->leftNode === null) {
+                $this->root = $root->rightNode;
+                $this->size--;
+            } else if ($root->rightNode === null) {
+                $this->root = $root->leftNode;
+                $this->size--;
             } else {
-                $targetNode->parent->rightNode = null;
+                $minNode = $this->searchMinNode($root->rightNode);
+                $this->deleteNode($root, $minNode->key, $minNode->value);
+                $root->key = $minNode->key;
+                $root->value = $minNode->value;
             }
-        } else if ($targetNode->leftNode === null) {
-            if ($targetNode->parent === null) {
-                $this->root = $targetNode->rightNode;
-            } else if ($targetNode->parent->leftNode === $targetNode) {
-                $targetNode->parent->leftNode = $targetNode->rightNode;
-            } else {
-                $targetNode->parent->rightNode = $targetNode->rightNode;
-            }
-        } else if ($targetNode->rightNode === null) {
-            if ($targetNode->parent === null) {
-                $this->root = $targetNode->leftNode;
-            } else if ($targetNode->parent->leftNode === $targetNode) {
-                $targetNode->parent->leftNode = $targetNode->leftNode;
-            } else {
-                $targetNode->parent->rightNode = $targetNode->leftNode;
-            }
-        } else {
-            $minNode = $this->searchMinNode($targetNode->rightNode);
-            $targetNode->value = $minNode->value;
-            $this->deleteNode($root, $minNode);
         }
     }
 
