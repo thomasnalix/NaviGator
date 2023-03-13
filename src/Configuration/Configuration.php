@@ -12,29 +12,24 @@ class Configuration
 
     public ConfigurationBDDInterface $configurationBDD;
 
-    public function __construct(ConfigurationBDDInterface $configurationBDD)
-    {
+    public function __construct(ConfigurationBDDInterface $configurationBDD){
         $this->configurationBDD= $configurationBDD;
     }
 
-    public function getConfigurationBDD(): ConfigurationBDDInterface
-    {
+    public function getConfigurationBDD(): ConfigurationBDDInterface {
         return $this->configurationBDD;
     }
 
-    static public function getDebug(): bool
-    {
+    static public function getDebug(): bool {
         return Configuration::$debug;
     }
 
-    public static function getDureeExpirationSession() : string
-    {
+    public static function getDureeExpirationSession() : string {
         // Durée d'expiration des sessions en secondes
         return 1200;
     }
 
-    public static function getAbsoluteURL() : string
-    {
+    public static function getAbsoluteURL() : string {
         throw new Exception("URL absolue non renseignée !");
     }
 

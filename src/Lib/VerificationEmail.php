@@ -6,10 +6,8 @@ use App\PlusCourtChemin\Configuration\Configuration;
 use App\PlusCourtChemin\Modele\DataObject\Utilisateur;
 use App\PlusCourtChemin\Modele\Repository\UtilisateurRepository;
 
-class VerificationEmail
-{
-    public static function envoiEmailValidation(Utilisateur $utilisateur): void
-    {
+class VerificationEmail {
+    public static function envoiEmailValidation(Utilisateur $utilisateur): void {
         $loginURL = rawurlencode($utilisateur->getLogin());
         $nonceURL = rawurlencode($utilisateur->getNonce());
         $absoluteURL = Configuration::getAbsoluteURL();
@@ -26,8 +24,7 @@ class VerificationEmail
         // );
     }
 
-    public static function traiterEmailValidation($login, $nonce): bool
-    {
+    public static function traiterEmailValidation($login, $nonce): bool {
         $utilisateurRepository = new UtilisateurRepository();
         /** @var Utilisateur $utilisateur */
         $utilisateur = $utilisateurRepository->recupererParClePrimaire($login);
@@ -47,8 +44,7 @@ class VerificationEmail
         return true;
     }
 
-    public static function aValideEmail(Utilisateur $utilisateur): bool
-    {
+    public static function aValideEmail(Utilisateur $utilisateur): bool {
         return $utilisateur->getEmail() !== "";
     }
 }

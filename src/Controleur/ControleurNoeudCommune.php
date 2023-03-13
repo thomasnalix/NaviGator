@@ -8,16 +8,13 @@ use App\PlusCourtChemin\Modele\DataObject\NoeudCommune;
 use App\PlusCourtChemin\Modele\Repository\NoeudCommuneRepository;
 use App\PlusCourtChemin\Modele\Repository\NoeudRoutierRepository;
 
-class ControleurNoeudCommune extends ControleurGenerique
-{
+class ControleurNoeudCommune extends ControleurGenerique {
 
-    public static function afficherErreur($errorMessage = "", $controleur = ""): void
-    {
+    public static function afficherErreur($errorMessage = "", $controleur = ""): void {
         parent::afficherErreur($errorMessage, "noeudCommune");
     }
 
-    public static function afficherListe(): void
-    {
+    public static function afficherListe(): void {
         $noeudsCommunes = (new NoeudCommuneRepository())->recuperer();     //appel au modèle pour gerer la BD
         ControleurNoeudCommune::afficherVue('vueGenerale.php', [
             "noeudsCommunes" => $noeudsCommunes,
@@ -26,8 +23,7 @@ class ControleurNoeudCommune extends ControleurGenerique
         ]);
     }
 
-    public static function afficherDetail(): void
-    {
+    public static function afficherDetail(): void {
         if (!isset($_REQUEST['gid'])) {
             MessageFlash::ajouter("danger", "Immatriculation manquante.");
             ControleurNoeudCommune::rediriger("noeudCommune", "afficherListe");
@@ -48,8 +44,7 @@ class ControleurNoeudCommune extends ControleurGenerique
         ]);
     }
 
-    public static function map(): void
-    {
+    public static function map(): void {
         $noeudsCommunes = (new NoeudCommuneRepository())->recuperer();     //appel au modèle pour gerer la BD
         ControleurNoeudCommune::afficherVue('map.html', [
             "noeudsCommunes" => $noeudsCommunes,
@@ -58,8 +53,7 @@ class ControleurNoeudCommune extends ControleurGenerique
         ]);
     }
 
-    public static function plusCourtChemin(): void
-    {
+    public static function plusCourtChemin(): void {
         echo (" Appel de la fonction - " . date("H:i:s")) . "<br>";
         $now = microtime(true);
         $parametres = [

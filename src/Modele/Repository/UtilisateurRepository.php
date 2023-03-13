@@ -5,8 +5,7 @@ namespace App\PlusCourtChemin\Modele\Repository;
 use App\PlusCourtChemin\Modele\DataObject\Utilisateur;
 use Exception;
 
-class UtilisateurRepository extends AbstractRepository
-{
+class UtilisateurRepository extends AbstractRepository {
 //    /**
 //     * @return Utilisateur[]
 //     */
@@ -21,8 +20,7 @@ class UtilisateurRepository extends AbstractRepository
 //        return $utilisateurs;
 //    }
 
-    public function construireDepuisTableau(array $utilisateurTableau): Utilisateur
-    {
+    public function construireDepuisTableau(array $utilisateurTableau): Utilisateur {
         return new Utilisateur(
             $utilisateurTableau["login"],
             $utilisateurTableau["nom"],
@@ -35,19 +33,16 @@ class UtilisateurRepository extends AbstractRepository
         );
     }
 
-    public function getNomTable(): string
-    {
+    public function getNomTable(): string {
         throw new Exception("À vous de créer votre table utilisateur !");
         return 'utilisateur';
     }
 
-    protected function getNomClePrimaire(): string
-    {
+    protected function getNomClePrimaire(): string {
         return 'login';
     }
 
-    protected function getNomsColonnes(): array
-    {
+    protected function getNomsColonnes(): array {
         return ["login", "nom", "prenom", "mdp_hache", "est_admin", "email", "email_a_valider", "nonce"];
     }
 }

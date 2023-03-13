@@ -5,8 +5,7 @@ namespace App\PlusCourtChemin\Modele\Repository;
 use App\PlusCourtChemin\Modele\DataObject\AbstractDataObject;
 use PDOException;
 
-abstract class AbstractRepository
-{
+abstract class AbstractRepository {
 
     protected abstract function getNomTable(): string;
     protected abstract function getNomClePrimaire(): string;
@@ -17,8 +16,7 @@ abstract class AbstractRepository
      * @param int|string $limit Nombre de réponses ("ALL" pour toutes les réponses)
      * @return AbstractDataObject[]
      */
-    public function recuperer($limit = 200): array
-    {
+    public function recuperer($limit = 200): array {
         $nomTable = $this->getNomTable();
         $champsSelect = implode(", ", $this->getNomsColonnes());
         $requeteSQL = <<<SQL
@@ -37,8 +35,7 @@ abstract class AbstractRepository
      * @param array $critereSelection ex: ["nomColonne" => valeurDeRecherche]
      * @return AbstractDataObject[]
      */
-    public function recupererPar(array $critereSelection, $limit = 200): array
-    {
+    public function recupererPar(array $critereSelection, $limit = 200): array {
         $nomTable = $this->getNomTable();
         $champsSelect = implode(", ", $this->getNomsColonnes());
         $partiesWhere = array_map(function ($nomcolonne) {
@@ -58,8 +55,7 @@ abstract class AbstractRepository
         return $objets;
     }
 
-    public function recupererParClePrimaire(string $valeurClePrimaire): ?AbstractDataObject
-    {
+    public function recupererParClePrimaire(string $valeurClePrimaire): ?AbstractDataObject {
 
         $nomTable = $this->getNomTable();
         $nomClePrimaire = $this->getNomClePrimaire();
@@ -80,8 +76,7 @@ abstract class AbstractRepository
         return null;
     }
 
-    public function supprimer(string $valeurClePrimaire): bool
-    {
+    public function supprimer(string $valeurClePrimaire): bool {
         $nomTable = $this->getNomTable();
         $nomClePrimaire = $this->getNomClePrimaire();
         $sql = "DELETE FROM $nomTable WHERE $nomClePrimaire= :clePrimaireTag;";
@@ -104,8 +99,7 @@ abstract class AbstractRepository
         return ($deleteCount > 0);
     }
 
-    public function mettreAJour(AbstractDataObject $object): void
-    {
+    public function mettreAJour(AbstractDataObject $object): void {
         $nomTable = $this->getNomTable();
         $nomClePrimaire = $this->getNomClePrimaire();
         $nomsColonnes = $this->getNomsColonnes();
@@ -126,8 +120,7 @@ abstract class AbstractRepository
         return;
     }
 
-    public function ajouter(AbstractDataObject $object): bool
-    {
+    public function ajouter(AbstractDataObject $object): bool {
         $nomTable = $this->getNomTable();
         $nomsColonnes = $this->getNomsColonnes();
 

@@ -6,16 +6,14 @@ use App\PlusCourtChemin\Lib\MessageFlash;
 
 class ControleurGenerique {
 
-    protected static function afficherVue(string $cheminVue, array $parametres = []): void
-    {
+    protected static function afficherVue(string $cheminVue, array $parametres = []): void {
         extract($parametres);
         $messagesFlash = MessageFlash::lireTousMessages();
         require __DIR__ . "/../vue/$cheminVue";
     }
 
     // https://stackoverflow.com/questions/768431/how-do-i-make-a-redirect-in-php
-    protected static function rediriger(string $controleur = "", string $action = "", array $query = []) : void
-    {
+    protected static function rediriger(string $controleur = "", string $action = "", array $query = []) : void {
         $queryString = [];
         if ($action != "") {
             $queryString[] = "action=" . rawurlencode($action);
@@ -33,8 +31,7 @@ class ControleurGenerique {
         exit();
     }
 
-    public static function afficherErreur($errorMessage = "", $controleur = ""): void
-    {
+    public static function afficherErreur($errorMessage = "", $controleur = ""): void {
         $errorMessageView = "Problème";
         if ($controleur !== "")
             $errorMessageView .= " avec le contrôleur $controleur";

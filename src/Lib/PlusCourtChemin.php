@@ -7,8 +7,7 @@ use App\PlusCourtChemin\Modele\DataObject\DataContainer;
 use App\PlusCourtChemin\Modele\DataObject\NoeudRoutier;
 use App\PlusCourtChemin\Modele\Repository\NoeudRoutierRepository;
 
-class PlusCourtChemin
-{
+class PlusCourtChemin {
 
     /**
      * Construit comme suit:
@@ -29,9 +28,7 @@ class PlusCourtChemin
     public function __construct(
         private NoeudRoutier $noeudRoutierDepart,
         private NoeudRoutier $noeudRoutierArrivee
-    )
-    {
-    }
+    ) { }
 
 
     function calculerAStar(): float {
@@ -53,6 +50,7 @@ class PlusCourtChemin
         $iteration = 0;
         $tempsFinaleLoadUnlod = 0;
         $tempsFinaleVoisin = 0;
+        $tempsF = 0;
         while (!$openSet->isEmpty()) {
             $iteration++;
             $nodeData = $openSet->getMinNode()->data;
@@ -63,6 +61,7 @@ class PlusCourtChemin
                 echo "Itérations : " . $iteration . "<br>";
                 echo "Temps LOAD / UNLOAD departement : " . $tempsFinaleLoadUnlod . "<br>";
                 echo "Temps calcul voisin : " . $tempsFinaleVoisin. "<br>";
+                echo "Temps f : " . $tempsF. "<br>";
                 $now = microtime(true);
                 $chemin = $this->reconstruireChemin($cameFrom, $noeudRoutierGidCourant, $cost);
                 echo "Temps reconstruire chemin : " . (microtime(true) - $now) . "<br>";
@@ -91,7 +90,9 @@ class PlusCourtChemin
 
                     $gScore[$neighbor['noeud_gid']] = $tentativeGScore;
 
+                    $now = microtime(true);
                     $fScore[$neighbor['noeud_gid']] = $tentativeGScore + $this->getHeuristique($neighbor['noeud_coord']);
+                    $tempsF += microtime(true) - $now;
                     $dataContainer = new DataContainer($neighbor['noeud_gid'], $fScore[$neighbor['noeud_gid']]);
                     if (!$openSet->search($dataContainer))
                         $openSet->insert($dataContainer);
@@ -103,8 +104,7 @@ class PlusCourtChemin
         return -1;
     }
 
-    private function getHeuristique($noeud): float
-    {
+    private function getHeuristique($noeud): float {
         $coordsArrivee = explode(";", $this->noeudRoutierArrivee->getCoords());
         $coordsPoints = explode(";", $noeud);
 
@@ -114,21 +114,15 @@ class PlusCourtChemin
         $lon1 = $coordsPoints[0];
 
         $earthRadius = 6371; // rayon de la Terre en kilomètres
-        $dLat = $this->deg2rad($lat2 - $lat1);
-        $dLon = $this->deg2rad($lon2 - $lon1);
-        $a = sin($dLat / 2) * sin($dLat / 2) + cos($this->deg2rad($lat1)) * cos($this->deg2rad($lat2)) * sin($dLon / 2) * sin($dLon / 2);
+        $dLat = deg2rad($lat2 - $lat1);
+        $dLon = deg2rad($lon2 - $lon1);
+        $a = sin($dLat / 2) * sin($dLat / 2) + cos(deg2rad($lat1)) * cos(deg2rad($lat2)) * sin($dLon / 2) * sin($dLon / 2);
         $c = 2 * asin(sqrt($a));
         return $earthRadius * $c; // distance en kilomètres
 
     }
 
-    private function deg2rad($deg)
-    {
-        return $deg * 0.017453293; // 0.017453293 = pi/180
-    }
-
-    private function reconstruireChemin(array $cameFrom, $current, $cost): float
-    {
+    private function reconstruireChemin(array $cameFrom, $current, $cost): float {
         $total_path = [$current];
         $distance = 0;
         while (array_key_exists($current, $cameFrom)) {
@@ -141,8 +135,7 @@ class PlusCourtChemin
         return $distance;
     }
 
-    private function getNumDepartement($noeudRoutierGidCourant)
-    {
+    private function getNumDepartement($noeudRoutierGidCourant) {
         $numDepartement = '';
         for ($i = 0; $i < count($this->noeudsRoutierCache); $i++) {
             $key = array_keys($this->noeudsRoutierCache)[$i];

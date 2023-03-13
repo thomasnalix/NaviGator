@@ -4,8 +4,7 @@ namespace App\PlusCourtChemin\Modele\DataObject;
 
 use App\PlusCourtChemin\Lib\MotDePasse;
 
-class Utilisateur extends AbstractDataObject
-{
+class Utilisateur extends AbstractDataObject {
 
     private string $login;
     private string $nom;
@@ -36,8 +35,7 @@ class Utilisateur extends AbstractDataObject
         $this->nonce = $nonce;
     }
 
-    public static function construireDepuisFormulaire (array $tableauFormulaire) : Utilisateur
-    {
+    public static function construireDepuisFormulaire (array $tableauFormulaire) : Utilisateur {
         return new Utilisateur(
             $tableauFormulaire["login"],
             $tableauFormulaire["nom"],
@@ -50,38 +48,31 @@ class Utilisateur extends AbstractDataObject
         );
     }
 
-    public function getLogin(): string
-    {
+    public function getLogin(): string {
         return $this->login;
     }
 
-    public function setLogin(string $login): void
-    {
+    public function setLogin(string $login): void {
         $this->login = $login;
     }
 
-    public function getNom(): string
-    {
+    public function getNom(): string {
         return $this->nom;
     }
 
-    public function setNom(string $nom): void
-    {
+    public function setNom(string $nom): void {
         $this->nom = $nom;
     }
 
-    public function getPrenom(): string
-    {
+    public function getPrenom(): string {
         return $this->prenom;
     }
 
-    public function setPrenom(string $prenom): void
-    {
+    public function setPrenom(string $prenom): void {
         $this->prenom = $prenom;
     }
 
-    public function getMdpHache(): string
-    {
+    public function getMdpHache(): string {
         return $this->mdpHache;
     }
 
@@ -89,48 +80,39 @@ class Utilisateur extends AbstractDataObject
         $this->mdpHache = MotDePasse::hacher($mdpClair);
     }
 
-    public function getEstAdmin(): string
-    {
+    public function getEstAdmin(): string {
         return $this->estAdmin;
     }
 
-    public function setEstAdmin(string $estAdmin): void
-    {
+    public function setEstAdmin(string $estAdmin): void {
         $this->estAdmin = $estAdmin;
     }
 
-    public function getEmail(): string
-    {
+    public function getEmail(): string {
         return $this->email;
     }
 
-    public function setEmail(string $email): void
-    {
+    public function setEmail(string $email): void {
         $this->email = $email;
     }
 
-    public function getEmailAValider(): string
-    {
+    public function getEmailAValider(): string {
         return $this->emailAValider;
     }
 
-    public function setEmailAValider(string $emailAValider): void
-    {
+    public function setEmailAValider(string $emailAValider): void {
         $this->emailAValider = $emailAValider;
     }
 
-    public function getNonce(): string
-    {
+    public function getNonce(): string {
         return $this->nonce;
     }
 
-    public function setNonce(string $nonce): void
-    {
+    public function setNonce(string $nonce): void {
         $this->nonce = $nonce;
     }
 
-    public function exporterEnFormatRequetePreparee(): array
-    {
+    public function exporterEnFormatRequetePreparee(): array {
         return array(
             "login_tag" => $this->login,
             "nom_tag" => $this->nom,

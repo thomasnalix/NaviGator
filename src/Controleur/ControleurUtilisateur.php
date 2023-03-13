@@ -10,11 +10,9 @@ use App\PlusCourtChemin\Lib\VerificationEmail;
 use App\PlusCourtChemin\Modele\DataObject\Utilisateur;
 use App\PlusCourtChemin\Modele\Repository\UtilisateurRepository;
 
-class ControleurUtilisateur extends ControleurGenerique
-{
+class ControleurUtilisateur extends ControleurGenerique {
 
-    public static function afficherErreur($errorMessage = "", $controleur = ""): void
-    {
+    public static function afficherErreur($errorMessage = "", $controleur = ""): void {
         parent::afficherErreur($errorMessage, "utilisateur");
     }
 
@@ -29,8 +27,7 @@ class ControleurUtilisateur extends ControleurGenerique
         ]);
     }
 
-    public static function afficherDetail(): void
-    {
+    public static function afficherDetail(): void {
         if (isset($_REQUEST['login'])) {
             $login = $_REQUEST['login'];
             $utilisateur = (new UtilisateurRepository())->recupererParClePrimaire($login);
@@ -50,8 +47,7 @@ class ControleurUtilisateur extends ControleurGenerique
         }
     }
 
-    public static function supprimer()
-    {
+    public static function supprimer() {
         if (isset($_REQUEST['login'])) {
             $login = $_REQUEST['login'];
             $utilisateurRepository = new UtilisateurRepository();
@@ -70,8 +66,7 @@ class ControleurUtilisateur extends ControleurGenerique
         }
     }
 
-    public static function afficherFormulaireCreation(): void
-    {
+    public static function afficherFormulaireCreation(): void {
         ControleurUtilisateur::afficherVue('vueGenerale.php', [
             "pagetitle" => "Création d'un utilisateur",
             "cheminVueBody" => "utilisateur/formulaireCreation.php",
@@ -79,8 +74,7 @@ class ControleurUtilisateur extends ControleurGenerique
         ]);
     }
 
-    public static function creerDepuisFormulaire(): void
-    {
+    public static function creerDepuisFormulaire(): void {
         if (
             isset($_REQUEST['login']) && isset($_REQUEST['prenom']) && isset($_REQUEST['nom'])
             && isset($_REQUEST['mdp']) && isset($_REQUEST['mdp2'])
@@ -118,8 +112,7 @@ class ControleurUtilisateur extends ControleurGenerique
         }
     }
 
-    public static function afficherFormulaireMiseAJour(): void
-    {
+    public static function afficherFormulaireMiseAJour(): void {
         if (isset($_REQUEST['login'])) {
             $login = $_REQUEST['login'];
             /** @var Utilisateur $utilisateur */
@@ -153,8 +146,7 @@ class ControleurUtilisateur extends ControleurGenerique
         }
     }
 
-    public static function mettreAJour(): void
-    {
+    public static function mettreAJour(): void {
         if (!(isset($_REQUEST['login']) && isset($_REQUEST['prenom']) && isset($_REQUEST['nom'])
             && isset($_REQUEST['mdp']) && isset($_REQUEST['mdp2']) && isset($_REQUEST['mdpAncien'])
             && isset($_REQUEST['email'])
@@ -213,8 +205,7 @@ class ControleurUtilisateur extends ControleurGenerique
         ControleurUtilisateur::rediriger("utilisateur", "afficherListe");
     }
 
-    public static function afficherFormulaireConnexion(): void
-    {
+    public static function afficherFormulaireConnexion(): void {
         ControleurUtilisateur::afficherVue('vueGenerale.php', [
             "pagetitle" => "Formulaire de connexion",
             "cheminVueBody" => "utilisateur/formulaireConnexion.php",
@@ -222,8 +213,7 @@ class ControleurUtilisateur extends ControleurGenerique
         ]);
     }
 
-    public static function connecter(): void
-    {
+    public static function connecter(): void {
         if (!(isset($_REQUEST['login']) && isset($_REQUEST['mdp']))) {
             MessageFlash::ajouter("danger", "Login ou mot de passe manquant.");
             ControleurUtilisateur::rediriger("utilisateur", "afficherFormulaireConnexion");
@@ -252,8 +242,7 @@ class ControleurUtilisateur extends ControleurGenerique
         ControleurUtilisateur::rediriger("utilisateur", "afficherDetail", ["login" => $_REQUEST["login"]]);
     }
 
-    public static function deconnecter(): void
-    {
+    public static function deconnecter(): void {
         if (!ConnexionUtilisateur::estConnecte()) {
             MessageFlash::ajouter("danger", "Utilisateur non connecté.");
             ControleurUtilisateur::rediriger("utilisateur", "afficherListe");
@@ -263,8 +252,7 @@ class ControleurUtilisateur extends ControleurGenerique
         ControleurUtilisateur::rediriger("utilisateur", "afficherListe");
     }
 
-    public static function validerEmail()
-    {
+    public static function validerEmail() {
         if (isset($_REQUEST['login']) && isset($_REQUEST['nonce'])) {
             $succesValidation = VerificationEmail::traiterEmailValidation($_REQUEST["login"], $_REQUEST["nonce"]);
 
@@ -281,6 +269,4 @@ class ControleurUtilisateur extends ControleurGenerique
             ControleurUtilisateur::rediriger("utilisateur", "afficherListe");
         }
     }
-
-
 }

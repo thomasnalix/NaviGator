@@ -9,8 +9,7 @@ use PDO;
 class NoeudRoutierRepository extends AbstractRepository
 {
 
-    public function construireDepuisTableau(array $noeudRoutierTableau): NoeudRoutier
-    {
+    public function construireDepuisTableau(array $noeudRoutierTableau): NoeudRoutier {
         return new NoeudRoutier(
             $noeudRoutierTableau["gid"],
             $noeudRoutierTableau["coords"]
@@ -18,35 +17,29 @@ class NoeudRoutierRepository extends AbstractRepository
     }
 
 
-    protected function getNomTable(): string
-    {
+    protected function getNomTable(): string {
         return 'nalixt.noeud_routier';
     }
 
-    protected function getNomClePrimaire(): string
-    {
+    protected function getNomClePrimaire(): string {
         return 'gid';
     }
 
-    protected function getNomsColonnes(): array
-    {
+    protected function getNomsColonnes(): array {
         return ["gid"]; // "id_rte500"
     }
 
     // On bloque l'ajout, la màj et la suppression pour ne pas modifier la table
     // Normalement, j'ai restreint l'accès à SELECT au niveau de la BD
-    public function supprimer(string $valeurClePrimaire): bool
-    {
+    public function supprimer(string $valeurClePrimaire): bool {
         return false;
     }
 
-    public function mettreAJour(AbstractDataObject $object): void
-    {
+    public function mettreAJour(AbstractDataObject $object): void {
         return;
     }
 
-    public function ajouter(AbstractDataObject $object): bool
-    {
+    public function ajouter(AbstractDataObject $object): bool {
         return false;
     }
 
@@ -62,12 +55,10 @@ class NoeudRoutierRepository extends AbstractRepository
             WHERE noeud_courant_gid = :gidTag LIMIT 1);
         SQL;
         $pdoStatement = ConnexionBaseDeDonnees::getPdo()->prepare($requeteSQL);
-        $now = microtime(true);
         $pdoStatement->execute(array(
             "gidTag" => $noeudRoutierGid
         ));
         $noeudsRoutierRegion = $pdoStatement->fetchAll(PDO::FETCH_ASSOC);
-        echo "Temps de récupération des noeuds routiers du département : " . (microtime(true) - $now) . "s<br>";
         /**
          * On récup ça:
          * 1 2 ...
@@ -84,7 +75,6 @@ class NoeudRoutierRepository extends AbstractRepository
          *     numDepartement2 => [ ... ],
          * ]
          */
-        $now = microtime(true);
         $noeudsRoutierRegionAvecVoisins = [];
         foreach ($noeudsRoutierRegion as $noeudRoutierRegion) {
             $noeudCourantGid = $noeudRoutierRegion["noeud_courant_gid"];
@@ -104,7 +94,6 @@ class NoeudRoutierRepository extends AbstractRepository
                 "longueur_troncon" => $longueurTroncon,
             ];
         }
-        echo "Temps de construction du tableau de noeuds routiers avec leurs voisins: " . (microtime(true) - $now) . "s<br>";
         return $noeudsRoutierRegionAvecVoisins;
     }
 
@@ -112,8 +101,7 @@ class NoeudRoutierRepository extends AbstractRepository
      * Renvoi les informations d'un noeud routier tel que le gid, et ses coordonnées (lat, long)
      * @return NoeudRoutier|null
      */
-    public function recupererNoeudRoutier($idRte): ?NoeudRoutier
-    {
+    public function recupererNoeudRoutier($idRte): ?NoeudRoutier {
         $requeteSQL = <<<SQL
             SELECT gid,
                    concat(ST_X(ST_AsText(geom)), ';',

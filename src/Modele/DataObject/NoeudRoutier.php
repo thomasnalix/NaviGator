@@ -5,8 +5,7 @@ namespace App\PlusCourtChemin\Modele\DataObject;
 use App\PlusCourtChemin\Modele\Repository\NoeudRoutierRepository;
 use Exception;
 
-class NoeudRoutier extends AbstractDataObject
-{
+class NoeudRoutier extends AbstractDataObject {
     //private array $voisins;
 
     public function __construct(
