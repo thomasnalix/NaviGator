@@ -44,27 +44,17 @@ class ControleurNoeudCommune extends ControleurGenerique {
         ]);
     }
 
-    public static function map(): void {
-        $noeudsCommunes = (new NoeudCommuneRepository())->recuperer();     //appel au modèle pour gerer la BD
-        ControleurNoeudCommune::afficherVue('map.html', [
-            "noeudsCommunes" => $noeudsCommunes,
-            "pagetitle" => "Carte des Noeuds Routiers",
-            "cheminVueBody" => "map.html"
-        ]);
-    }
 
     public static function plusCourtChemin(): void {
-        echo (" Appel de la fonction - " . date("H:i:s")) . "<br>";
-        $now = microtime(true);
+//        echo (" Appel de la fonction - " . date("H:i:s")) . "<br>";
+//        $now = microtime(true);
         $parametres = [
             "pagetitle" => "Plus court chemin",
             "cheminVueBody" => "noeudCommune/plusCourtChemin.php",
         ];
 
-
         if (!empty($_POST)) {
 
-            $now = microtime(true);
             $nomCommuneDepart = $_POST["nomCommuneDepart"];
             $nomCommuneArrivee = $_POST["nomCommuneArrivee"];
             $noeudCommuneRepository = new NoeudCommuneRepository();
@@ -85,19 +75,17 @@ class ControleurNoeudCommune extends ControleurGenerique {
             $noeudRoutierDepart = $noeudRoutierRepository->recupererNoeudRoutier($noeudCommuneDepart->getId_nd_rte());
             $noeudRoutierArrivee = $noeudRoutierRepository->recupererNoeudRoutier($noeudCommuneArrivee->getId_nd_rte());
 
-
             $pcc = new PlusCourtChemin($noeudRoutierDepart, $noeudRoutierArrivee);
             $distance = $pcc->calculerAStar();
 
             $parametres["nomCommuneDepart"] = $nomCommuneDepart;
             $parametres["nomCommuneArrivee"] = $nomCommuneArrivee;
-            $parametres["distance"] = $distance;
-
-            // ControleurGenerique::afficherVue('map.html', ["chemin" => $pcc->getCheminChoisi()]);
+            $parametres["distance"] = $distance[0];
+            $parametres["chemin"] = $distance[1];
         }
 
-        echo " Fin de la fonction - " . date("H:i:s") . "<br>";
-        echo '=> Interval fonction : ' . (microtime(true) - $now) . ' secondes<br>';
+//        echo " Fin de la fonction - " . date("H:i:s") . "<br>";
+//        echo '=> Interval fonction : ' . (microtime(true) - $now) . ' secondes<br>';
 
         ControleurNoeudCommune::afficherVue('vueGenerale.php', $parametres);
     }
