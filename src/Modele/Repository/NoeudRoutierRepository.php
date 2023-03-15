@@ -55,20 +55,27 @@ class NoeudRoutierRepository extends AbstractRepository
 //            WHERE num_departement = (SELECT num_departement FROM nalixt.calcul_noeud_troncon
 //            WHERE noeud_courant_gid = :gidTag LIMIT 1);
 //        SQL;
+        $noeudDepartGid = $this->getDepartementGid($noeudRoutierGid);
         $requeteSQL = <<<SQL
+            --             SELECT *
+            --             FROM nalixt.noeuds_from_troncon
+            --             WHERE num_departement_depart = (SELECT num_departement
+            --             FROM nalixt.noeud_gid_dep
+            --             WHERE gid = :gidTag)
+            --             OR
+            --             num_departement_arrivee = (SELECT num_departement
+            --             FROM nalixt.noeud_gid_dep
+            --             WHERE gid = :gidTag);
             SELECT *
             FROM nalixt.noeuds_from_troncon
-            WHERE num_departement_depart = (SELECT num_departement
-            FROM nalixt.noeud_gid_dep
-            WHERE gid = :gidTag)
+            WHERE num_departement_depart = :departement
             OR
-            num_departement_arrivee = (SELECT num_departement
-            FROM nalixt.noeud_gid_dep
-            WHERE gid = :gidTag);
+            num_departement_arrivee = :departement;
         SQL;
         $pdoStatement = ConnexionBaseDeDonnees::getPdo()->prepare($requeteSQL);
         $pdoStatement->execute(array(
-            "gidTag" => $noeudRoutierGid
+//            "gidTag" => $noeudRoutierGid,
+                "departement" => $noeudDepartGid
         ));
         $noeudsRoutierRegion = $pdoStatement->fetchAll(PDO::FETCH_ASSOC);
         /**
@@ -88,9 +95,12 @@ class NoeudRoutierRepository extends AbstractRepository
          * ]
          */
         $noeudsRoutierRegionAvecVoisins = [];
-        TimerUtils::startTimer("phpTableau");
+        //TimerUtils::startTimer("letleau");
+
         $numDepartementNoeudRoutier = $this->getDepartementGid($noeudRoutierGid);
-        foreach ($noeudsRoutierRegion as $noeudRoutierRegion) {
+        for ($i = 0; $i < count($noeudsRoutierRegion); $i++) {
+            $noeudRoutierRegion = $noeudsRoutierRegion[$i];
+//        foreach ($noeudsRoutierRegion as $noeudRoutierRegion) {
             $noeudDepartGid = $noeudRoutierRegion["noeud_depart_gid"];
             $noeudDepartCoord = $noeudRoutierRegion["noeud_depart_coord"];
             $noeudArriveeGid = $noeudRoutierRegion["noeud_arrivee_gid"];
@@ -124,7 +134,7 @@ class NoeudRoutierRepository extends AbstractRepository
                 ];
             }
         }
-        TimerUtils::stopTimer("phpTableau");
+        //TimerUtils::stopTimer("phpTableau");
         return $noeudsRoutierRegionAvecVoisins;
     }
 

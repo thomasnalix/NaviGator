@@ -35,6 +35,9 @@ class PlusCourtChemin {
 
     function calculerAStar(): ?array {
 
+        $now = microtime(true);
+        $cumul = 0;
+
         $nbIteration = 0;
         TimerUtils::startTimer("total");
 
@@ -52,34 +55,38 @@ class PlusCourtChemin {
         $fScore[$this->noeudRoutierDepart->getGid()] = 0;
 
         while (!$openSet->isEmpty()) {
-            TimerUtils::startOrRestartTimer("getMinNode");
+            //TimerUtils::startOrRestartTimer("getMinNode");
             $nodeData = $openSet->getMinNode()->data;
-            TimerUtils::pauseTimer("getMinNode");
+            //TimerUtils::pauseTimer("getMinNode");
             $noeudRoutierGidCourant = $nodeData->getGid();
 
             // Path found
             if ($noeudRoutierGidCourant == $this->noeudRoutierArrivee->getGid()) {
-                TimerUtils::stopAllTimers();
-                TimerUtils::printAllTimers();
+//                TimerUtils::stopAllTimers();
+//                TimerUtils::printAllTimers();
+                echo "total: " . (microtime(true) - $now) . "s<br>";
+                echo "cumulBD : " . $cumul . "s<br>";
                 return $this->reconstruireChemin($cameFrom, $noeudRoutierGidCourant, $cost, $coordTrocon);
             }
 
-            TimerUtils::startOrRestartTimer("deleteNode");
+            //TimerUtils::startOrRestartTimer("deleteNode");
             $openSet->delete($nodeData);
-            TimerUtils::pauseTimer("deleteNode");
+            //TimerUtils::pauseTimer("deleteNode");
 
-            TimerUtils::startOrRestartTimer("loadDepartement");
+//            TimerUtils::startOrRestartTimer("loadDepartement");
+            $now2 = microtime(true);
             $this->numDepartementCourant = $this->getNumDepartement($noeudRoutierGidCourant);
             if (!isset($this->numDepartementCourant)) {
                 $this->noeudsRoutierCache += $noeudRoutierRepository->getNoeudsRoutierDepartement($noeudRoutierGidCourant);
                 $this->numDepartementCourant = $this->getNumDepartement($noeudRoutierGidCourant);
             }
+            $cumul += microtime(true) - $now2;
 
 
-            TimerUtils::pauseTimer("loadDepartement");
+//            TimerUtils::pauseTimer("loadDepartement");
             $neighbors = $this->noeudsRoutierCache[$this->numDepartementCourant][$noeudRoutierGidCourant];
 
-            TimerUtils::startOrRestartTimer("voisin");
+            //TimerUtils::startOrRestartTimer("voisin");
             foreach ($neighbors as $neighbor) {
                 $tentativeGScore = $gScore[$noeudRoutierGidCourant] + $neighbor['longueur_troncon'];
                 $value = $gScore[$neighbor['noeud_gid']] ?? PHP_INT_MAX;
@@ -91,22 +98,22 @@ class PlusCourtChemin {
 
                     $gScore[$neighbor['noeud_gid']] = $tentativeGScore;
 
-                    TimerUtils::startOrRestartTimer("heuristique");
+                    //TimerUtils::startOrRestartTimer("heuristique");
                     $fScore[$neighbor['noeud_gid']] = $tentativeGScore + $this->getHeuristique($neighbor['noeud_coord']);
-                    TimerUtils::pauseTimer("heuristique");
+                    //TimerUtils::pauseTimer("heuristique");
 
                     $dataContainer = new DataContainer($neighbor['noeud_gid'], $fScore[$neighbor['noeud_gid']]);
-                    TimerUtils::startOrRestartTimer("searchNode");
+                    //TimerUtils::startOrRestartTimer("searchNode");
                     $search = $openSet->search($dataContainer);
-                    TimerUtils::pauseTimer("searchNode");
+                    //TimerUtils::pauseTimer("searchNode");
                     if (!$search) {
-                        TimerUtils::startOrRestartTimer("insertNode");
+                        //TimerUtils::startOrRestartTimer("insertNode");
                         $openSet->insert($dataContainer);
-                        TimerUtils::pauseTimer("insertNode");
+                        //TimerUtils::pauseTimer("insertNode");
                     }
                 }
             }
-            TimerUtils::pauseTimer("voisin");
+            //TimerUtils::pauseTimer("voisin");
             $nbIteration++;
         }
         return [-1, -1];
