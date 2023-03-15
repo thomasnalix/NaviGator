@@ -59,10 +59,10 @@ class NoeudRoutierRepository extends AbstractRepository
             SELECT *
             FROM nalixt.noeuds_from_troncon
             WHERE num_departement_depart = (SELECT num_departement_depart FROM nalixt.noeuds_from_troncon
-            WHERE noeud_depart_gid = :gidTag OR noeud_arrivee_gid = :gidTag LIMIT 1)
+            WHERE noeud_depart_gid = :gidTag LIMIT 1)
             OR
             num_departement_arrivee = (SELECT num_departement_arrivee FROM nalixt.noeuds_from_troncon
-            WHERE noeud_depart_gid = :gidTag OR noeud_arrivee_gid = :gidTag LIMIT 1);
+            WHERE noeud_arrivee_gid = :gidTag LIMIT 1);
         SQL;
         $pdoStatement = ConnexionBaseDeDonnees::getPdo()->prepare($requeteSQL);
         $pdoStatement->execute(array(
@@ -88,6 +88,8 @@ class NoeudRoutierRepository extends AbstractRepository
         $noeudsRoutierRegionAvecVoisins = [];
         TimerUtils::startTimer("phpTableau");
         $numDepartementNoeudRoutier = $this->getDepartementGid($noeudRoutierGid);
+        var_dump($noeudRoutierGid);
+        var_dump($numDepartementNoeudRoutier);
         foreach ($noeudsRoutierRegion as $noeudRoutierRegion) {
             $noeudDepartGid = $noeudRoutierRegion["noeud_depart_gid"];
             $noeudDepartCoord = $noeudRoutierRegion["noeud_depart_coord"];
@@ -99,6 +101,7 @@ class NoeudRoutierRepository extends AbstractRepository
             $numDepartementDepart = $noeudRoutierRegion["num_departement_depart"];
             $numDepartementArrivee = $noeudRoutierRegion["num_departement_arrivee"];
 
+
             // en fonction de $numDepartementNoeudRoutier, on va ajouter dans le tableau avec les bonnes valeurs donc noeudArrive ou noeudArrive
             if ($numDepartementNoeudRoutier === $numDepartementDepart) {
                 $noeudsRoutierRegionAvecVoisins[$numDepartementNoeudRoutier][$noeudDepartGid][] = [
@@ -109,7 +112,8 @@ class NoeudRoutierRepository extends AbstractRepository
                     "troncon_coord" => $tronconCoord,
                     "longueur_troncon" => $longueurTroncon,
                 ];
-            } else {
+            }
+            if ($numDepartementNoeudRoutier === $numDepartementArrivee) {
                 $noeudsRoutierRegionAvecVoisins[$numDepartementNoeudRoutier][$noeudArriveeGid][] = [
                     "noeud_gid" => $noeudDepartGid,
                     "noeud_courant_coord" => $noeudArriveeCoord,
@@ -119,6 +123,9 @@ class NoeudRoutierRepository extends AbstractRepository
                     "longueur_troncon" => $longueurTroncon,
                 ];
             }
+        }
+        if (isset($noeudsRoutierRegionAvecVoisins['12']['126967'])) {
+            echo "PUTAIN DE MERDE <br>";
         }
         TimerUtils::stopTimer("phpTableau");
         return $noeudsRoutierRegionAvecVoisins;
@@ -150,7 +157,7 @@ class NoeudRoutierRepository extends AbstractRepository
     public function getDepartementGid($noeudRoutierGid) {
         $requeteSQL = <<<SQL
             SELECT "left"(nc.insee_comm::text, 2) as num_departement
-            FROM noeud_routier nc
+            FROM nalixt.noeud_routier nc
             WHERE gid = :gid
         SQL;
         $pdoStatement = ConnexionBaseDeDonnees::getPdo()->prepare($requeteSQL);

@@ -71,11 +71,21 @@ class PlusCourtChemin {
             TimerUtils::startOrRestartTimer("loadDepartement");
             $this->numDepartementCourant = $this->getNumDepartement($noeudRoutierGidCourant);
             if (!isset($this->numDepartementCourant)) {
+                echo "Itération 1 : " . $nbIteration . "<br>";
+                echo "Noeud routier : " . $noeudRoutierGidCourant . "<br>";
                 $this->noeudsRoutierCache += $noeudRoutierRepository->getNoeudsRoutierDepartement($noeudRoutierGidCourant);
                 $this->numDepartementCourant = $this->getNumDepartement($noeudRoutierGidCourant);
             }
             TimerUtils::pauseTimer("loadDepartement");
 
+            if (!isset($this->numDepartementCourant)) {
+                echo "Itération 2 : " . $nbIteration . "<br>";
+                echo "Gid probleme : " . $noeudRoutierGidCourant . "<br>";
+                echo "Departement problématique : " . $this->numDepartementCourant . "<br>";
+                echo "<br><br>================<br><br>";
+                var_dump($this->noeudsRoutierCache['12']['126967']);
+                echo "<br><br>================<br><br>";
+            }
             $neighbors = $this->noeudsRoutierCache[$this->numDepartementCourant][$noeudRoutierGidCourant];
 
             TimerUtils::startOrRestartTimer("voisin");
