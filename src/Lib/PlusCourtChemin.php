@@ -6,6 +6,7 @@ namespace App\PlusCourtChemin\Lib;
 use App\PlusCourtChemin\Modele\DataObject\DataContainer;
 use App\PlusCourtChemin\Modele\DataObject\NoeudRoutier;
 use App\PlusCourtChemin\Modele\Repository\NoeudRoutierRepository;
+use Exception;
 
 class PlusCourtChemin {
 
@@ -60,7 +61,6 @@ class PlusCourtChemin {
             if ($noeudRoutierGidCourant == $this->noeudRoutierArrivee->getGid()) {
                 TimerUtils::stopAllTimers();
                 TimerUtils::printAllTimers();
-                echo "Nb iteration: $nbIteration<br>";
                 return $this->reconstruireChemin($cameFrom, $noeudRoutierGidCourant, $cost, $coordTrocon);
             }
 
@@ -71,21 +71,12 @@ class PlusCourtChemin {
             TimerUtils::startOrRestartTimer("loadDepartement");
             $this->numDepartementCourant = $this->getNumDepartement($noeudRoutierGidCourant);
             if (!isset($this->numDepartementCourant)) {
-                echo "Itération 1 : " . $nbIteration . "<br>";
-                echo "Noeud routier : " . $noeudRoutierGidCourant . "<br>";
                 $this->noeudsRoutierCache += $noeudRoutierRepository->getNoeudsRoutierDepartement($noeudRoutierGidCourant);
                 $this->numDepartementCourant = $this->getNumDepartement($noeudRoutierGidCourant);
             }
-            TimerUtils::pauseTimer("loadDepartement");
 
-            if (!isset($this->numDepartementCourant)) {
-                echo "Itération 2 : " . $nbIteration . "<br>";
-                echo "Gid probleme : " . $noeudRoutierGidCourant . "<br>";
-                echo "Departement problématique : " . $this->numDepartementCourant . "<br>";
-                echo "<br><br>================<br><br>";
-                var_dump($this->noeudsRoutierCache['12']['126967']);
-                echo "<br><br>================<br><br>";
-            }
+
+            TimerUtils::pauseTimer("loadDepartement");
             $neighbors = $this->noeudsRoutierCache[$this->numDepartementCourant][$noeudRoutierGidCourant];
 
             TimerUtils::startOrRestartTimer("voisin");
@@ -170,8 +161,9 @@ class PlusCourtChemin {
     private function getNumDepartement($noeudRoutierGidCourant) : ?string {
         for ($i = 0; $i < count($this->noeudsRoutierCache); $i++) {
             $key = array_keys($this->noeudsRoutierCache)[$i];
-            if (isset($this->noeudsRoutierCache[$key][$noeudRoutierGidCourant]))
+            if (isset($this->noeudsRoutierCache[$key][$noeudRoutierGidCourant])) {
                 return $key;
+            }
         }
         return null;
     }

@@ -58,11 +58,13 @@ class NoeudRoutierRepository extends AbstractRepository
         $requeteSQL = <<<SQL
             SELECT *
             FROM nalixt.noeuds_from_troncon
-            WHERE num_departement_depart = (SELECT num_departement_depart FROM nalixt.noeuds_from_troncon
-            WHERE noeud_depart_gid = :gidTag LIMIT 1)
+            WHERE num_departement_depart = (SELECT num_departement
+            FROM nalixt.noeud_gid_dep
+            WHERE gid = :gidTag)
             OR
-            num_departement_arrivee = (SELECT num_departement_arrivee FROM nalixt.noeuds_from_troncon
-            WHERE noeud_arrivee_gid = :gidTag LIMIT 1);
+            num_departement_arrivee = (SELECT num_departement
+            FROM nalixt.noeud_gid_dep
+            WHERE gid = :gidTag);
         SQL;
         $pdoStatement = ConnexionBaseDeDonnees::getPdo()->prepare($requeteSQL);
         $pdoStatement->execute(array(
@@ -88,8 +90,6 @@ class NoeudRoutierRepository extends AbstractRepository
         $noeudsRoutierRegionAvecVoisins = [];
         TimerUtils::startTimer("phpTableau");
         $numDepartementNoeudRoutier = $this->getDepartementGid($noeudRoutierGid);
-        var_dump($noeudRoutierGid);
-        var_dump($numDepartementNoeudRoutier);
         foreach ($noeudsRoutierRegion as $noeudRoutierRegion) {
             $noeudDepartGid = $noeudRoutierRegion["noeud_depart_gid"];
             $noeudDepartCoord = $noeudRoutierRegion["noeud_depart_coord"];
@@ -124,9 +124,6 @@ class NoeudRoutierRepository extends AbstractRepository
                 ];
             }
         }
-        if (isset($noeudsRoutierRegionAvecVoisins['12']['126967'])) {
-            echo "PUTAIN DE MERDE <br>";
-        }
         TimerUtils::stopTimer("phpTableau");
         return $noeudsRoutierRegionAvecVoisins;
     }
@@ -156,8 +153,8 @@ class NoeudRoutierRepository extends AbstractRepository
 
     public function getDepartementGid($noeudRoutierGid) {
         $requeteSQL = <<<SQL
-            SELECT "left"(nc.insee_comm::text, 2) as num_departement
-            FROM nalixt.noeud_routier nc
+            SELECT num_departement
+            FROM nalixt.noeud_gid_dep
             WHERE gid = :gid
         SQL;
         $pdoStatement = ConnexionBaseDeDonnees::getPdo()->prepare($requeteSQL);
