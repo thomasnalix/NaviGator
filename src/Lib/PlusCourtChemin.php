@@ -23,7 +23,8 @@ class PlusCourtChemin {
      *     numDepartement2 => [ ... ]
      * ]
      */
-    private array $noeudsRoutierCache;
+    private array $noeudsRoutierCache = [];
+    private ?string $numDepartementCourant = null;
 
     public function __construct(
         private NoeudRoutier $noeudRoutierDepart,
@@ -37,8 +38,6 @@ class PlusCourtChemin {
         TimerUtils::startTimer("total");
 
         $noeudRoutierRepository = new NoeudRoutierRepository();
-
-        $this->noeudsRoutierCache = [];
 
         $openSet = new BinarySearchTree();
         $openSet->insert(new DataContainer($this->noeudRoutierDepart->getGid(), 0));
@@ -70,16 +69,14 @@ class PlusCourtChemin {
             TimerUtils::pauseTimer("deleteNode");
 
             TimerUtils::startOrRestartTimer("loadDepartement");
-            $numDepartementNoeud = $this->getNumDepartement($noeudRoutierGidCourant);
-
-            echo "Num departement: $numDepartementNoeud<br>";
-            if ($numDepartementNoeud === '') {
+            $this->numDepartementCourant = $this->getNumDepartement($noeudRoutierGidCourant);
+            if (!isset($this->numDepartementCourant)) {
                 $this->noeudsRoutierCache += $noeudRoutierRepository->getNoeudsRoutierDepartement($noeudRoutierGidCourant);
-                $numDepartementNoeud = $this->getNumDepartement($noeudRoutierGidCourant);
+                $this->numDepartementCourant = $this->getNumDepartement($noeudRoutierGidCourant);
             }
             TimerUtils::pauseTimer("loadDepartement");
 
-            $neighbors = $this->noeudsRoutierCache[$numDepartementNoeud][$noeudRoutierGidCourant];
+            $neighbors = $this->noeudsRoutierCache[$this->numDepartementCourant][$noeudRoutierGidCourant];
 
             TimerUtils::startOrRestartTimer("voisin");
             foreach ($neighbors as $neighbor) {
@@ -118,7 +115,7 @@ class PlusCourtChemin {
      * @param $noeud
      * @return float
      */
-    private function getHeuristique($noeud): float {
+    private function getHeuristique(string $noeud): float {
         $coordsArrivee = explode(";", $this->noeudRoutierArrivee->getCoords());
         $coordsPoints = explode(";", $noeud);
 
@@ -160,14 +157,13 @@ class PlusCourtChemin {
         return [$distance, $trocons];
     }
 
-    private function getNumDepartement($noeudRoutierGidCourant) {
-        $numDepartement = '';
+    private function getNumDepartement($noeudRoutierGidCourant) : ?string {
         for ($i = 0; $i < count($this->noeudsRoutierCache); $i++) {
             $key = array_keys($this->noeudsRoutierCache)[$i];
             if (isset($this->noeudsRoutierCache[$key][$noeudRoutierGidCourant]))
                 return $key;
         }
-        return $numDepartement;
+        return null;
     }
 
     private function debugTableau($tableau) {

@@ -87,6 +87,7 @@ class NoeudRoutierRepository extends AbstractRepository
          */
         $noeudsRoutierRegionAvecVoisins = [];
         TimerUtils::startTimer("phpTableau");
+        $numDepartementNoeudRoutier = $this->getDepartementGid($noeudRoutierGid);
         foreach ($noeudsRoutierRegion as $noeudRoutierRegion) {
             $noeudDepartGid = $noeudRoutierRegion["noeud_depart_gid"];
             $noeudDepartCoord = $noeudRoutierRegion["noeud_depart_coord"];
@@ -97,22 +98,27 @@ class NoeudRoutierRepository extends AbstractRepository
             $longueurTroncon = $noeudRoutierRegion["longueur_troncon"];
             $numDepartementDepart = $noeudRoutierRegion["num_departement_depart"];
             $numDepartementArrivee = $noeudRoutierRegion["num_departement_arrivee"];
-            $noeudsRoutierRegionAvecVoisins[$numDepartementDepart][$noeudDepartGid][] = [
-                "noeud_gid" => $noeudArriveeGid,
-                "noeud_courant_coord" => $noeudDepartCoord,
-                "noeud_coord" => $noeudArriveeCoord,
-                "troncon_gid" => $tronconGid,
-                "troncon_coord" => $tronconCoord,
-                "longueur_troncon" => $longueurTroncon,
-            ];
-//            $noeudsRoutierRegionAvecVoisins[$numDepartementArrivee][$noeudArriveeGid][] = [
-//                "noeud_gid" => $noeudDepartGid,
-//                "noeud_courant_coord" => $noeudArriveeCoord,
-//                "noeud_coord" => $noeudDepartCoord,
-//                "troncon_gid" => $tronconGid,
-//                "troncon_coord" => $tronconCoord,
-//                "longueur_troncon" => $longueurTroncon,
-//            ];
+
+            // en fonction de $numDepartementNoeudRoutier, on va ajouter dans le tableau avec les bonnes valeurs donc noeudArrive ou noeudArrive
+            if ($numDepartementNoeudRoutier === $numDepartementDepart) {
+                $noeudsRoutierRegionAvecVoisins[$numDepartementNoeudRoutier][$noeudDepartGid][] = [
+                    "noeud_gid" => $noeudArriveeGid,
+                    "noeud_courant_coord" => $noeudDepartCoord,
+                    "noeud_coord" => $noeudArriveeCoord,
+                    "troncon_gid" => $tronconGid,
+                    "troncon_coord" => $tronconCoord,
+                    "longueur_troncon" => $longueurTroncon,
+                ];
+            } else {
+                $noeudsRoutierRegionAvecVoisins[$numDepartementNoeudRoutier][$noeudArriveeGid][] = [
+                    "noeud_gid" => $noeudDepartGid,
+                    "noeud_courant_coord" => $noeudArriveeCoord,
+                    "noeud_coord" => $noeudDepartCoord,
+                    "troncon_gid" => $tronconGid,
+                    "troncon_coord" => $tronconCoord,
+                    "longueur_troncon" => $longueurTroncon,
+                ];
+            }
         }
         TimerUtils::stopTimer("phpTableau");
         return $noeudsRoutierRegionAvecVoisins;
@@ -139,5 +145,19 @@ class NoeudRoutierRepository extends AbstractRepository
             return $this->construireDepuisTableau($objetFormatTableau);
         }
         return null;
+    }
+
+    public function getDepartementGid($noeudRoutierGid) {
+        $requeteSQL = <<<SQL
+            SELECT "left"(nc.insee_comm::text, 2) as num_departement
+            FROM noeud_routier nc
+            WHERE gid = :gid
+        SQL;
+        $pdoStatement = ConnexionBaseDeDonnees::getPdo()->prepare($requeteSQL);
+        $pdoStatement->execute(array(
+            "gid" => $noeudRoutierGid
+        ));
+        $objetFormatTableau = $pdoStatement->fetch();
+        return $objetFormatTableau["num_departement"];
     }
 }

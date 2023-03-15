@@ -56,7 +56,7 @@
         let lineStyle = new ol.style.Style({
             stroke: new ol.style.Stroke({
                 color: 'blue',
-                width: 4
+                width: 5
             })
         });
 
