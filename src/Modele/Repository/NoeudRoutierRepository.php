@@ -2,6 +2,7 @@
 
 namespace App\PlusCourtChemin\Modele\Repository;
 
+use App\PlusCourtChemin\Lib\TimerUtils;
 use App\PlusCourtChemin\Modele\DataObject\AbstractDataObject;
 use App\PlusCourtChemin\Modele\DataObject\NoeudRoutier;
 use PDO;
@@ -49,10 +50,19 @@ class NoeudRoutierRepository extends AbstractRepository
      * TODO: explorer la piste des groupes avec un GROUP BY côté SQL pour accélérer le traitement en PHP ?
      */
     public function getNoeudsRoutierDepartement(int $noeudRoutierGid) : array {
+//        $requeteSQL = <<<SQL
+//            SELECT * FROM nalixt.calcul_noeud_troncon
+//            WHERE num_departement = (SELECT num_departement FROM nalixt.calcul_noeud_troncon
+//            WHERE noeud_courant_gid = :gidTag LIMIT 1);
+//        SQL;
         $requeteSQL = <<<SQL
-            SELECT * FROM nalixt.calcul_noeud_troncon
-            WHERE num_departement = (SELECT num_departement FROM nalixt.calcul_noeud_troncon
-            WHERE noeud_courant_gid = :gidTag LIMIT 1);
+            SELECT *
+            FROM nalixt.noeuds_from_troncon
+            WHERE num_departement_depart = (SELECT num_departement_depart FROM nalixt.noeuds_from_troncon
+            WHERE noeud_depart_gid = :gidTag OR noeud_arrivee_gid = :gidTag LIMIT 1)
+            OR
+            num_departement_arrivee = (SELECT num_departement_arrivee FROM nalixt.noeuds_from_troncon
+            WHERE noeud_depart_gid = :gidTag OR noeud_arrivee_gid = :gidTag LIMIT 1);
         SQL;
         $pdoStatement = ConnexionBaseDeDonnees::getPdo()->prepare($requeteSQL);
         $pdoStatement->execute(array(
@@ -76,24 +86,35 @@ class NoeudRoutierRepository extends AbstractRepository
          * ]
          */
         $noeudsRoutierRegionAvecVoisins = [];
+        TimerUtils::startTimer("phpTableau");
         foreach ($noeudsRoutierRegion as $noeudRoutierRegion) {
-            $noeudCourantGid = $noeudRoutierRegion["noeud_courant_gid"];
-            $noeudCourantCoord = $noeudRoutierRegion["noeud_courant_coord"];
-            $noeudVoisinGid = $noeudRoutierRegion["noeud_voisin_gid"];
-            $noeudVoisinCoord = $noeudRoutierRegion["noeud_voisin_coord"];
+            $noeudDepartGid = $noeudRoutierRegion["noeud_depart_gid"];
+            $noeudDepartCoord = $noeudRoutierRegion["noeud_depart_coord"];
+            $noeudArriveeGid = $noeudRoutierRegion["noeud_arrivee_gid"];
+            $noeudArriveeCoord = $noeudRoutierRegion["noeud_arrivee_coord"];
             $tronconGid = $noeudRoutierRegion["troncon_gid"];
             $tronconCoord = $noeudRoutierRegion["troncon_coord"];
             $longueurTroncon = $noeudRoutierRegion["longueur_troncon"];
-            $numDepartement = $noeudRoutierRegion["num_departement"];
-            $noeudsRoutierRegionAvecVoisins[$numDepartement][$noeudCourantGid][] = [
-                "noeud_gid" => $noeudVoisinGid,
-                "noeud_courant_coord" => $noeudCourantCoord,
-                "noeud_coord" => $noeudVoisinCoord,
+            $numDepartementDepart = $noeudRoutierRegion["num_departement_depart"];
+            $numDepartementArrivee = $noeudRoutierRegion["num_departement_arrivee"];
+            $noeudsRoutierRegionAvecVoisins[$numDepartementDepart][$noeudDepartGid][] = [
+                "noeud_gid" => $noeudArriveeGid,
+                "noeud_courant_coord" => $noeudDepartCoord,
+                "noeud_coord" => $noeudArriveeCoord,
                 "troncon_gid" => $tronconGid,
                 "troncon_coord" => $tronconCoord,
                 "longueur_troncon" => $longueurTroncon,
             ];
+//            $noeudsRoutierRegionAvecVoisins[$numDepartementArrivee][$noeudArriveeGid][] = [
+//                "noeud_gid" => $noeudDepartGid,
+//                "noeud_courant_coord" => $noeudArriveeCoord,
+//                "noeud_coord" => $noeudDepartCoord,
+//                "troncon_gid" => $tronconGid,
+//                "troncon_coord" => $tronconCoord,
+//                "longueur_troncon" => $longueurTroncon,
+//            ];
         }
+        TimerUtils::stopTimer("phpTableau");
         return $noeudsRoutierRegionAvecVoisins;
     }
 

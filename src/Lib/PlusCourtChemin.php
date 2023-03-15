@@ -71,6 +71,8 @@ class PlusCourtChemin {
 
             TimerUtils::startOrRestartTimer("loadDepartement");
             $numDepartementNoeud = $this->getNumDepartement($noeudRoutierGidCourant);
+
+            echo "Num departement: $numDepartementNoeud<br>";
             if ($numDepartementNoeud === '') {
                 $this->noeudsRoutierCache += $noeudRoutierRepository->getNoeudsRoutierDepartement($noeudRoutierGidCourant);
                 $numDepartementNoeud = $this->getNumDepartement($noeudRoutierGidCourant);
@@ -109,7 +111,7 @@ class PlusCourtChemin {
             TimerUtils::pauseTimer("voisin");
             $nbIteration++;
         }
-        return null;
+        return [-1, -1];
     }
 
     /**
