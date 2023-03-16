@@ -44,14 +44,15 @@ public function __construct(
         $voisin = 0;
         $nowSearch = 0;
         $nowInsert = 0;
-        $nowDelete = 0;
+        $nowMinAndDelete = 0;
 
         $nbIteration = 0;
         TimerUtils::startTimer("total");
 
         $noeudRoutierRepository = new NoeudRoutierRepository();
 
-        $openSet = new BinarySearchTree();
+        //$openSet = new BinarySearchTree();
+        $openSet = new FibonacciHeap();
         $openSet->insert(new DataContainer($this->noeudRoutierDepart->getGid(), 0));
 
         $cameFrom = [];
@@ -62,12 +63,11 @@ public function __construct(
 
         $fScore[$this->noeudRoutierDepart->getGid()] = 0;
         $nowHeuristique = 0;
-        $pool = Pool::create();
 
         while (!$openSet->isEmpty()) {
-            //TimerUtils::startOrRestartTimer("getMinNode");
-            $nodeData = $openSet->getMinNode();
-            //TimerUtils::pauseTimer("getMinNode");
+            $nowMinAndDelete -= microtime(true);
+            $nodeData = $openSet->extractMin(); // supprime et retourne
+            $nowMinAndDelete += microtime(true) - $nowMinAndDelete;
             $noeudRoutierGidCourant = $nodeData->getGid();
 
             // Path found
@@ -79,19 +79,12 @@ public function __construct(
                 echo "voisin : " . $voisin . "s<br>";
                 echo "nbIteration : " . $nbIteration . "<br>";
                 echo "Heuruistique : " . $nowHeuristique . "s<br>";
+                echo "Min & Delete : " . $nowMinAndDelete . "s<br>";
                 echo "Search : " . $nowSearch . "s<br>";
                 echo "Insert : " . $nowInsert . "s<br>";
-                echo "Delete : " . $nowDelete . "s<br>";
                 return $this->reconstruireChemin($cameFrom, $noeudRoutierGidCourant, $cost, $coordTrocon);
             }
 
-            //TimerUtils::startOrRestartTimer("deleteNode");
-            $now8 = microtime(true);
-            $openSet->delete($nodeData);
-            $nowDelete += microtime(true) - $now8;
-            //TimerUtils::pauseTimer("deleteNode");
-
-//            TimerUtils::startOrRestartTimer("loadDepartement");
             $now2 = microtime(true);
             $this->numDepartementCourant = $this->getNumDepartement($noeudRoutierGidCourant);
             if (!isset($this->numDepartementCourant)) {
@@ -102,10 +95,8 @@ public function __construct(
             $cumul += microtime(true) - $now2;
 
 
-//            TimerUtils::pauseTimer("loadDepartement");
             $neighbors = $this->noeudsRoutierCache[$this->numDepartementCourant][$noeudRoutierGidCourant];
 
-            //TimerUtils::startOrRestartTimer("voisin");
             $now3 = microtime(true);
             foreach ($neighbors as $neighbor) {
                 $tentativeGScore = $gScore[$noeudRoutierGidCourant] + $neighbor['longueur_troncon'];
@@ -118,32 +109,26 @@ public function __construct(
 
                     $gScore[$neighbor['noeud_gid']] = $tentativeGScore;
 
-//                    $pool->add(function () use ($neighbor, $tentativeGScore, $openSet) {
-                        //TimerUtils::startOrRestartTimer("heuristique");
-                         $now4 = microtime(true);
-                        $fScore[$neighbor['noeud_gid']] = $tentativeGScore + $this->getHeuristique($neighbor['noeud_coord_lat'],$neighbor['noeud_coord_long']);
-                        $nowHeuristique += microtime(true) - $now4;
-                        //TimerUtils::pauseTimer("heuristique");
+                    $now4 = microtime(true);
+                    $fScore[$neighbor['noeud_gid']] = $tentativeGScore + $this->getHeuristique($neighbor['noeud_coord_lat'],$neighbor['noeud_coord_long']);
+                    $nowHeuristique += microtime(true) - $now4;
 
-                        $dataContainer = new DataContainer($neighbor['noeud_gid'], $fScore[$neighbor['noeud_gid']]);
-                        //TimerUtils::startOrRestartTimer("searchNode");
-                        $now5 = microtime(true);
-                        $search = $openSet->search($dataContainer);
-                        $nowSearch += microtime(true) - $now5;
-                        //TimerUtils::pauseTimer("searchNode");
-                        if (!$search) {
-                            //TimerUtils::startOrRestartTimer("insertNode");
-                            $now6 = microtime(true);
-                            $openSet->insert($dataContainer);
-                            $nowInsert += microtime(true) - $now6;
-                            //TimerUtils::pauseTimer("insertNode");
-                        }
-                   // });
+                    $dataContainer = new DataContainer($neighbor['noeud_gid'], $fScore[$neighbor['noeud_gid']]);
+                    //TimerUtils::startOrRestartTimer("searchNode");
+                    $now5 = microtime(true);
+                    $search = $openSet->search($neighbor['noeud_gid']);
+                    $nowSearch += microtime(true) - $now5;
+                    //TimerUtils::pauseTimer("searchNode");
+                    if (!$search) {
+                        //TimerUtils::startOrRestartTimer("insertNode");
+                        $now6 = microtime(true);
+                        $openSet->insert($dataContainer);
+                        $nowInsert += microtime(true) - $now6;
+                        //TimerUtils::pauseTimer("insertNode");
+                    }
                 }
             }
-            //$pool->wait();
             $voisin += microtime(true) - $now3;
-            //TimerUtils::pauseTimer("voisin");
             $nbIteration++;
         }
         return [-1, -1];
@@ -197,12 +182,6 @@ public function __construct(
             if (isset($this->noeudsRoutierCache[$departement][$noeudRoutierGidCourant]))
                 return $departement;
         return null;
-    }
-
-    private function debugTableau($tableau) {
-        echo "<pre>";
-        print_r($tableau);
-        echo "</pre>";
     }
 
 }

@@ -4,7 +4,7 @@ namespace App\PlusCourtChemin\Lib;
 
 use App\PlusCourtChemin\Modele\DataObject\DataContainer;
 
-class FibonacciHeap implements \Countable {
+class FibonacciHeap {
 
     private $nodes;
 
@@ -56,19 +56,15 @@ class FibonacciHeap implements \Countable {
             }
             $this->n--;
         }
-        return $minimum;
+        return $minimum->data;
     }
 
     public function isEmpty() {
-        return $this->min === null;
+        return $this->n === 0;
     }
 
     public function size() {
         return $this->n;
-    }
-
-    public function count() {
-        return $this->size();
     }
 
     protected function concatenate($x, $y) {
@@ -94,19 +90,6 @@ class FibonacciHeap implements \Countable {
         $x->right->left = $x->left;
         $x->right = $x;
         $x->left = $x;
-    }
-
-    protected function cut(FibonacciNode $x, FibonacciNode $y) {
-        if ($x->right === $x) {
-            $y->child = null;
-        } else {
-            $y->child = $x->right;
-            $this->remove($x);
-        }
-        $y->degree--;
-        $x->parent = null;
-        $x->mark = false;
-        $this->concatenate($this->min, $x);
     }
 
     protected function heapLink(FibonacciNode $x, FibonacciNode $y) {
