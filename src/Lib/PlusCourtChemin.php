@@ -6,7 +6,6 @@ namespace App\PlusCourtChemin\Lib;
 use App\PlusCourtChemin\Modele\DataObject\DataContainer;
 use App\PlusCourtChemin\Modele\DataObject\NoeudRoutier;
 use App\PlusCourtChemin\Modele\Repository\NoeudRoutierRepository;
-use Spatie\Async\Pool;
 
 class PlusCourtChemin {
 
@@ -27,15 +26,17 @@ class PlusCourtChemin {
     private array $noeudsRoutierCache = [];
     private array $loadedDepartements = [];
 
-    private ?string $numDepartementCourant = null;
+    private ?string $numDepartementCourant;
+    public static string $lastLoadedDepartement;
 
-    public static $lastLoadedDepartement = null;
+    private DataStructure $openSet;
 
 public function __construct(
-        private NoeudRoutier $noeudRoutierDepart,
-        private NoeudRoutier $noeudRoutierArrivee
-    ) { }
-
+    private NoeudRoutier $noeudRoutierDepart,
+    private NoeudRoutier $noeudRoutierArrivee
+) {
+    $this->openSet = new BinarySearchTree();
+}
 
     function calculerAStar(): ?array {
 
@@ -44,16 +45,15 @@ public function __construct(
         $voisin = 0;
         $nowSearch = 0;
         $nowInsert = 0;
-        $nowMinAndDelete = 0;
+        $nowMin = 0;
+        $nowDelete = 0;
 
         $nbIteration = 0;
         TimerUtils::startTimer("total");
 
         $noeudRoutierRepository = new NoeudRoutierRepository();
 
-        //$openSet = new BinarySearchTree();
-        $openSet = new FibonacciHeap();
-        $openSet->insert(new DataContainer($this->noeudRoutierDepart->getGid(), 0));
+        $this->openSet->insert(new DataContainer($this->noeudRoutierDepart->getGid(), 0));
 
         $cameFrom = [];
         $cost[$this->noeudRoutierDepart->getGid()] = 0;
@@ -64,10 +64,10 @@ public function __construct(
         $fScore[$this->noeudRoutierDepart->getGid()] = 0;
         $nowHeuristique = 0;
 
-        while (!$openSet->isEmpty()) {
+        while (!$this->openSet->isEmpty()) {
             $now0 = microtime(true);
-            $nodeData = $openSet->extractMin(); // supprime et retourne
-            $nowMinAndDelete += microtime(true) - $now0;
+            $nodeData = $this->openSet->getMinNode();
+            $nowMin += microtime(true) - $now0;
             $noeudRoutierGidCourant = $nodeData->getGid();
 
             // Path found
@@ -79,21 +79,26 @@ public function __construct(
                 echo "voisin : " . $voisin . "s<br>";
                 echo "nbIteration : " . $nbIteration . "<br>";
                 echo "Heuruistique : " . $nowHeuristique . "s<br>";
-                echo "Min & Delete : " . $nowMinAndDelete . "s<br>";
-                echo "Search : " . $nowSearch . "s<br>";
+                echo "Min : " . $nowMin . "s<br>";
                 echo "Insert : " . $nowInsert . "s<br>";
+                echo "Search : " . $nowSearch . "s<br>";
+                echo "Delete : " . $nowDelete . "s<br>";
                 return $this->reconstruireChemin($cameFrom, $noeudRoutierGidCourant, $cost, $coordTrocon);
             }
 
             $now2 = microtime(true);
-            $this->numDepartementCourant = $this->getNumDepartement($noeudRoutierGidCourant);
-            if (!isset($this->numDepartementCourant)) {
+            $this->numDepartementCourant = $cameFrom[$noeudRoutierGidCourant][1] ?? null;
+            if (!isset($this->numDepartementCourant) || !isset($this->loadedDepartements[$this->numDepartementCourant])) {
+
                 $this->noeudsRoutierCache += $noeudRoutierRepository->getNoeudsRoutierDepartement($noeudRoutierGidCourant);
                 $this->numDepartementCourant = PlusCourtChemin::$lastLoadedDepartement;
                 $this->loadedDepartements[] = $this->numDepartementCourant;
             }
             $cumul += microtime(true) - $now2;
 
+            $now0 = microtime(true);
+            $this->openSet->delete($nodeData);
+            $nowDelete += microtime(true) - $now0;
 
             $neighbors = $this->noeudsRoutierCache[$this->numDepartementCourant][$noeudRoutierGidCourant];
 
@@ -102,7 +107,7 @@ public function __construct(
                 $tentativeGScore = $gScore[$noeudRoutierGidCourant] + $neighbor['longueur_troncon'];
                 $value = $gScore[$neighbor['noeud_gid']] ?? PHP_INT_MAX;
                 if ($tentativeGScore < $value) {
-                    $cameFrom[$neighbor['noeud_gid']] = $noeudRoutierGidCourant;
+                    $cameFrom[$neighbor['noeud_gid']] = [$noeudRoutierGidCourant, $neighbor['num_departement']];
                     $cost[$neighbor['noeud_gid']] = $neighbor['longueur_troncon'];
 
                     $coordTrocon[$neighbor['noeud_gid']] = $neighbor['troncon_coord'];
@@ -116,13 +121,13 @@ public function __construct(
                     $dataContainer = new DataContainer($neighbor['noeud_gid'], $fScore[$neighbor['noeud_gid']]);
                     //TimerUtils::startOrRestartTimer("searchNode");
                     $now5 = microtime(true);
-                    $search = $openSet->search($neighbor['noeud_gid']);
+                    $search = $this->openSet->search($dataContainer);
                     $nowSearch += microtime(true) - $now5;
                     //TimerUtils::pauseTimer("searchNode");
                     if (!$search) {
                         //TimerUtils::startOrRestartTimer("insertNode");
                         $now6 = microtime(true);
-                        $openSet->insert($dataContainer);
+                        $this->openSet->insert($dataContainer);
                         $nowInsert += microtime(true) - $now6;
                         //TimerUtils::pauseTimer("insertNode");
                     }
@@ -166,22 +171,15 @@ public function __construct(
         $total_path = [$current];
         $trocons = [];
         $distance = 0;
-        while (array_key_exists($current, $cameFrom)) {
-            $current = $cameFrom[$current];
-            $total_path[] = $current;
+        while (isset($cameFrom[$current])) {
+            $total_path[] = $cameFrom[$current][0];
+            $current = $cameFrom[$current][0];
         }
         foreach ($total_path as $gid) {
             $distance += $cost[$gid];
             $trocons[] = $coordTrocon[$gid] ?? null;
         }
         return [$distance, $trocons];
-    }
-
-    private function getNumDepartement($noeudRoutierGidCourant) : ?string {
-        foreach ($this->loadedDepartements as $departement)
-            if (isset($this->noeudsRoutierCache[$departement][$noeudRoutierGidCourant]))
-                return $departement;
-        return null;
     }
 
 }

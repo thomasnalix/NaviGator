@@ -119,6 +119,7 @@ class NoeudRoutierRepository extends AbstractRepository
                     "troncon_gid" => $tronconGid,
                     "troncon_coord" => $tronconCoord,
                     "longueur_troncon" => $longueurTroncon,
+                    "num_departement" => $numDepartementArrivee,
                 ];
             }
             if ($numDepartementNoeudRoutier === $numDepartementArrivee) {
@@ -131,6 +132,7 @@ class NoeudRoutierRepository extends AbstractRepository
                     "troncon_gid" => $tronconGid,
                     "troncon_coord" => $tronconCoord,
                     "longueur_troncon" => $longueurTroncon,
+                    "num_departement" => $numDepartementDepart,
                 ];
             }
         }

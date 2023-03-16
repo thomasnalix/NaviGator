@@ -3,37 +3,38 @@
 namespace App\PlusCourtChemin\Lib;
 
 use App\PlusCourtChemin\Modele\DataObject\DataContainer;
+use Exception;
 
-class FibonacciHeap {
+class FibonacciHeap implements DataStructure {
 
-    private $nodes;
+    private array $nodes;
 
     private $min;
-    private $n;
+    private $size;
 
     public function __construct() {
         $this->min = null;
-        $this->n = 0;
+        $this->size = 0;
         $this->nodes = [];
     }
 
-    public function insert(DataContainer $data) {
+    public function insert(DataContainer $data) : void {
         $x = new FibonacciNode();
         $x->data = $data;
         $x->key = $data->getDistance();
         $x->left = $x;
         $x->right = $x;
         $this->min = $this->concatenate($x, $this->min);
-        $this->n++;
+        $this->size++;
         $this->nodes[$data->getGid()] = $data->getGid(); // on s'en fou de la valeur, pour avoir O(1) sur isset faut juste la clé
-        return $x;
     }
 
-    public function search($gid) : bool {
-        return isset($this->nodes[$gid]);
+    public function search($dataContainer) : bool {
+        return isset($this->nodes[$dataContainer->getGid()]);
     }
 
-    public function extractMin() {
+    // Le nom serait plus "extractMin"
+    public function getMinNode($ignored = null) : ?DataContainer {
         $minimum = $this->min;
         if ($minimum !== null) {
             if ($minimum->child !== null) {
@@ -54,20 +55,16 @@ class FibonacciHeap {
                 $this->remove($minimum);
                 $this->consolidate();
             }
-            $this->n--;
+            $this->size--;
         }
         return $minimum->data;
     }
 
-    public function isEmpty() {
-        return $this->n === 0;
+    public function isEmpty() : bool {
+        return $this->size === 0;
     }
 
-    public function size() {
-        return $this->n;
-    }
-
-    protected function concatenate($x, $y) {
+    private function concatenate($x, $y) {
         if ($x === null)
             return $y;
         else if ($y === null)
@@ -85,14 +82,14 @@ class FibonacciHeap {
             return $y;
     }
 
-    protected function remove(FibonacciNode $x) {
+    private function remove(FibonacciNode $x) {
         $x->left->right = $x->right;
         $x->right->left = $x->left;
         $x->right = $x;
         $x->left = $x;
     }
 
-    protected function heapLink(FibonacciNode $x, FibonacciNode $y) {
+    private function heapLink(FibonacciNode $x, FibonacciNode $y) {
         $this->remove($x);
         $this->concatenate($x, $y->child);
         $x->parent = $y;
@@ -101,7 +98,7 @@ class FibonacciHeap {
         $x->mark = false;
     }
 
-    protected function consolidate() {
+    private function consolidate() {
         $A = [];
         $rootList = [];
         $start = $this->min;
@@ -137,6 +134,11 @@ class FibonacciHeap {
                 $this->min = $this->concatenate($a, $this->min);
             }
         }
+    }
+
+    function delete(DataContainer $data): void
+    {
+        throw new Exception("Pas besoin de l'implémenter car inutile ici, on utilise uniquement extractMin()");
     }
 
 }
