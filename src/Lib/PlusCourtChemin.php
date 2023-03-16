@@ -65,7 +65,7 @@ public function __construct(
         $nowHeuristique = 0;
 
         while (!$openSet->isEmpty()) {
-            $nowMinAndDelete -= microtime(true);
+            $nowMinAndDelete = microtime(true);
             $nodeData = $openSet->extractMin(); // supprime et retourne
             $nowMinAndDelete += microtime(true) - $nowMinAndDelete;
             $noeudRoutierGidCourant = $nodeData->getGid();
