@@ -88,10 +88,10 @@ public function __construct(
 
             $now2 = microtime(true);
             $this->numDepartementCourant = $cameFrom[$noeudRoutierGidCourant][1] ?? null;
-            if ($this->numDepartementCourant == null || !in_array($this->numDepartementCourant, $this->loadedDepartements)) {
+            if ($this->numDepartementCourant == null || !isset($this->loadedDepartements[$this->numDepartementCourant])) {
                 $this->noeudsRoutierCache += $noeudRoutierRepository->getNoeudsRoutierDepartement($noeudRoutierGidCourant);
                 $this->numDepartementCourant = PlusCourtChemin::$lastLoadedDepartement;
-                $this->loadedDepartements[] = $this->numDepartementCourant;
+                $this->loadedDepartements[$this->numDepartementCourant] = 0; // on s'en fout de la valeur on veut juste la clé pour O(1) avec isset
             }
             $cumul += microtime(true) - $now2;
 
