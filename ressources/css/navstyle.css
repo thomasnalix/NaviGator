@@ -1,6 +1,8 @@
 body {
     margin: 0;
     background: #dedede;
+    font-family: 'Roboto', sans-serif;
+    font-weight: 500;
 }
 
 /* =========================
@@ -22,6 +24,9 @@ nav a {
     color: black;
 }
 
+.logo {
+    padding: 10px;
+}
 
 
 /* =========================
@@ -41,6 +46,7 @@ nav a {
     position: absolute;
     border-radius: 10px;
     z-index: 100;
+    width: 320px;
 }
 
 .ol-zoom {
@@ -49,6 +55,37 @@ nav a {
     left: inherit!important;
 }
 
+/* =========================
+           Form
+  ======================= */
+
+form {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.input-box {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.button-box {
+    background: #0ac976;
+    border: none;
+    padding: 5px 10px;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+input[type="text"] {
+    background: #f5f5f5;
+    border: none;
+    border-radius: 5px;
+    padding: 10px 15px;
+    width: 100%;
+}
 
 
 

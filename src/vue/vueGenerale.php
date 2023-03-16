@@ -3,13 +3,19 @@
 <head>
     <meta charset="UTF-8">
     <title><?= $pagetitle ?></title>
+    <link rel="icon" type="image/png" href="../ressources/img/favicon.png" />
     <link rel="stylesheet" href="../ressources/css/navstyle.css">
     <link rel="stylesheet" href="https://openlayers.org/en/v6.6.1/css/ol.css" type="text/css">
     <script src="https://openlayers.org/en/v6.6.1/build/ol.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Source+Sans+Pro&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
 </head>
 <body>
 <header>
     <nav>
+        <img class="logo" src="../ressources/img/logo.png" alt="logo" width="40">
         <a href="controleurFrontal.php?action=afficherListe&controleur=utilisateur">Utilisateurs</a>
         <a href="controleurFrontal.php?action=afficherListe&controleur=noeudCommune">Communes</a>
         <a href="controleurFrontal.php?action=plusCourtChemin&controleur=noeudCommune">Calcul</a>

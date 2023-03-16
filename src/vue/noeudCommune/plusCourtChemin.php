@@ -1,21 +1,19 @@
 <div class="itinerary-box">
     <form action="" method="post">
-        <p class="InputAddOn">
-            <label class="InputAddOn-item" for="nomCommuneDepart_id">Nom de la commune de départ</label>
-            <input class="InputAddOn-field" type="text" value="" placeholder="Ex : Menton" name="nomCommuneDepart" id="nomCommuneDepart_id" required>
-        </p>
-        <p class="InputAddOn">
-            <label class="InputAddOn-item" for="nomCommuneArrivee_id">Nom de la commune de départ</label>
-            <input class="InputAddOn-field" type="text" value="" placeholder="Ex : Menton" name="nomCommuneArrivee" id="nomCommuneArrivee_id" required>
-        </p>
+        <div class="input-box">
+            <span class="material-symbols-outlined">pin_drop</span>
+            <input class="" type="text" value="" placeholder="Commune de départ" name="nomCommuneDepart" id="nomCommuneDepart_id" required>
+        </div>
+        <div class="input-box">
+            <span class="material-symbols-outlined">flag</span>
+            <input class="" type="text" value="" placeholder="Commune d'arrivée" name="nomCommuneArrivee" id="nomCommuneArrivee_id" required>
+        </div>
         <input type="hidden" name="XDEBUG_TRIGGER">
-        <p>
-            <input class="InputAddOn-field" type="submit" value="Calculer" />
-        </p>
+        <input class="button-box" type="submit" value="Calculer"/>
     </form>
     <?php if (!empty($_POST)) {
         echo '<p>
-                Le plus court chemin entre ' . $nomCommuneDepart . ' et ' . $nomCommuneArrivee . ' mesure ' . $distance . 'km.
+                ' . $nomCommuneDepart . ' vers ' . $nomCommuneArrivee . ' : ' . $distance . 'km.
               </p>';
     }
     ?>
@@ -55,11 +53,10 @@
         // Définir un style de ligne rouge avec une épaisseur de 4 pixels
         let lineStyle = new ol.style.Style({
             stroke: new ol.style.Stroke({
-                color: 'blue',
+                color: '#0c7847',
                 width: 5
             })
         });
-
 
         // Créer une couche vectorielle à partir du tableau de géométries
         let vectorLayer = new ol.layer.Vector({
@@ -72,5 +69,15 @@
         // add to the map the vector layer
         map.addLayer(vectorLayer);
     }
+
+    function zoomToLine() {
+        let view = map.getView();
+        let source = map.getLayers().getArray()[1].getSource();
+        let extent = source.getExtent();
+        view.fit(extent, {maxZoom: 20, duration: 2000});
+    }
+
+    window.onload = zoomToLine;
+
 
 </script>
