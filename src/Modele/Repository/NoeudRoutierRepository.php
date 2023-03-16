@@ -3,7 +3,6 @@
 namespace App\PlusCourtChemin\Modele\Repository;
 
 use App\PlusCourtChemin\Lib\PlusCourtChemin;
-use App\PlusCourtChemin\Lib\TimerUtils;
 use App\PlusCourtChemin\Modele\DataObject\AbstractDataObject;
 use App\PlusCourtChemin\Modele\DataObject\NoeudRoutier;
 use PDO;
