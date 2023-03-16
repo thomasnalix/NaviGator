@@ -27,7 +27,7 @@ class PlusCourtChemin {
     private array $loadedDepartements = [];
 
     private ?string $numDepartementCourant;
-    public static string $lastLoadedDepartement;
+    public static ?string $lastLoadedDepartement = null;
 
     private DataStructure $openSet;
 
@@ -88,8 +88,7 @@ public function __construct(
 
             $now2 = microtime(true);
             $this->numDepartementCourant = $cameFrom[$noeudRoutierGidCourant][1] ?? null;
-            if (!isset($this->numDepartementCourant) || !isset($this->loadedDepartements[$this->numDepartementCourant])) {
-
+            if (!isset($this->numDepartementCourant) && !isset($this->loadedDepartements[$this->numDepartementCourant])) {
                 $this->noeudsRoutierCache += $noeudRoutierRepository->getNoeudsRoutierDepartement($noeudRoutierGidCourant);
                 $this->numDepartementCourant = PlusCourtChemin::$lastLoadedDepartement;
                 $this->loadedDepartements[] = $this->numDepartementCourant;
