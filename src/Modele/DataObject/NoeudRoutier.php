@@ -10,17 +10,18 @@ class NoeudRoutier extends AbstractDataObject {
 
     public function __construct(
         private int $gid,
-        private string $coords,
+        private float $lat,
+        private float $long,
         private array $voisins = []
     ) {
-
         //$this->voisins = (new NoeudRoutierRepository())->getVoisins($this->getGid());
     }
 
     public function getGid(): int { return $this->gid; }
 
-    public function getCoords(): string { return $this->coords; }
+    public function getLat(): float { return $this->lat; }
 
+    public function getLong(): float { return $this->long; }
 
     public function getVoisins(): array {
         return $this->voisins;

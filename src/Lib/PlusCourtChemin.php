@@ -29,7 +29,7 @@ class PlusCourtChemin {
 
     public function __construct(
         private NoeudRoutier $noeudRoutierDepart,
-        private NoeudRoutier $noeudRoutierArrivee
+        private NoeudRoutier  $noeudRoutierArrivee
     ) { }
 
 
@@ -38,6 +38,9 @@ class PlusCourtChemin {
         $now = microtime(true);
         $cumul = 0;
         $voisin = 0;
+        $nowSearch = 0;
+        $nowInsert = 0;
+        $nowDelete = 0;
 
         $nbIteration = 0;
         TimerUtils::startTimer("total");
@@ -54,6 +57,8 @@ class PlusCourtChemin {
         $gScore[$this->noeudRoutierDepart->getGid()] = 0;
 
         $fScore[$this->noeudRoutierDepart->getGid()] = 0;
+        $nowHeuristique = 0;
+        $pool = Pool::create();
 
         while (!$openSet->isEmpty()) {
             //TimerUtils::startOrRestartTimer("getMinNode");
@@ -68,11 +73,18 @@ class PlusCourtChemin {
                 echo "total: " . (microtime(true) - $now) . "s<br>";
                 echo "cumulBD : " . $cumul . "s<br>";
                 echo "voisin : " . $voisin . "s<br>";
+                echo "nbIteration : " . $nbIteration . "<br>";
+                echo "Heuruistique : " . $nowHeuristique . "s<br>";
+                echo "Search : " . $nowSearch . "s<br>";
+                echo "Insert : " . $nowInsert . "s<br>";
+                echo "Delete : " . $nowDelete . "s<br>";
                 return $this->reconstruireChemin($cameFrom, $noeudRoutierGidCourant, $cost, $coordTrocon);
             }
 
             //TimerUtils::startOrRestartTimer("deleteNode");
+            $now8 = microtime(true);
             $openSet->delete($nodeData);
+            $nowDelete += microtime(true) - $now8;
             //TimerUtils::pauseTimer("deleteNode");
 
 //            TimerUtils::startOrRestartTimer("loadDepartement");
@@ -90,7 +102,6 @@ class PlusCourtChemin {
 
             //TimerUtils::startOrRestartTimer("voisin");
             $now3 = microtime(true);
-            //$pool = Pool::create();
             foreach ($neighbors as $neighbor) {
                 $tentativeGScore = $gScore[$noeudRoutierGidCourant] + $neighbor['longueur_troncon'];
                 $value = $gScore[$neighbor['noeud_gid']] ?? PHP_INT_MAX;
@@ -102,21 +113,27 @@ class PlusCourtChemin {
 
                     $gScore[$neighbor['noeud_gid']] = $tentativeGScore;
 
-                    /*$pool->add(function () use ($neighbor, $tentativeGScore, $openSet) {*/
+//                    $pool->add(function () use ($neighbor, $tentativeGScore, $openSet) {
                         //TimerUtils::startOrRestartTimer("heuristique");
-                        $fScore[$neighbor['noeud_gid']] = $tentativeGScore + $this->getHeuristique($neighbor['noeud_coord']);
+                         $now4 = microtime(true);
+                        $fScore[$neighbor['noeud_gid']] = $tentativeGScore + $this->getHeuristique($neighbor['noeud_coord_lat'],$neighbor['noeud_coord_long']);
+                        $nowHeuristique += microtime(true) - $now4;
                         //TimerUtils::pauseTimer("heuristique");
 
                         $dataContainer = new DataContainer($neighbor['noeud_gid'], $fScore[$neighbor['noeud_gid']]);
                         //TimerUtils::startOrRestartTimer("searchNode");
+                        $now5 = microtime(true);
                         $search = $openSet->search($dataContainer);
+                        $nowSearch += microtime(true) - $now5;
                         //TimerUtils::pauseTimer("searchNode");
                         if (!$search) {
                             //TimerUtils::startOrRestartTimer("insertNode");
+                            $now6 = microtime(true);
                             $openSet->insert($dataContainer);
+                            $nowInsert += microtime(true) - $now6;
                             //TimerUtils::pauseTimer("insertNode");
                         }
-                    /*});*/
+                   // });
                 }
             }
             //$pool->wait();
@@ -131,21 +148,18 @@ class PlusCourtChemin {
      * @param $noeud
      * @return float
      */
-    private function getHeuristique(string $noeud): float {
-        $coordsArrivee = explode(";", $this->noeudRoutierArrivee->getCoords());
-        $coordsPoints = explode(";", $noeud);
-
-        $lat2 = $coordsArrivee[1];
-        $lon2 = $coordsArrivee[0];
-        $lat1 = $coordsPoints[1];
-        $lon1 = $coordsPoints[0];
+    private function getHeuristique(float $lat, float $long): float {
+        $latArrivee = $this->noeudRoutierArrivee->getLat();
+        $longArrivee = $this->noeudRoutierArrivee->getLong();
+        $latCourant = $lat;
+        $longCourant = $long;
 
         $earthRadius = 6371; // rayon de la Terre en kilomètres
-        $dLat = deg2rad($lat2 - $lat1);
-        $dLon = deg2rad($lon2 - $lon1);
+        $dLat = deg2rad($latArrivee - $latCourant);
+        $dLon = deg2rad($longArrivee - $longCourant);
         $sinLat = sin($dLat / 2);
         $sinLon = sin($dLon / 2);
-        $a = $sinLat * $sinLat + cos(deg2rad($lat1)) * cos(deg2rad($lat2)) * $sinLon * $sinLon;
+        $a = $sinLat * $sinLat + cos(deg2rad($latCourant)) * cos(deg2rad($latArrivee)) * $sinLon * $sinLon;
         $c = 2 * asin(sqrt($a));
         return $earthRadius * $c; // distance en kilomètres
 

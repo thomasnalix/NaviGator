@@ -13,7 +13,8 @@ class NoeudRoutierRepository extends AbstractRepository
     public function construireDepuisTableau(array $noeudRoutierTableau): NoeudRoutier {
         return new NoeudRoutier(
             $noeudRoutierTableau["gid"],
-            $noeudRoutierTableau["coords"]
+            $noeudRoutierTableau["lat"],
+            $noeudRoutierTableau["long"]
         );
     }
 
@@ -102,9 +103,11 @@ class NoeudRoutierRepository extends AbstractRepository
             $noeudRoutierRegion = $noeudsRoutierRegion[$i];
 //        foreach ($noeudsRoutierRegion as $noeudRoutierRegion) {
             $noeudDepartGid = $noeudRoutierRegion["noeud_depart_gid"];
-            $noeudDepartCoord = $noeudRoutierRegion["noeud_depart_coord"];
+            $noeudDepartLat = $noeudRoutierRegion["noeud_depart_lat"];
+            $noeudDepartLong = $noeudRoutierRegion["noeud_depart_long"];
             $noeudArriveeGid = $noeudRoutierRegion["noeud_arrivee_gid"];
-            $noeudArriveeCoord = $noeudRoutierRegion["noeud_arrivee_coord"];
+            $noeudArriveeLat = $noeudRoutierRegion["noeud_arrivee_lat"];
+            $noeudArriveeLong = $noeudRoutierRegion["noeud_arrivee_long"];
             $tronconGid = $noeudRoutierRegion["troncon_gid"];
             $tronconCoord = $noeudRoutierRegion["troncon_coord"];
             $longueurTroncon = $noeudRoutierRegion["longueur_troncon"];
@@ -116,8 +119,10 @@ class NoeudRoutierRepository extends AbstractRepository
             if ($numDepartementNoeudRoutier === $numDepartementDepart) {
                 $noeudsRoutierRegionAvecVoisins[$numDepartementNoeudRoutier][$noeudDepartGid][] = [
                     "noeud_gid" => $noeudArriveeGid,
-                    "noeud_courant_coord" => $noeudDepartCoord,
-                    "noeud_coord" => $noeudArriveeCoord,
+                    "noeud_courant_lat" => $noeudDepartLat,
+                    "noeud_courant_long" => $noeudDepartLong,
+                    "noeud_coord_lat" => $noeudArriveeLat,
+                    "noeud_coord_long" => $noeudArriveeLong,
                     "troncon_gid" => $tronconGid,
                     "troncon_coord" => $tronconCoord,
                     "longueur_troncon" => $longueurTroncon,
@@ -126,8 +131,10 @@ class NoeudRoutierRepository extends AbstractRepository
             if ($numDepartementNoeudRoutier === $numDepartementArrivee) {
                 $noeudsRoutierRegionAvecVoisins[$numDepartementNoeudRoutier][$noeudArriveeGid][] = [
                     "noeud_gid" => $noeudDepartGid,
-                    "noeud_courant_coord" => $noeudArriveeCoord,
-                    "noeud_coord" => $noeudDepartCoord,
+                    "noeud_courant_lat" => $noeudArriveeLat,
+                    "noeud_courant_long" => $noeudArriveeLong,
+                    "noeud_coord_lat" => $noeudDepartLat,
+                    "noeud_coord_long" => $noeudDepartLong,
                     "troncon_gid" => $tronconGid,
                     "troncon_coord" => $tronconCoord,
                     "longueur_troncon" => $longueurTroncon,
@@ -145,8 +152,8 @@ class NoeudRoutierRepository extends AbstractRepository
     public function recupererNoeudRoutier($idRte): ?NoeudRoutier {
         $requeteSQL = <<<SQL
             SELECT gid,
-                   concat(ST_X(ST_AsText(geom)), ';',
-                ST_Y(ST_AsText(geom))) as coords
+                   ST_X(ST_AsText(geom)) as long,
+                ST_Y(ST_AsText(geom)) as lat
             FROM nalixt.noeud_routier
             WHERE id_rte500 = :idRteTag;
         SQL;
