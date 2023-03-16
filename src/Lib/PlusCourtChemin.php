@@ -6,7 +6,7 @@ namespace App\PlusCourtChemin\Lib;
 use App\PlusCourtChemin\Modele\DataObject\DataContainer;
 use App\PlusCourtChemin\Modele\DataObject\NoeudRoutier;
 use App\PlusCourtChemin\Modele\Repository\NoeudRoutierRepository;
-use Exception;
+use Spatie\Async\Pool;
 
 class PlusCourtChemin {
 
@@ -90,6 +90,7 @@ class PlusCourtChemin {
 
             //TimerUtils::startOrRestartTimer("voisin");
             $now3 = microtime(true);
+            //$pool = Pool::create();
             foreach ($neighbors as $neighbor) {
                 $tentativeGScore = $gScore[$noeudRoutierGidCourant] + $neighbor['longueur_troncon'];
                 $value = $gScore[$neighbor['noeud_gid']] ?? PHP_INT_MAX;
@@ -101,21 +102,24 @@ class PlusCourtChemin {
 
                     $gScore[$neighbor['noeud_gid']] = $tentativeGScore;
 
-                    //TimerUtils::startOrRestartTimer("heuristique");
-                    $fScore[$neighbor['noeud_gid']] = $tentativeGScore + $this->getHeuristique($neighbor['noeud_coord']);
-                    //TimerUtils::pauseTimer("heuristique");
+                    /*$pool->add(function () use ($neighbor, $tentativeGScore, $openSet) {*/
+                        //TimerUtils::startOrRestartTimer("heuristique");
+                        $fScore[$neighbor['noeud_gid']] = $tentativeGScore + $this->getHeuristique($neighbor['noeud_coord']);
+                        //TimerUtils::pauseTimer("heuristique");
 
-                    $dataContainer = new DataContainer($neighbor['noeud_gid'], $fScore[$neighbor['noeud_gid']]);
-                    //TimerUtils::startOrRestartTimer("searchNode");
-                    $search = $openSet->search($dataContainer);
-                    //TimerUtils::pauseTimer("searchNode");
-                    if (!$search) {
-                        //TimerUtils::startOrRestartTimer("insertNode");
-                        $openSet->insert($dataContainer);
-                        //TimerUtils::pauseTimer("insertNode");
-                    }
+                        $dataContainer = new DataContainer($neighbor['noeud_gid'], $fScore[$neighbor['noeud_gid']]);
+                        //TimerUtils::startOrRestartTimer("searchNode");
+                        $search = $openSet->search($dataContainer);
+                        //TimerUtils::pauseTimer("searchNode");
+                        if (!$search) {
+                            //TimerUtils::startOrRestartTimer("insertNode");
+                            $openSet->insert($dataContainer);
+                            //TimerUtils::pauseTimer("insertNode");
+                        }
+                    /*});*/
                 }
             }
+            //$pool->wait();
             $voisin += microtime(true) - $now3;
             //TimerUtils::pauseTimer("voisin");
             $nbIteration++;
