@@ -4,14 +4,14 @@ namespace App\PlusCourtChemin\Lib;
 
 use App\PlusCourtChemin\Modele\DataObject\DataContainer;
 
-class BinarySearchTree {
+class BinarySearchTree implements DataStructure {
     public ?Node $root;
 
     function __construct() {
         $this->root = null;
     }
 
-    function insert(DataContainer $data) {
+    function insert(DataContainer $data) : void {
         $newNode = new Node($data);
 
         if ($this->root == null) {
@@ -40,7 +40,7 @@ class BinarySearchTree {
         }
     }
 
-    function search(DataContainer $data) {
+    function search(DataContainer $data) : bool {
         $current = $this->root;
 
         while ($current != null) {
@@ -56,7 +56,7 @@ class BinarySearchTree {
         return false;
     }
 
-    function delete(DataContainer $data) {
+    function delete(DataContainer $data) : void {
         $this->root = $this->deleteNode($this->root, $data);
     }
 
@@ -77,8 +77,8 @@ class BinarySearchTree {
                 $node = $node->leftChild;
             } else {
                 $minRight = $this->getMinNode($node->rightChild);
-                $node->data = $minRight->data;
-                $node->rightChild = $this->deleteNode($node->rightChild, $minRight->data);
+                $node->data = $minRight;
+                $node->rightChild = $this->deleteNode($node->rightChild, $minRight);
             }
         } else {
             $node->rightChild = $this->deleteNode($node->rightChild, $data);
@@ -87,17 +87,17 @@ class BinarySearchTree {
         return $node;
     }
 
-    function getMinNode($current = null) {
+    function getMinNode($current = null) : DataContainer {
         if ($current == null) $current = $this->root;
 
         while ($current->leftChild != null) {
             $current = $current->leftChild;
         }
 
-        return $current;
+        return $current->data;
     }
 
-    function isEmpty() {
+    function isEmpty() : bool {
         return $this->root == null;
     }
 

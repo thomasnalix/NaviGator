@@ -37,6 +37,7 @@ class PlusCourtChemin {
 
         $now = microtime(true);
         $cumul = 0;
+        $voisin = 0;
 
         $nbIteration = 0;
         TimerUtils::startTimer("total");
@@ -56,7 +57,7 @@ class PlusCourtChemin {
 
         while (!$openSet->isEmpty()) {
             //TimerUtils::startOrRestartTimer("getMinNode");
-            $nodeData = $openSet->getMinNode()->data;
+            $nodeData = $openSet->getMinNode();
             //TimerUtils::pauseTimer("getMinNode");
             $noeudRoutierGidCourant = $nodeData->getGid();
 
@@ -66,6 +67,7 @@ class PlusCourtChemin {
 //                TimerUtils::printAllTimers();
                 echo "total: " . (microtime(true) - $now) . "s<br>";
                 echo "cumulBD : " . $cumul . "s<br>";
+                echo "voisin : " . $voisin . "s<br>";
                 return $this->reconstruireChemin($cameFrom, $noeudRoutierGidCourant, $cost, $coordTrocon);
             }
 
@@ -87,6 +89,7 @@ class PlusCourtChemin {
             $neighbors = $this->noeudsRoutierCache[$this->numDepartementCourant][$noeudRoutierGidCourant];
 
             //TimerUtils::startOrRestartTimer("voisin");
+            $now3 = microtime(true);
             foreach ($neighbors as $neighbor) {
                 $tentativeGScore = $gScore[$noeudRoutierGidCourant] + $neighbor['longueur_troncon'];
                 $value = $gScore[$neighbor['noeud_gid']] ?? PHP_INT_MAX;
@@ -113,6 +116,7 @@ class PlusCourtChemin {
                     }
                 }
             }
+            $voisin += microtime(true) - $now3;
             //TimerUtils::pauseTimer("voisin");
             $nbIteration++;
         }
