@@ -12,6 +12,7 @@
     <nav>
         <a href="controleurFrontal.php?action=afficherListe&controleur=utilisateur">Utilisateurs</a>
         <a href="controleurFrontal.php?action=afficherListe&controleur=noeudCommune">Communes</a>
+        <a href="controleurFrontal.php?action=plusCourtChemin&controleur=noeudCommune">Calcul</a>
             <?php
 
             use App\PlusCourtChemin\Lib\ConnexionUtilisateur;
