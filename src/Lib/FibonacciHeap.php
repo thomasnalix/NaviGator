@@ -57,7 +57,7 @@ class FibonacciHeap implements DataStructure {
             }
             $this->size--;
         }
-        $this->nodes[$minimum->data->getGid()] = null;
+        unset($this->nodes[$minimum->data->getGid()]);
         return $minimum->data;
     }
 

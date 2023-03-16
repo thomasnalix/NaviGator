@@ -24,10 +24,8 @@ class PlusCourtChemin {
      * ]
      */
     private array $noeudsRoutierCache = [];
-    private array $loadedDepartements = [];
 
     private ?string $numDepartementCourant;
-    public static ?string $lastLoadedDepartement = null;
 
     private DataStructure $openSet;
 
@@ -40,17 +38,6 @@ public function __construct(
 
     function calculerAStar(): ?array {
 
-        $now = microtime(true);
-        $cumul = 0;
-        $voisin = 0;
-        $nowSearch = 0;
-        $nowInsert = 0;
-        $nowMin = 0;
-        $nowDelete = 0;
-
-        $nbIteration = 0;
-        TimerUtils::startTimer("total");
-
         $noeudRoutierRepository = new NoeudRoutierRepository();
 
         $this->openSet->insert(new DataContainer($this->noeudRoutierDepart->getGid(), 0));
@@ -62,78 +49,47 @@ public function __construct(
         $gScore[$this->noeudRoutierDepart->getGid()] = 0;
 
         $fScore[$this->noeudRoutierDepart->getGid()] = 0;
-        $nowHeuristique = 0;
 
         while (!$this->openSet->isEmpty()) {
-            $now0 = microtime(true);
             $nodeData = $this->openSet->getMinNode();
-            $nowMin += microtime(true) - $now0;
             $noeudRoutierGidCourant = $nodeData->getGid();
 
             // Path found
             if ($noeudRoutierGidCourant == $this->noeudRoutierArrivee->getGid()) {
-//                TimerUtils::stopAllTimers();
-//                TimerUtils::printAllTimers();
-                echo "total: " . (microtime(true) - $now) . "s<br>";
-                echo "cumulBD : " . $cumul . "s<br>";
-                echo "voisin : " . $voisin . "s<br>";
-                echo "nbIteration : " . $nbIteration . "<br>";
-                echo "Heuruistique : " . $nowHeuristique . "s<br>";
-                echo "Min : " . $nowMin . "s<br>";
-                echo "Insert : " . $nowInsert . "s<br>";
-                echo "Search : " . $nowSearch . "s<br>";
-                echo "Delete : " . $nowDelete . "s<br>";
                 return $this->reconstruireChemin($cameFrom, $noeudRoutierGidCourant, $cost, $coordTrocon);
             }
 
-            $now2 = microtime(true);
-            $this->numDepartementCourant = $cameFrom[$noeudRoutierGidCourant][1] ?? null;
-            if ($this->numDepartementCourant == null || !isset($this->loadedDepartements[$this->numDepartementCourant])) {
+            $this->numDepartementCourant = $this->getNumDepartement($noeudRoutierGidCourant);
+            if (!isset($this->numDepartementCourant)) {
                 $this->noeudsRoutierCache += $noeudRoutierRepository->getNoeudsRoutierDepartement($noeudRoutierGidCourant);
-                $this->numDepartementCourant = PlusCourtChemin::$lastLoadedDepartement;
-                $this->loadedDepartements[$this->numDepartementCourant] = 0; // on s'en fout de la valeur on veut juste la clé pour O(1) avec isset
+                $this->numDepartementCourant = $this->getNumDepartement($noeudRoutierGidCourant);
             }
-            $cumul += microtime(true) - $now2;
 
-            $now0 = microtime(true);
             $this->openSet->delete($nodeData);
-            $nowDelete += microtime(true) - $now0;
 
             $neighbors = $this->noeudsRoutierCache[$this->numDepartementCourant][$noeudRoutierGidCourant];
 
-            $now3 = microtime(true);
             foreach ($neighbors as $neighbor) {
                 $tentativeGScore = $gScore[$noeudRoutierGidCourant] + $neighbor['longueur_troncon'];
                 $value = $gScore[$neighbor['noeud_gid']] ?? PHP_INT_MAX;
                 if ($tentativeGScore < $value) {
-                    $cameFrom[$neighbor['noeud_gid']] = [$noeudRoutierGidCourant, $neighbor['num_departement']];
+                    $cameFrom[$neighbor['noeud_gid']] = $noeudRoutierGidCourant;
                     $cost[$neighbor['noeud_gid']] = $neighbor['longueur_troncon'];
 
                     $coordTrocon[$neighbor['noeud_gid']] = $neighbor['troncon_coord'];
 
                     $gScore[$neighbor['noeud_gid']] = $tentativeGScore;
 
-                    $now4 = microtime(true);
                     $fScore[$neighbor['noeud_gid']] = $tentativeGScore + $this->getHeuristique($neighbor['noeud_coord_lat'],$neighbor['noeud_coord_long']);
-                    $nowHeuristique += microtime(true) - $now4;
 
                     $dataContainer = new DataContainer($neighbor['noeud_gid'], $fScore[$neighbor['noeud_gid']]);
                     //TimerUtils::startOrRestartTimer("searchNode");
-                    $now5 = microtime(true);
                     $search = $this->openSet->search($dataContainer);
-                    $nowSearch += microtime(true) - $now5;
-                    //TimerUtils::pauseTimer("searchNode");
                     if (!$search) {
-                        //TimerUtils::startOrRestartTimer("insertNode");
-                        $now6 = microtime(true);
                         $this->openSet->insert($dataContainer);
-                        $nowInsert += microtime(true) - $now6;
-                        //TimerUtils::pauseTimer("insertNode");
                     }
                 }
             }
-            $voisin += microtime(true) - $now3;
-            $nbIteration++;
         }
         return [-1, -1];
     }
@@ -170,15 +126,22 @@ public function __construct(
         $total_path = [$current];
         $trocons = [];
         $distance = 0;
-        while (isset($cameFrom[$current])) {
-            $total_path[] = $cameFrom[$current][0];
-            $current = $cameFrom[$current][0];
+        while (array_key_exists($current, $cameFrom)) {
+            $current = $cameFrom[$current];
+            $total_path[] = $current;
         }
         foreach ($total_path as $gid) {
             $distance += $cost[$gid];
             $trocons[] = $coordTrocon[$gid] ?? null;
         }
         return [$distance, $trocons];
+    }
+
+    private function getNumDepartement($noeudRoutierGidCourant) : ?string {
+        foreach (array_keys($this->noeudsRoutierCache) as $numDepartement)
+            if (isset($this->noeudsRoutierCache[$numDepartement][$noeudRoutierGidCourant]))
+                return $numDepartement;
+        return null;
     }
 
 }

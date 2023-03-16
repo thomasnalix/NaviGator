@@ -52,7 +52,6 @@ class NoeudRoutierRepository extends AbstractRepository
      */
     public function getNoeudsRoutierDepartement(int $noeudRoutierGid) : array {
         $numDepartementNoeudRoutier = $this->getDepartementGid($noeudRoutierGid);
-        PlusCourtChemin::$lastLoadedDepartement = $numDepartementNoeudRoutier;
         $requeteSQL = <<<SQL
             --             SELECT *
             --             FROM nalixt.noeuds_from_troncon
@@ -91,7 +90,6 @@ class NoeudRoutierRepository extends AbstractRepository
          * ]
          */
         $noeudsRoutierRegionAvecVoisins = [];
-        //TimerUtils::startTimer("letleau");
 
         foreach ($noeudsRoutierRegion as $noeudRoutierRegion) {
             $noeudDepartGid = $noeudRoutierRegion["noeud_depart_gid"];
@@ -118,7 +116,6 @@ class NoeudRoutierRepository extends AbstractRepository
                     "troncon_gid" => $tronconGid,
                     "troncon_coord" => $tronconCoord,
                     "longueur_troncon" => $longueurTroncon,
-                    "num_departement" => $numDepartementArrivee,
                 ];
             }
             if ($numDepartementNoeudRoutier === $numDepartementArrivee) {
@@ -131,11 +128,9 @@ class NoeudRoutierRepository extends AbstractRepository
                     "troncon_gid" => $tronconGid,
                     "troncon_coord" => $tronconCoord,
                     "longueur_troncon" => $longueurTroncon,
-                    "num_departement" => $numDepartementDepart,
                 ];
             }
         }
-        //TimerUtils::stopTimer("phpTableau");
         return $noeudsRoutierRegionAvecVoisins;
     }
 

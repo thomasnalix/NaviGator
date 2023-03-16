@@ -17,7 +17,7 @@ class BinarySearchTree implements DataStructure {
 
     function insert(DataContainer $data) : void {
         $newNode = new Node($data);
-        $this->nodes[$data->getGid()] = $newNode;
+        //$this->nodes[$data->getGid()] = 0; // on s'en fou de la valeur, pour avoir O(1) sur isset faut juste la clé
         if ($this->root == null) {
             $this->root = $newNode;
             return;
@@ -45,12 +45,25 @@ class BinarySearchTree implements DataStructure {
     }
 
     function search(DataContainer $data) : bool {
-        return isset($this->nodes[$data->getGid()]);
+        $current = $this->root;
+
+        while ($current != null) {
+            if ($data->getGid() == $current->data->getGid()) {
+                return true;
+            } else if ($data->getDistance() < $current->data->getDistance()) {
+                $current = $current->leftChild;
+            } else {
+                $current = $current->rightChild;
+            }
+        }
+
+        return false;
+        //return isset($this->nodes[$data->getGid()]);
     }
 
     function delete(DataContainer $data) : void {
         $this->root = $this->deleteNode($this->root, $data);
-        $this->nodes[$data->getGid()] = null;
+        //unset($this->nodes[$data->getGid()]);
     }
 
     function deleteNode(?Node $node, DataContainer $data) {
