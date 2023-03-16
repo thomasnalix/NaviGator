@@ -2,6 +2,7 @@
 
 namespace App\PlusCourtChemin\Modele\Repository;
 
+use App\PlusCourtChemin\Lib\PlusCourtChemin;
 use App\PlusCourtChemin\Lib\TimerUtils;
 use App\PlusCourtChemin\Modele\DataObject\AbstractDataObject;
 use App\PlusCourtChemin\Modele\DataObject\NoeudRoutier;
@@ -51,12 +52,8 @@ class NoeudRoutierRepository extends AbstractRepository
      * TODO: explorer la piste des groupes avec un GROUP BY côté SQL pour accélérer le traitement en PHP ?
      */
     public function getNoeudsRoutierDepartement(int $noeudRoutierGid) : array {
-//        $requeteSQL = <<<SQL
-//            SELECT * FROM nalixt.calcul_noeud_troncon
-//            WHERE num_departement = (SELECT num_departement FROM nalixt.calcul_noeud_troncon
-//            WHERE noeud_courant_gid = :gidTag LIMIT 1);
-//        SQL;
-        $noeudDepartGid = $this->getDepartementGid($noeudRoutierGid);
+        $numDepartementNoeudRoutier = $this->getDepartementGid($noeudRoutierGid);
+        PlusCourtChemin::$lastLoadedDepartement = $numDepartementNoeudRoutier;
         $requeteSQL = <<<SQL
             --             SELECT *
             --             FROM nalixt.noeuds_from_troncon
@@ -75,8 +72,7 @@ class NoeudRoutierRepository extends AbstractRepository
         SQL;
         $pdoStatement = ConnexionBaseDeDonnees::getPdo()->prepare($requeteSQL);
         $pdoStatement->execute(array(
-//            "gidTag" => $noeudRoutierGid,
-                "departement" => $noeudDepartGid
+                "departement" => $numDepartementNoeudRoutier
         ));
         $noeudsRoutierRegion = $pdoStatement->fetchAll(PDO::FETCH_ASSOC);
         /**
@@ -98,10 +94,7 @@ class NoeudRoutierRepository extends AbstractRepository
         $noeudsRoutierRegionAvecVoisins = [];
         //TimerUtils::startTimer("letleau");
 
-        $numDepartementNoeudRoutier = $this->getDepartementGid($noeudRoutierGid);
-        for ($i = 0; $i < count($noeudsRoutierRegion); $i++) {
-            $noeudRoutierRegion = $noeudsRoutierRegion[$i];
-//        foreach ($noeudsRoutierRegion as $noeudRoutierRegion) {
+        foreach ($noeudsRoutierRegion as $noeudRoutierRegion) {
             $noeudDepartGid = $noeudRoutierRegion["noeud_depart_gid"];
             $noeudDepartLat = $noeudRoutierRegion["noeud_depart_lat"];
             $noeudDepartLong = $noeudRoutierRegion["noeud_depart_long"];

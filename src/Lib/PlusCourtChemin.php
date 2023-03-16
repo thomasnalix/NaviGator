@@ -25,11 +25,15 @@ class PlusCourtChemin {
      * ]
      */
     private array $noeudsRoutierCache = [];
+    private array $loadedDepartements = [];
+
     private ?string $numDepartementCourant = null;
 
-    public function __construct(
+    public static $lastLoadedDepartement = null;
+
+public function __construct(
         private NoeudRoutier $noeudRoutierDepart,
-        private NoeudRoutier  $noeudRoutierArrivee
+        private NoeudRoutier $noeudRoutierArrivee
     ) { }
 
 
@@ -92,7 +96,8 @@ class PlusCourtChemin {
             $this->numDepartementCourant = $this->getNumDepartement($noeudRoutierGidCourant);
             if (!isset($this->numDepartementCourant)) {
                 $this->noeudsRoutierCache += $noeudRoutierRepository->getNoeudsRoutierDepartement($noeudRoutierGidCourant);
-                $this->numDepartementCourant = $this->getNumDepartement($noeudRoutierGidCourant);
+                $this->numDepartementCourant = PlusCourtChemin::$lastLoadedDepartement;
+                $this->loadedDepartements[] = $this->numDepartementCourant;
             }
             $cumul += microtime(true) - $now2;
 
@@ -188,12 +193,9 @@ class PlusCourtChemin {
     }
 
     private function getNumDepartement($noeudRoutierGidCourant) : ?string {
-        for ($i = 0; $i < count($this->noeudsRoutierCache); $i++) {
-            $key = array_keys($this->noeudsRoutierCache)[$i];
-            if (isset($this->noeudsRoutierCache[$key][$noeudRoutierGidCourant])) {
-                return $key;
-            }
-        }
+        foreach ($this->loadedDepartements as $departement)
+            if (isset($this->noeudsRoutierCache[$departement][$noeudRoutierGidCourant]))
+                return $departement;
         return null;
     }
 
