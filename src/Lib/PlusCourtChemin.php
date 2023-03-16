@@ -88,7 +88,7 @@ public function __construct(
 
             $now2 = microtime(true);
             $this->numDepartementCourant = $cameFrom[$noeudRoutierGidCourant][1] ?? null;
-            if (!isset($this->numDepartementCourant) && !isset($this->loadedDepartements[$this->numDepartementCourant])) {
+            if ($this->numDepartementCourant == null || !in_array($this->numDepartementCourant, $this->loadedDepartements)) {
                 $this->noeudsRoutierCache += $noeudRoutierRepository->getNoeudsRoutierDepartement($noeudRoutierGidCourant);
                 $this->numDepartementCourant = PlusCourtChemin::$lastLoadedDepartement;
                 $this->loadedDepartements[] = $this->numDepartementCourant;
