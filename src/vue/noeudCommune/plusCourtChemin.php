@@ -1,14 +1,24 @@
+<script defer src="../ressources/js/main.js"></script>
 <div class="itinerary-box">
     <form action="" method="post">
-        <div class="input-box">
-            <span class="material-symbols-outlined">pin_drop</span>
-            <input class="" type="text" value="" placeholder="Commune de départ" name="nomCommuneDepart" id="nomCommuneDepart_id" required>
+        <div id="formDestination" class="flex flex-col gap-4">
+            <div class="input-box">
+                <span class="material-symbols-outlined">pin_drop</span>
+                <input type="text" value="" placeholder="Commune de départ" name="commune0" id="commune0" required>
+                <span class="material-symbols-outlined close">close</span>
+            </div>
+            <div class="input-box">
+                <span class="material-symbols-outlined">flag</span>
+                <input type="text" value="" placeholder="Commune d'arrivée" name="commune1" id="commune1" required>
+                <span class="material-symbols-outlined close">close</span>
+            </div>
         </div>
-        <div class="input-box">
-            <span class="material-symbols-outlined">flag</span>
-            <input class="" type="text" value="" placeholder="Commune d'arrivée" name="nomCommuneArrivee" id="nomCommuneArrivee_id" required>
+        <div id="addDestination" class="box-flex">
+            <span class="material-symbols-outlined">add_circle</span>
+            <p>Ajouter une destination</p>
         </div>
         <input type="hidden" name="XDEBUG_TRIGGER">
+        <input type="hidden" name="nbField" value="2" id="nbField">
         <input class="button-box" type="submit" value="Calculer"/>
     </form>
     <?php if (!empty($_POST)) {
@@ -74,7 +84,7 @@
         let view = map.getView();
         let source = map.getLayers().getArray()[1].getSource();
         let extent = source.getExtent();
-        view.fit(extent, {maxZoom: 20, duration: 2000});
+        view.fit(extent, {maxZoom: 20, duration: 2000, padding: [150, 150, 150, 150]});
     }
 
     window.onload = zoomToLine;

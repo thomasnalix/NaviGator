@@ -71,6 +71,10 @@ form {
     gap: 10px;
 }
 
+.material-symbols-outlined {
+    user-select: none;
+}
+
 .button-box {
     background: #0ac976;
     border: none;
@@ -87,18 +91,18 @@ input[type="text"] {
     width: 100%;
 }
 
-
-
-
-
-
-
-footer p {
-    border: 1px solid black;
-    text-align:right;
-    /*width:600px;*/
-    padding-right:1em;
+.box-flex {
+    display: flex;
+    align-items: center;
+    gap: 10px;
 }
+
+.close {
+    display: none;
+}
+
+
+
 
 /* Bootstrap alerts */
 /* https://getbootstrap.com/docs/3.4/components/#alerts */
@@ -134,43 +138,12 @@ footer p {
     border-color: #ebccd1;
 }
 
-/* https://philipwalton.github.io/solved-by-flexbox/demos/input-add-ons/ */
-.InputAddOn {
-    display: flex;
-    margin-bottom: 1.5em;
-}
-
-.InputAddOn-field {
-    flex: 1;
-}
-.InputAddOn-field:not(:first-child) {
-    border-left: 0;
-}
-.InputAddOn-field:not(:last-child) {
-    border-right: 0;
-}
-
-.InputAddOn-item {
-    background-color: rgba(147, 128, 108, 0.1);
-    color: #666666;
-    font: inherit;
-    font-weight: normal;
-}
-
-.InputAddOn-field,
-.InputAddOn-item {
-    border: 1px solid rgba(147, 128, 108, 0.25);
-    padding: 0.5em 0.75em;
-}
-.InputAddOn-field:first-child,
-.InputAddOn-item:first-child {
-    border-radius: 2px 0 0 2px;
-}
-.InputAddOn-field:last-child,
-.InputAddOn-item:last-child {
-    border-radius: 0 2px 2px 0;
-}
 
 
 
+
+/*Tailwind*/
+.flex { display: flex }
+.flex-col { flex-direction: column }
+.gap-4 { gap: 10px }
 

@@ -92,42 +92,29 @@ class NoeudRoutierRepository extends AbstractRepository
         $noeudsRoutierRegionAvecVoisins = [];
 
         foreach ($noeudsRoutierRegion as $noeudRoutierRegion) {
-            $noeudDepartGid = $noeudRoutierRegion["noeud_depart_gid"];
-            $noeudDepartLat = $noeudRoutierRegion["noeud_depart_lat"];
-            $noeudDepartLong = $noeudRoutierRegion["noeud_depart_long"];
-            $noeudArriveeGid = $noeudRoutierRegion["noeud_arrivee_gid"];
-            $noeudArriveeLat = $noeudRoutierRegion["noeud_arrivee_lat"];
-            $noeudArriveeLong = $noeudRoutierRegion["noeud_arrivee_long"];
-            $tronconGid = $noeudRoutierRegion["troncon_gid"];
-            $tronconCoord = $noeudRoutierRegion["troncon_coord"];
-            $longueurTroncon = $noeudRoutierRegion["longueur_troncon"];
-            $numDepartementDepart = $noeudRoutierRegion["num_departement_depart"];
-            $numDepartementArrivee = $noeudRoutierRegion["num_departement_arrivee"];
-
-
             // en fonction de $numDepartementNoeudRoutier, on va ajouter dans le tableau avec les bonnes valeurs donc noeudArrive ou noeudArrive
-            if ($numDepartementNoeudRoutier === $numDepartementDepart) {
-                $noeudsRoutierRegionAvecVoisins[$numDepartementNoeudRoutier][$noeudDepartGid][] = [
-                    "noeud_gid" => $noeudArriveeGid,
-                    "noeud_courant_lat" => $noeudDepartLat,
-                    "noeud_courant_long" => $noeudDepartLong,
-                    "noeud_coord_lat" => $noeudArriveeLat,
-                    "noeud_coord_long" => $noeudArriveeLong,
-                    "troncon_gid" => $tronconGid,
-                    "troncon_coord" => $tronconCoord,
-                    "longueur_troncon" => $longueurTroncon,
+            if ($numDepartementNoeudRoutier === $noeudRoutierRegion["num_departement_depart"]) {
+                $noeudsRoutierRegionAvecVoisins[$numDepartementNoeudRoutier][$noeudRoutierRegion["noeud_depart_gid"]][] = [
+                    "noeud_gid" => $noeudRoutierRegion["noeud_arrivee_gid"],
+                    "noeud_courant_lat" => $noeudRoutierRegion["noeud_depart_lat"],
+                    "noeud_courant_long" => $noeudRoutierRegion["noeud_depart_long"],
+                    "noeud_coord_lat" => $noeudRoutierRegion["noeud_arrivee_lat"],
+                    "noeud_coord_long" => $noeudRoutierRegion["noeud_arrivee_long"],
+                    "troncon_gid" => $noeudRoutierRegion["troncon_gid"],
+                    "troncon_coord" => $noeudRoutierRegion["troncon_coord"],
+                    "longueur_troncon" => $noeudRoutierRegion["longueur_troncon"],
                 ];
             }
-            if ($numDepartementNoeudRoutier === $numDepartementArrivee) {
-                $noeudsRoutierRegionAvecVoisins[$numDepartementNoeudRoutier][$noeudArriveeGid][] = [
-                    "noeud_gid" => $noeudDepartGid,
-                    "noeud_courant_lat" => $noeudArriveeLat,
-                    "noeud_courant_long" => $noeudArriveeLong,
-                    "noeud_coord_lat" => $noeudDepartLat,
-                    "noeud_coord_long" => $noeudDepartLong,
-                    "troncon_gid" => $tronconGid,
-                    "troncon_coord" => $tronconCoord,
-                    "longueur_troncon" => $longueurTroncon,
+            if ($numDepartementNoeudRoutier ===  $noeudRoutierRegion["num_departement_arrivee"]) {
+                $noeudsRoutierRegionAvecVoisins[$numDepartementNoeudRoutier][$noeudRoutierRegion["noeud_arrivee_gid"]][] = [
+                    "noeud_gid" => $noeudRoutierRegion["noeud_depart_gid"],
+                    "noeud_courant_lat" => $noeudRoutierRegion["noeud_arrivee_lat"],
+                    "noeud_courant_long" => $noeudRoutierRegion["noeud_arrivee_long"],
+                    "noeud_coord_lat" => $noeudRoutierRegion["noeud_depart_lat"],
+                    "noeud_coord_long" => $noeudRoutierRegion["noeud_depart_long"],
+                    "troncon_gid" => $noeudRoutierRegion["troncon_gid"],
+                    "troncon_coord" => $noeudRoutierRegion["troncon_coord"],
+                    "longueur_troncon" => $noeudRoutierRegion["longueur_troncon"],
                 ];
             }
         }

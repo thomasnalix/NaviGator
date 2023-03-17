@@ -55,13 +55,22 @@ class ControleurNoeudCommune extends ControleurGenerique {
 
         if (!empty($_POST)) {
 
-            $nomCommuneDepart = $_POST["nomCommuneDepart"];
-            $nomCommuneArrivee = $_POST["nomCommuneArrivee"];
+            $communes = [];
+            for($i = 0; $i < $_POST['nbField']; $i++) {
+                $communes[] = $_POST["commune" . $i];
+            }
+//            $nomCommuneDepart = $_POST["commune0"];
+//            $nomCommuneArrivee = $_POST["commune1"];
             $noeudCommuneRepository = new NoeudCommuneRepository();
             /** @var NoeudCommune $noeudCommuneDepart */
-            $noeudCommuneDepart = $noeudCommuneRepository->recupererPar(["nom_comm" => $nomCommuneDepart])[0];
-            /** @var NoeudCommune $noeudCommuneArrivee */
-            $noeudCommuneArrivee = $noeudCommuneRepository->recupererPar(["nom_comm" => $nomCommuneArrivee])[0];
+
+            $noeudCommunes = [];
+            foreach ($communes as $commune) {
+                $noeudCommunes[] = $noeudCommuneRepository->recupererPar(["nom_comm" => $commune])[0];
+            }
+//            $noeudCommuneDepart = $noeudCommuneRepository->recupererPar(["nom_comm" => $nomCommuneDepart])[0];
+//            /** @var NoeudCommune $noeudCommuneArrivee */
+//            $noeudCommuneArrivee = $noeudCommuneRepository->recupererPar(["nom_comm" => $nomCommuneArrivee])[0];
 
             $noeudRoutierRepository = new NoeudRoutierRepository();
 //            $noeudRoutierDepartGid = $noeudRoutierRepository->recupererPar([
@@ -72,14 +81,24 @@ class ControleurNoeudCommune extends ControleurGenerique {
 //            ])[0]->getGid();
 //            $pcc = new PlusCourtChemin($noeudRoutierDepartGid, $noeudRoutierArriveeGid);
 //            $distance = $pcc->calculer();
-            $noeudRoutierDepart = $noeudRoutierRepository->recupererNoeudRoutier($noeudCommuneDepart->getId_nd_rte());
-            $noeudRoutierArrivee = $noeudRoutierRepository->recupererNoeudRoutier($noeudCommuneArrivee->getId_nd_rte());
 
-            $pcc = new PlusCourtChemin($noeudRoutierDepart, $noeudRoutierArrivee);
+            $noeudRoutier = [];
+            foreach ($noeudCommunes as $noeudCommune) {
+                $noeudRoutier[] = $noeudRoutierRepository->recupererNoeudRoutier($noeudCommune->getId_nd_rte());
+            }
+
+//            $noeudRoutierDepart = $noeudRoutierRepository->recupererNoeudRoutier($noeudCommuneDepart->getId_nd_rte());
+//            $noeudRoutierArrivee = $noeudRoutierRepository->recupererNoeudRoutier($noeudCommuneArrivee->getId_nd_rte());
+
+            $pcc = new PlusCourtChemin($noeudRoutier);
+//            $pcc = new PlusCourtChemin($noeudRoutierDepart, $noeudRoutierArrivee);
             $distance = $pcc->calculerAStar();
 
-            $parametres["nomCommuneDepart"] = $nomCommuneDepart;
-            $parametres["nomCommuneArrivee"] = $nomCommuneArrivee;
+            $parametres["nomCommuneDepart"] = $communes[0];
+            $parametres["nomCommuneArrivee"] = $communes[1];
+
+//            $parametres["nomCommuneDepart"] = $nomCommuneDepart;
+//            $parametres["nomCommuneArrivee"] = $nomCommuneArrivee;
             $parametres["distance"] = $distance[0];
             $parametres["chemin"] = $distance[1];
         }

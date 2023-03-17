@@ -25,38 +25,49 @@ class PlusCourtChemin {
      */
     private array $noeudsRoutierCache = [];
 
+    private int $index = 0;
+
     private ?string $numDepartementCourant;
 
     private DataStructure $openSet;
 
 public function __construct(
-    private NoeudRoutier $noeudRoutierDepart,
-    private NoeudRoutier $noeudRoutierArrivee
+    private array $noeudsRoutier
+//    private NoeudRoutier $noeudRoutierDepart,
+//    private NoeudRoutier $noeudRoutierArrivee
 ) {
     $this->openSet = new BinarySearchTree();
 }
 
     function calculerAStar(): ?array {
-
         $noeudRoutierRepository = new NoeudRoutierRepository();
 
-        $this->openSet->insert(new DataContainer($this->noeudRoutierDepart->getGid(), 0));
+        $this->openSet->insert(new DataContainer($this->noeudsRoutier[$this->index]->getGid(), 0));
 
         $cameFrom = [];
-        $cost[$this->noeudRoutierDepart->getGid()] = 0;
+        $cost[$this->noeudsRoutier[$this->index]->getGid()] = 0;
         $coordTrocon = [];
 
-        $gScore[$this->noeudRoutierDepart->getGid()] = 0;
+        $gScore[$this->noeudsRoutier[$this->index]->getGid()] = 0;
 
-        $fScore[$this->noeudRoutierDepart->getGid()] = 0;
+        $fScore[$this->noeudsRoutier[$this->index]->getGid()] = 0;
 
         while (!$this->openSet->isEmpty()) {
             $nodeData = $this->openSet->getMinNode();
             $noeudRoutierGidCourant = $nodeData->getGid();
 
             // Path found
-            if ($noeudRoutierGidCourant == $this->noeudRoutierArrivee->getGid()) {
-                return $this->reconstruireChemin($cameFrom, $noeudRoutierGidCourant, $cost, $coordTrocon);
+            if ($noeudRoutierGidCourant == $this->noeudsRoutier[$this->index+1]->getGid()) {
+                $response = $this->reconstruireChemin($cameFrom, $noeudRoutierGidCourant, $cost, $coordTrocon);
+                if ($this->index == count($this->noeudsRoutier) - 2) {
+                    return $response;
+                } else {
+                    $this->index++;
+                    // On réinitialise la variable openset du constructeur
+                    $this->openSet = new BinarySearchTree();
+                    $this->numDepartementCourant = null;
+                    $this->calculerAStar();
+                }
             }
 
             $this->numDepartementCourant = $this->getNumDepartement($noeudRoutierGidCourant);
@@ -83,7 +94,6 @@ public function __construct(
                     $fScore[$neighbor['noeud_gid']] = $tentativeGScore + $this->getHeuristique($neighbor['noeud_coord_lat'],$neighbor['noeud_coord_long']);
 
                     $dataContainer = new DataContainer($neighbor['noeud_gid'], $fScore[$neighbor['noeud_gid']]);
-                    //TimerUtils::startOrRestartTimer("searchNode");
                     $search = $this->openSet->search($dataContainer);
                     if (!$search) {
                         $this->openSet->insert($dataContainer);
@@ -99,8 +109,8 @@ public function __construct(
      * @return float
      */
     private function getHeuristique(float $lat, float $long): float {
-        $latArrivee = $this->noeudRoutierArrivee->getLat();
-        $longArrivee = $this->noeudRoutierArrivee->getLong();
+        $latArrivee = $this->noeudsRoutier[$this->index+1]->getLat();
+        $longArrivee = $this->noeudsRoutier[$this->index+1]->getLong();
         $latCourant = $lat;
         $longCourant = $long;
 
