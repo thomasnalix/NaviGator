@@ -132,6 +132,7 @@ abstract class AbstractRepository {
         $valueString = '(' . join(', ', $partiesValues) . ')';
 
         $sql = "INSERT INTO $nomTable $insertString VALUES $valueString";
+        var_dump($sql);
         // Préparation de la requête
         $pdoStatement = ConnexionBaseDeDonnees::getPdo()->prepare($sql);
 

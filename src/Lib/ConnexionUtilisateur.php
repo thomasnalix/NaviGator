@@ -39,17 +39,17 @@ class ConnexionUtilisateur
         );
     }
 
-    public static function estAdministrateur() : bool {
-        $loginConnecte = ConnexionUtilisateur::getLoginUtilisateurConnecte();
-
-        // Si personne n'est connecté
-        if ($loginConnecte === null)
-            return false;
-
-        $utilisateurRepository = new UtilisateurRepository();
-        /** @var Utilisateur $utilisateurConnecte */
-        $utilisateurConnecte = $utilisateurRepository->recupererParClePrimaire($loginConnecte);
-
-        return ($utilisateurConnecte !== null && $utilisateurConnecte->getEstAdmin());
-    }
+//    public static function estAdministrateur() : bool {
+//        $loginConnecte = ConnexionUtilisateur::getLoginUtilisateurConnecte();
+//
+//        // Si personne n'est connecté
+//        if ($loginConnecte === null)
+//            return false;
+//
+//        $utilisateurRepository = new UtilisateurRepository();
+//        /** @var Utilisateur $utilisateurConnecte */
+//        $utilisateurConnecte = $utilisateurRepository->recupererParClePrimaire($loginConnecte);
+//
+//        return ($utilisateurConnecte !== null);
+//    }
 }

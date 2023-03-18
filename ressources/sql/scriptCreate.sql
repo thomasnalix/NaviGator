@@ -1,0 +1,70 @@
+CREATE TABLE nalixt.utilisateurs(
+   login VARCHAR(50),
+   nom VARCHAR(2000) NOT NULL,
+   prenom VARCHAR(2000) NOT NULL,
+   motDePasse text,
+   email VARCHAR(100) NOT NULL,
+   imageProfil VARCHAR(64),
+   PRIMARY KEY(login)
+);
+
+
+CREATE MATERIALIZED VIEW nalixt.noeuds_from_troncon AS
+SELECT
+    nr.gid                                                                                AS noeud_depart_gid,
+    st_x(st_astext(nr.geom)::geometry)                                                    AS noeud_depart_long,
+    st_y(st_astext(nr.geom)::geometry)                                                    AS noeud_depart_lat,
+    nr2.gid                                                                               AS noeud_arrivee_gid,
+    st_x(st_astext(nr2.geom)::geometry)                                                   AS noeud_arrivee_long,
+    st_y(st_astext(nr2.geom)::geometry)                                                   AS noeud_arrivee_lat,
+    tr.gid                                                                                AS troncon_gid,
+    tr.longueur                                                                           AS longueur_troncon,
+    tr.geom                                                                               AS troncon_coord,
+    "left"(nc.insee_comm::text, 2)                                                        AS num_departement_depart,
+    "left"(nc2.insee_comm::text, 2)                                                       AS num_departement_arrivee
+
+FROM nalixt.troncon_route tr
+
+         JOIN nalixt.noeud_routier nr ON nr.geom && st_expand(tr.geom, 0.0001::double precision) AND st_dwithin(tr.geom, nr.geom, 0.0001::double precision)
+         JOIN nalixt.noeud_routier nr2 ON nr2.geom && st_expand(tr.geom, 0.0001::double precision) AND st_dwithin(tr.geom, nr2.geom, 0.0001::double precision)
+         JOIN nalixt.noeud_commune nc ON nr.insee_comm::text = nc.insee_comm::text
+         JOIN nalixt.noeud_commune nc2 ON nr2.insee_comm::text = nc2.insee_comm::text
+
+WHERE nr2.gid <> nr.gid
+AND nr.gid < nr2.gid;
+
+
+CREATE MATERIALIZED VIEW nalixt.vitesses_route AS
+SELECT
+    nr.gid AS noeud_depart_gid,
+    st_x(st_astext(nr.geom)::geometry) AS noeud_depart_long,
+    st_y(st_astext(nr.geom)::geometry) AS noeud_depart_lat,
+    nr2.gid AS noeud_arrivee_gid,
+    st_x(st_astext(nr2.geom)::geometry) AS noeud_arrivee_long,
+    st_y(st_astext(nr2.geom)::geometry) AS noeud_arrivee_lat,
+    tr.gid AS troncon_gid,
+    tr.longueur AS longueur_troncon,
+    tr.geom AS troncon_coord,
+    "left"(nc.insee_comm::text, 2) AS num_departement_depart,
+    "left"(nc2.insee_comm::text, 2) AS num_departement_arrivee,
+    CASE
+        WHEN vocation = 'Bretelle' THEN 60
+        WHEN vocation = 'Liaison locale' THEN 40
+        WHEN vocation = 'Liaison principale' THEN 80
+        WHEN vocation = 'Liaison régionale' THEN 70
+        WHEN vocation = 'Type autoroutier' THEN 110
+        END AS vitesse
+FROM nalixt.troncon_route tr
+
+         JOIN nalixt.noeud_routier nr ON nr.geom && st_expand(tr.geom, 0.0001::double precision) AND st_dwithin(tr.geom, nr.geom, 0.0001::double precision)
+         JOIN nalixt.noeud_routier nr2 ON nr2.geom && st_expand(tr.geom, 0.0001::double precision) AND st_dwithin(tr.geom, nr2.geom, 0.0001::double precision)
+         JOIN nalixt.noeud_commune nc ON nr.insee_comm::text = nc.insee_comm::text
+         JOIN nalixt.noeud_commune nc2 ON nr2.insee_comm::text = nc2.insee_comm::text
+
+WHERE nr2.gid <> nr.gid
+  AND nr.gid < nr2.gid;
+
+
+CREATE materialized view nalixt.noeud_gid_dep AS
+SELECT nc.gid, "left"(nc.insee_comm::text, 2) as num_departement
+FROM nalixt.noeud_routier nc

@@ -7,7 +7,7 @@ require_once __DIR__ . '/../vendor/autoload.php';
 // The null coalescing operator returns its first operand if it exists and is not null
 $action = $_REQUEST['action'] ?? 'afficherListe';
 
-$controleur = $_REQUEST['controleur'] ?? "noeudRoutier";
+$controleur = $_REQUEST['controleur'] ?? "noeudCommune";
 
 $controleurClassName = 'App\PlusCourtChemin\Controleur\Controleur' . ucfirst($controleur);
 

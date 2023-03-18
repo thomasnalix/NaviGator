@@ -16,7 +16,7 @@
             </p>
             <p class="InputAddOn">
                 <label class="InputAddOn-item" for="email_id">Email&#42;</label>
-                <input class="InputAddOn-field" type="email" value="<?= $emailHTML ?>" placeholder="rlebreton@yopmail.com" name="email" id="email_id" required>
+                <input class="InputAddOn-field" type="email" value="<?= $emailHTML ?>" placeholder="rlebreton@yopmail.com" name="email" id="email_id" readonly>
             </p>
             <p class="InputAddOn">
                 <label class="InputAddOn-item" for="mdp_id">Ancien mot de passe&#42;</label>
@@ -30,17 +30,7 @@
                 <label class="InputAddOn-item" for="mdp2_id">Vérification du nouveau mot de passe&#42;</label>
                 <input class="InputAddOn-field" type="password" value="" placeholder="" name="mdp2" id="mdp2_id" required>
             </p>
-            <?php
 
-            use App\PlusCourtChemin\Lib\ConnexionUtilisateur;
-
-            if (ConnexionUtilisateur::estAdministrateur()) {
-            ?>
-                <p class="InputAddOn">
-                    <label class="InputAddOn-item" for="estAdmin_id">Administrateur</label>
-                    <input class="InputAddOn-field" type="checkbox" placeholder="" name="estAdmin" id="estAdmin_id" <?= $estAdmin ? "checked" : "" ?>>
-                </p>
-            <?php } ?>
             <input type='hidden' name='action' value='mettreAJour'>
             <input type='hidden' name='controleur' value='utilisateur'>
             <p class="InputAddOn">

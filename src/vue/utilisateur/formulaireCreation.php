@@ -26,17 +26,11 @@
                 <label class="InputAddOn-item" for="mdp2_id">Vérification du mot de passe&#42;</label>
                 <input class="InputAddOn-field" type="password" value="" placeholder="" name="mdp2" id="mdp2_id" required>
             </p>
-            <?php
+            <p class="InputAddOn">
+                <label class="InputAddOn-item" for="profil_id">Photo de profil&#42;</label>
+                <input class="InputAddOn-field" accept="image/png, image/jpeg" type="file" name="imageProfil" id="profil_id" required>
+            </p>
 
-            use App\PlusCourtChemin\Lib\ConnexionUtilisateur;
-
-            if (ConnexionUtilisateur::estAdministrateur()) {
-            ?>
-                <p class="InputAddOn">
-                    <label class="InputAddOn-item" for="estAdmin_id">Administrateur</label>
-                    <input class="InputAddOn-field" type="checkbox" placeholder="" name="estAdmin" id="estAdmin_id">
-                </p>
-            <?php } ?>
             <input type='hidden' name='action' value='creerDepuisFormulaire'>
             <input type='hidden' name='controleur' value='utilisateur'>
             <p class="InputAddOn">

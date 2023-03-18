@@ -9,31 +9,21 @@ class Utilisateur extends AbstractDataObject {
     private string $login;
     private string $nom;
     private string $prenom;
-    private string $mdpHache;
-    private bool $estAdmin;
+    private string $motDePasse;
     private string $email;
-    private string $emailAValider;
-    private string $nonce;
+    private string $imageProfil;
 
-    public function __construct(
-        string $login,
-        string $nom,
-        string $prenom,
-        string $mdpHache,
-        bool $estAdmin,
-        string $email,
-        string $emailAValider,
-        string $nonce,
-    ) {
+
+    public function __construct(string $login, string $nom, string $prenom, string $motDePasse, string $email, string $imageProfil)
+    {
         $this->login = $login;
         $this->nom = $nom;
         $this->prenom = $prenom;
-        $this->mdpHache = $mdpHache;
-        $this->estAdmin = $estAdmin;
+        $this->motDePasse = $motDePasse;
         $this->email = $email;
-        $this->emailAValider = $emailAValider;
-        $this->nonce = $nonce;
+        $this->imageProfil = $imageProfil;
     }
+
 
     public static function construireDepuisFormulaire (array $tableauFormulaire) : Utilisateur {
         return new Utilisateur(
@@ -41,11 +31,13 @@ class Utilisateur extends AbstractDataObject {
             $tableauFormulaire["nom"],
             $tableauFormulaire["prenom"],
             MotDePasse::hacher($tableauFormulaire["mdp"]),
-            isset($tableauFormulaire["estAdmin"]),
-            "",
             $tableauFormulaire["email"],
-            MotDePasse::genererChaineAleatoire(),
+            $tableauFormulaire["imageProfil"]
         );
+    }
+
+    public static function creer ($login, $nom, $prenom, $motDePasse, $email, $imageProfil) : Utilisateur {
+        return new Utilisateur($login, $nom, $prenom, MotDePasse::hacher($motDePasse), $email, $imageProfil);
     }
 
     public function getLogin(): string {
@@ -72,44 +64,34 @@ class Utilisateur extends AbstractDataObject {
         $this->prenom = $prenom;
     }
 
-    public function getMdpHache(): string {
-        return $this->mdpHache;
+    public function getMotDePasse(): string
+    {
+        return $this->motDePasse;
     }
 
-    public function setMdpHache(string $mdpClair) {
-        $this->mdpHache = MotDePasse::hacher($mdpClair);
+    public function setMotDePasse(string $motDePasse): void
+    {
+        $this->motDePasse = $motDePasse;
     }
 
-    public function getEstAdmin(): string {
-        return $this->estAdmin;
-    }
-
-    public function setEstAdmin(string $estAdmin): void {
-        $this->estAdmin = $estAdmin;
-    }
-
-    public function getEmail(): string {
+    public function getEmail(): string
+    {
         return $this->email;
     }
 
-    public function setEmail(string $email): void {
+    public function setEmail(string $email): void
+    {
         $this->email = $email;
     }
 
-    public function getEmailAValider(): string {
-        return $this->emailAValider;
+    public function getImageProfil(): string
+    {
+        return $this->imageProfil;
     }
 
-    public function setEmailAValider(string $emailAValider): void {
-        $this->emailAValider = $emailAValider;
-    }
-
-    public function getNonce(): string {
-        return $this->nonce;
-    }
-
-    public function setNonce(string $nonce): void {
-        $this->nonce = $nonce;
+    public function setImageProfil(string $imageProfil): void
+    {
+        $this->imageProfil = $imageProfil;
     }
 
     public function exporterEnFormatRequetePreparee(): array {
@@ -117,11 +99,9 @@ class Utilisateur extends AbstractDataObject {
             "login_tag" => $this->login,
             "nom_tag" => $this->nom,
             "prenom_tag" => $this->prenom,
-            "mdp_hache_tag" => $this->mdpHache,
-            "est_admin_tag" => $this->estAdmin ? "1" : "0",
+            "motDePasse_tag" => $this->motDePasse,
             "email_tag" => $this->email,
-            "nonce_tag" => $this->nonce,
-            "email_a_valider_tag" => $this->emailAValider,
+            "imageProfil_tag" => $this->imageProfil
         );
     }
 }

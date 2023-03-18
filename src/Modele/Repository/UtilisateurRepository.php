@@ -25,17 +25,14 @@ class UtilisateurRepository extends AbstractRepository {
             $utilisateurTableau["login"],
             $utilisateurTableau["nom"],
             $utilisateurTableau["prenom"],
-            $utilisateurTableau["mdp_hache"],
-            $utilisateurTableau["est_admin"],
+            $utilisateurTableau["motdepasse"],
             $utilisateurTableau["email"],
-            $utilisateurTableau["email_a_valider"],
-            $utilisateurTableau["nonce"],
+            $utilisateurTableau["imageprofil"]
         );
     }
 
     public function getNomTable(): string {
-        throw new Exception("À vous de créer votre table utilisateur !");
-        return 'utilisateur';
+        return 'nalixt.utilisateurs';
     }
 
     protected function getNomClePrimaire(): string {
@@ -43,6 +40,6 @@ class UtilisateurRepository extends AbstractRepository {
     }
 
     protected function getNomsColonnes(): array {
-        return ["login", "nom", "prenom", "mdp_hache", "est_admin", "email", "email_a_valider", "nonce"];
+        return ["login", "nom", "prenom", "motDePasse", "email", "imageProfil"];
     }
 }

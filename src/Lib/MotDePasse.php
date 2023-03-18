@@ -5,7 +5,7 @@ namespace App\PlusCourtChemin\Lib;
 class MotDePasse {
 
     // Exécutez genererChaineAleatoire() et stockez sa sortie dans le poivre
-    private static string $poivre = "";
+    private static string $poivre = "EPkyny3RuBXqMfZLHeMbij";
 
     public static function hacher(string $mdpClair): string {
         $mdpPoivre = hash_hmac("sha256", $mdpClair, MotDePasse::$poivre);
@@ -15,6 +15,7 @@ class MotDePasse {
 
     public static function verifier(string $mdpClair, string $mdpHache): bool {
         $mdpPoivre = hash_hmac("sha256", $mdpClair, MotDePasse::$poivre);
+
         return password_verify($mdpPoivre, $mdpHache);
     }
 
