@@ -5,12 +5,12 @@
             <div class="input-box">
                 <span class="material-symbols-outlined">pin_drop</span>
                 <input type="text" value="" placeholder="Commune de départ" name="commune0" id="commune0" required>
-                <span class="material-symbols-outlined close">close</span>
+                <span class="material-symbols-outlined close" style="display: none;">close</span>
             </div>
             <div class="input-box">
                 <span class="material-symbols-outlined">flag</span>
                 <input type="text" value="" placeholder="Commune d'arrivée" name="commune1" id="commune1" required>
-                <span class="material-symbols-outlined close">close</span>
+                <span class="material-symbols-outlined close" style="display: none;">close</span>
             </div>
         </div>
         <div id="addDestination" class="box-flex">
@@ -19,7 +19,7 @@
         </div>
         <input type="hidden" name="XDEBUG_TRIGGER">
         <input type="hidden" name="nbField" value="2" id="nbField">
-        <input class="button-box" type="submit" value="Calculer"/>
+        <input class="button-box"  id="calcul" type="submit" disabled value="Calculer"/>
     </form>
     <?php if (!empty($_POST)) {
         echo '<p>

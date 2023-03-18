@@ -25,6 +25,10 @@ class PlusCourtChemin {
      */
     private array $noeudsRoutierCache = [];
 
+    /**
+     * Index du noeud routier courant a traiter, commence a 0 et augmente de 1
+     * a chaque fois qu'on a trouve le chemin le plus court entre 2 noeuds
+     */
     private int $index = 0;
 
     private ?string $numDepartementCourant;
@@ -41,15 +45,13 @@ public function __construct(
 
     function calculerAStar(): ?array {
         $noeudRoutierRepository = new NoeudRoutierRepository();
-
         $this->openSet->insert(new DataContainer($this->noeudsRoutier[$this->index]->getGid(), 0));
-
         $cameFrom = [];
+        $chemin = [];
+        $distance = 0;
         $cost[$this->noeudsRoutier[$this->index]->getGid()] = 0;
         $coordTrocon = [];
-
         $gScore[$this->noeudsRoutier[$this->index]->getGid()] = 0;
-
         $fScore[$this->noeudsRoutier[$this->index]->getGid()] = 0;
 
         while (!$this->openSet->isEmpty()) {
@@ -58,15 +60,25 @@ public function __construct(
 
             // Path found
             if ($noeudRoutierGidCourant == $this->noeudsRoutier[$this->index+1]->getGid()) {
-                $response = $this->reconstruireChemin($cameFrom, $noeudRoutierGidCourant, $cost, $coordTrocon);
+                $cheminReconstruit = $this->reconstruireChemin($cameFrom, $noeudRoutierGidCourant, $cost, $coordTrocon);
+                $chemin = array_merge($chemin, $cheminReconstruit[1]);
+                $distance += $cheminReconstruit[0];
                 if ($this->index == count($this->noeudsRoutier) - 2) {
-                    return $response;
+                    return [$distance, $chemin];
                 } else {
                     $this->index++;
-                    // On réinitialise la variable openset du constructeur
+                    $cameFrom = [];
+                    $cost = [];
+                    $coordTrocon = [];
+                    $gScore = [];
+                    $fScore = [];
                     $this->openSet = new BinarySearchTree();
-                    $this->numDepartementCourant = null;
-                    $this->calculerAStar();
+                    $this->openSet->insert(new DataContainer($this->noeudsRoutier[$this->index]->getGid(), 0));
+                    $cost[$this->noeudsRoutier[$this->index]->getGid()] = 0;
+                    $gScore[$this->noeudsRoutier[$this->index]->getGid()] = 0;
+                    $fScore[$this->noeudsRoutier[$this->index]->getGid()] = 0;
+                    $nodeData = $this->openSet->getMinNode();
+                    $noeudRoutierGidCourant = $nodeData->getGid();
                 }
             }
 
@@ -90,7 +102,6 @@ public function __construct(
                     $coordTrocon[$neighbor['noeud_gid']] = $neighbor['troncon_coord'];
 
                     $gScore[$neighbor['noeud_gid']] = $tentativeGScore;
-
                     $fScore[$neighbor['noeud_gid']] = $tentativeGScore + $this->getHeuristique($neighbor['noeud_coord_lat'],$neighbor['noeud_coord_long']);
 
                     $dataContainer = new DataContainer($neighbor['noeud_gid'], $fScore[$neighbor['noeud_gid']]);

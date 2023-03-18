@@ -24,9 +24,7 @@ nav a {
     color: black;
 }
 
-.logo {
-    padding: 10px;
-}
+.logo { padding: 10px; }
 
 
 /* =========================
@@ -71,9 +69,7 @@ form {
     gap: 10px;
 }
 
-.material-symbols-outlined {
-    user-select: none;
-}
+.material-symbols-outlined { user-select: none; }
 
 .button-box {
     background: #0ac976;
@@ -97,10 +93,9 @@ input[type="text"] {
     gap: 10px;
 }
 
-.close {
-    display: none;
-}
+.close { display: none; }
 
+#addDestination { display: none; }
 
 
 
