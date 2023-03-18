@@ -53,6 +53,10 @@ nav a {
     left: inherit!important;
 }
 
+.ol-attribution.ol-uncollapsible {
+    display: none;
+}
+
 /* =========================
            Form
   ======================= */
