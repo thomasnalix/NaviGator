@@ -17,10 +17,7 @@
             <span class="material-symbols-outlined">add_circle</span>
             <p>Ajouter une destination</p>
         </div>
-        <div class="input-box">
-            <label for="time">Temps de trajet</label>
-            <input type="checkbox" name="time" id="time">
-        </div>
+        <input type="hidden" name="nbField" id="nbField" value="2">
         <input type="hidden" name="XDEBUG_TRIGGER">
         <input class="button-box"  id="calcul" type="submit" disabled value="Calculer"/>
     </form>
