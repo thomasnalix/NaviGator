@@ -15,7 +15,7 @@
 <body>
 <header>
     <nav>
-        <img class="logo" src="../ressources/img/logo.png" alt="logo" width="40">
+        <a class="gator" href="controleurFrontal.php?"><img class="logo" src="../ressources/img/logo.png" alt="logo"></a>
         <a href="controleurFrontal.php?action=afficherListe&controleur=utilisateur">Utilisateurs</a>
         <a href="controleurFrontal.php?action=afficherListe&controleur=noeudCommune">Communes</a>
         <a href="controleurFrontal.php?action=plusCourtChemin&controleur=noeudCommune">Calcul</a>

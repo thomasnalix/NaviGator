@@ -2,7 +2,7 @@ CREATE TABLE nalixt.utilisateurs(
    login VARCHAR(50),
    nom VARCHAR(2000) NOT NULL,
    prenom VARCHAR(2000) NOT NULL,
-   motDePasse text,
+   motDePasse text NOT NULL,
    email VARCHAR(100) NOT NULL,
    imageProfil VARCHAR(64),
    PRIMARY KEY(login)
@@ -52,8 +52,8 @@ SELECT
         WHEN vocation = 'Liaison locale' THEN 40
         WHEN vocation = 'Liaison principale' THEN 80
         WHEN vocation = 'Liaison régionale' THEN 70
-        WHEN vocation = 'Type autoroutier' THEN 110
-        END AS vitesse
+        WHEN vocation = 'Type autoroutier' THEN 130
+    END AS vitesse
 FROM nalixt.troncon_route tr
 
          JOIN nalixt.noeud_routier nr ON nr.geom && st_expand(tr.geom, 0.0001::double precision) AND st_dwithin(tr.geom, nr.geom, 0.0001::double precision)

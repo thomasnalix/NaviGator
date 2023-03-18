@@ -45,4 +45,11 @@ class ControleurGenerique {
         ]);
     }
 
+    public static function afficherAccueil() : void {
+        ControleurGenerique::afficherVue('vueGenerale.php', [
+            "pagetitle" => "Accueil",
+            "cheminVueBody" => "accueil.php"
+        ]);
+    }
+
 }

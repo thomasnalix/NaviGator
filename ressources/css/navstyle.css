@@ -1,8 +1,14 @@
-body {
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@100;200;300;400;500;600;700;800;900&display=swap');
+
+* {
     margin: 0;
-    background: #dedede;
-    font-family: 'Roboto', sans-serif;
-    font-weight: 500;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: "Poppins", sans-serif;
+}
+
+body {
+    background: #0ac876;
 }
 
 /* =========================
@@ -19,12 +25,105 @@ nav {
 }
 
 nav a {
-    padding: 10px;
+    padding-left: 5px;
+    display: flex;
+    align-items: center;
     text-decoration: none;
     color: black;
+    height: 100%;
 }
 
-.logo { padding: 10px; }
+.logo {
+    width: 50px;
+}
+
+/* =========================
+           Accueil
+  ======================= */
+
+.navigator {
+    padding-top: 40px;
+    height: auto;
+    width: auto;
+    max-width: 200px;
+    max-height: 200px;
+}
+
+section {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+}
+
+section:nth-child(1){
+    color: #fff;
+}
+
+section:nth-child(2){
+    color: #0ac876;
+    background-color: #fff;
+}
+
+section:nth-child(3){
+    color: #fff;
+}
+
+section:nth-child(4){
+    color: #0ac876;
+    background-color: #fff;
+}
+
+section .container{
+    margin: 100px;
+}
+
+section h1{
+    font-size: 60px;
+}
+
+section h2{
+    font-size: 40px;
+    text-align: center;
+    text-transform: uppercase;
+}
+
+section .cards{
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+}
+
+section .cards .text-card{
+    background: #0ac876;
+    color: #fff;
+    padding: 20px;
+    width: 100%;
+}
+
+section .cards .text-card img {
+    width: 100%;
+    border-radius: 15px;
+}
+
+
+/* =========================
+           Button
+  ======================= */
+
+button {
+    background: #069f5e;
+    color: #fff;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+button a {
+    text-decoration: none;
+    color: #fff;
+}
 
 
 /* =========================
@@ -72,7 +171,7 @@ form {
 .material-symbols-outlined { user-select: none; }
 
 .button-box {
-    background: #0ac976;
+    background: #0ac876;
     border: none;
     padding: 5px 10px;
     border-radius: 5px;
