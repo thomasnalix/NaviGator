@@ -8,7 +8,7 @@
 }
 
 body {
-    background: #0ac876;
+    background: #fff;
 }
 
 /* =========================
@@ -44,8 +44,8 @@ nav a {
 .navigator {
     height: auto;
     width: auto;
-    max-width: 500px;
-    max-height: 500px;
+    max-width: 320px;
+    max-height: 320px;
 }
 
 section {
@@ -57,20 +57,20 @@ section {
 
 section:nth-child(1){
     color: #fff;
+    background-color: #0ac876;
 }
 
 section:nth-child(2){
     color: #0ac876;
-    background-color: #fff;
 }
 
 section:nth-child(3){
     color: #fff;
+    background-color: #0ac876;
 }
 
 section:nth-child(4){
     color: #0ac876;
-    background-color: #fff;
 }
 
 section .container{
@@ -107,6 +107,18 @@ section .cards .text-card{
 section .cards .text-card img {
     width: 100%;
     border-radius: 15px;
+}
+
+.reveal{
+    position: relative;
+    transform: translateY(150px);
+    opacity: 0;
+    transition: all 2s ease;
+}
+
+.reveal.active{
+    transform: translateY(0px);
+    opacity: 1;
 }
 
 

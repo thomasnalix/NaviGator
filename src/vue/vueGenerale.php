@@ -7,6 +7,8 @@
     <link rel="stylesheet" href="../ressources/css/navstyle.css">
     <link rel="stylesheet" href="https://openlayers.org/en/v6.6.1/css/ol.css" type="text/css">
     <script src="https://openlayers.org/en/v6.6.1/build/ol.js"></script>
+    <script src="../ressources/js/scroll.js"></script>
+    <script src="../ressources/js/mousemove.js"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Source+Sans+Pro&display=swap" rel="stylesheet">

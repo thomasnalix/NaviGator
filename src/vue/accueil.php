@@ -2,12 +2,12 @@
     <div class="container">
         <h1>NaviGator</h1>
         <div class="cards">
-            <img class="navigator" src="../ressources/img/logo_void.png">
+            <img src="../ressources/img/logo_void.png" class="navigator object" data-value="3" alt="logo">
         </div>
     </div>
 </section>
 <section>
-    <div class="container">
+    <div class="container reveal">
         <h2>Présentation</h2>
         <div class="cards">
             <div class="text-card">
@@ -26,7 +26,7 @@
     </div>
 </section>
 <section>
-    <div class="container">
+    <div class="container reveal">
         <h2>Tester NaviGator</h2>
         <div style="display: flex; flex-direction: column; align-items: center">
             <h3>Images de comment ça marche etc...</h3>
@@ -35,7 +35,7 @@
     </div>
 </section>
 <section>
-    <div class="container">
+    <div class="container reveal">
         <h2>Les créateurs</h2>
         <div class="cards">
             <div class="text-card">
