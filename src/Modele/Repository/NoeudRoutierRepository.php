@@ -53,15 +53,6 @@ class NoeudRoutierRepository extends AbstractRepository
     public function getNoeudsRoutierDepartement(int $noeudRoutierGid) : array {
         $numDepartementNoeudRoutier = $this->getDepartementGid($noeudRoutierGid);
         $requeteSQL = <<<SQL
-            --             SELECT *
-            --             FROM nalixt.noeuds_from_troncon
-            --             WHERE num_departement_depart = (SELECT num_departement
-            --             FROM nalixt.noeud_gid_dep
-            --             WHERE gid = :gidTag)
-            --             OR
-            --             num_departement_arrivee = (SELECT num_departement
-            --             FROM nalixt.noeud_gid_dep
-            --             WHERE gid = :gidTag);
             SELECT *
             FROM nalixt.noeuds_from_troncon
             WHERE num_departement_depart = :departement
@@ -74,13 +65,7 @@ class NoeudRoutierRepository extends AbstractRepository
         ));
         $noeudsRoutierRegion = $pdoStatement->fetchAll(PDO::FETCH_ASSOC);
         /**
-         * On récup ça:
-         * 1 2 ...
-         * 1 3 ...
-         * 1 4 ...
-         * 2 5 ...
-         * 2 6 ...
-         * Et construit un tableau de noeuds routiers avec leurs voisins tel que :
+         * On construit un tableau de noeuds routiers avec leurs voisins tel que :
          * [
          *     numDepartement => [
          *          1 => [2, 3, 4],
@@ -121,8 +106,67 @@ class NoeudRoutierRepository extends AbstractRepository
         return $noeudsRoutierRegionAvecVoisins;
     }
 
+    public function getNoeudsRoutierDepartementTime(int $noeudRoutierGid): array {
+        $numDepartementNoeudRoutier = $this->getDepartementGid($noeudRoutierGid);
+        $requeteSQL = <<<SQL
+            SELECT *
+            FROM nalixt.vitesses_route
+            WHERE num_departement_depart = :departement
+            OR
+            num_departement_arrivee = :departement;
+        SQL;
+        $pdoStatement = ConnexionBaseDeDonnees::getPdo()->prepare($requeteSQL);
+        $pdoStatement->execute(array(
+            "departement" => $numDepartementNoeudRoutier
+        ));
+        $noeudsRoutierRegion = $pdoStatement->fetchAll(PDO::FETCH_ASSOC);
+        /**
+         * On construit un tableau de noeuds routiers avec leurs voisins tel que :
+         * [
+         *     numDepartement => [
+         *          1 => [2, 3, 4],
+         *          2 => [5, 6],
+         *     ],
+         *     numDepartement2 => [ ... ],
+         * ]
+         */
+        $noeudsRoutierRegionAvecVoisins = [];
+
+        foreach ($noeudsRoutierRegion as $noeudRoutierRegion) {
+            // en fonction de $numDepartementNoeudRoutier, on va ajouter dans le tableau avec les bonnes valeurs donc noeudArrive ou noeudArrive
+            if ($numDepartementNoeudRoutier === $noeudRoutierRegion["num_departement_depart"]) {
+                $noeudsRoutierRegionAvecVoisins[$numDepartementNoeudRoutier][$noeudRoutierRegion["noeud_depart_gid"]][] = [
+                    "noeud_gid" => $noeudRoutierRegion["noeud_arrivee_gid"],
+                    "noeud_courant_lat" => $noeudRoutierRegion["noeud_depart_lat"],
+                    "noeud_courant_long" => $noeudRoutierRegion["noeud_depart_long"],
+                    "noeud_coord_lat" => $noeudRoutierRegion["noeud_arrivee_lat"],
+                    "noeud_coord_long" => $noeudRoutierRegion["noeud_arrivee_long"],
+                    "troncon_gid" => $noeudRoutierRegion["troncon_gid"],
+                    "troncon_coord" => $noeudRoutierRegion["troncon_coord"],
+                    "longueur_troncon" => $noeudRoutierRegion["longueur_troncon"],
+                    "vitesse" => $noeudRoutierRegion["vitesse"],
+                ];
+            }
+            if ($numDepartementNoeudRoutier ===  $noeudRoutierRegion["num_departement_arrivee"]) {
+                $noeudsRoutierRegionAvecVoisins[$numDepartementNoeudRoutier][$noeudRoutierRegion["noeud_arrivee_gid"]][] = [
+                    "noeud_gid" => $noeudRoutierRegion["noeud_depart_gid"],
+                    "noeud_courant_lat" => $noeudRoutierRegion["noeud_arrivee_lat"],
+                    "noeud_courant_long" => $noeudRoutierRegion["noeud_arrivee_long"],
+                    "noeud_coord_lat" => $noeudRoutierRegion["noeud_depart_lat"],
+                    "noeud_coord_long" => $noeudRoutierRegion["noeud_depart_long"],
+                    "troncon_gid" => $noeudRoutierRegion["troncon_gid"],
+                    "troncon_coord" => $noeudRoutierRegion["troncon_coord"],
+                    "longueur_troncon" => $noeudRoutierRegion["longueur_troncon"],
+                    "vitesse" => $noeudRoutierRegion["vitesse"],
+                ];
+            }
+        }
+        return $noeudsRoutierRegionAvecVoisins;
+    }
+
     /**
      * Renvoi les informations d'un noeud routier tel que le gid, et ses coordonnées (lat, long)
+     * @param $idRte
      * @return NoeudRoutier|null
      */
     public function recupererNoeudRoutier($idRte): ?NoeudRoutier {

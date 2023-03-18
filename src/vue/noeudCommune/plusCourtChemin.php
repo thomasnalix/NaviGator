@@ -17,13 +17,16 @@
             <span class="material-symbols-outlined">add_circle</span>
             <p>Ajouter une destination</p>
         </div>
+        <div class="input-box">
+            <label for="time">Temps de trajet</label>
+            <input type="checkbox" name="time" id="time">
+        </div>
         <input type="hidden" name="XDEBUG_TRIGGER">
-        <input type="hidden" name="nbField" value="2" id="nbField">
         <input class="button-box"  id="calcul" type="submit" disabled value="Calculer"/>
     </form>
     <?php if (!empty($_POST)) {
         echo '<p>
-                ' . $nomCommuneDepart . ' vers ' . $nomCommuneArrivee . ' : ' . $distance . 'km.
+                ' . $nomCommuneDepart . ' vers ' . $nomCommuneArrivee . ' : ' . $distance . 'km. temps : ' . gmdate('H:i:s', floor($temps * 3600)) . ' 
               </p>';
     }
     ?>

@@ -46,7 +46,7 @@ class ControleurNoeudCommune extends ControleurGenerique {
 
 
     public static function plusCourtChemin(): void {
-        $parametres = [
+        $parameters = [
             "pagetitle" => "Plus court chemin",
             "cheminVueBody" => "noeudCommune/plusCourtChemin.php",
         ];
@@ -69,14 +69,18 @@ class ControleurNoeudCommune extends ControleurGenerique {
                 $noeudRoutier[] = $noeudRoutierRepository->recupererNoeudRoutier($noeudCommune->getId_nd_rte());
 
             $pcc = new PlusCourtChemin($noeudRoutier);
-            $distance = $pcc->calculerAStar();
 
-            $parametres["nomCommuneDepart"] = $communes[0];
-            $parametres["nomCommuneArrivee"] = $communes[count($communes) - 1];
-            $parametres["distance"] = $distance[0];
-            $parametres["chemin"] = $distance[1];
+
+            $distance = $pcc->aStarDistance();
+            $parameters["distance"] = $distance[0];
+            $parameters["chemin"] = $distance[1];
+            $parameters["temps"] = $distance[2];
+
+            $parameters["nomCommuneDepart"] = $communes[0];
+            $parameters["nomCommuneArrivee"] = $communes[count($communes) - 1];
+
         }
-        ControleurNoeudCommune::afficherVue('vueGenerale.php', $parametres);
+        ControleurNoeudCommune::afficherVue('vueGenerale.php', $parameters);
     }
 
 

@@ -7,7 +7,7 @@ const nbField = document.getElementById('nbField');
 // Création d'un field
 addDestination.addEventListener('click', function () {
     let nbChild = formDestination.childElementCount;
-    if (nbChild < 6) {
+    if (nbChild < 13) {
         const div = document.createElement('div');
         div.classList.add('input-box');
 
@@ -74,7 +74,7 @@ formDestination.addEventListener('input', function () {
 
 function verifyFilledField() {
     let nbChild = formDestination.childElementCount;
-    if (nbChild < 6) {
+    if (nbChild < 13) {
         let nbChild = formDestination.childElementCount;
         let nbFilled = 0;
         for (let i = 0; i < nbChild; i++) {
