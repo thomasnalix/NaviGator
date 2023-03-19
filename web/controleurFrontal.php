@@ -1,5 +1,4 @@
 <?php
-use App\PlusCourtChemin\Lib\Psr4AutoloaderClass;
 
 require_once __DIR__ . '/../vendor/autoload.php';
 
