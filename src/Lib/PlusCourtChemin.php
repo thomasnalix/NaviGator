@@ -2,9 +2,8 @@
 
 namespace App\PlusCourtChemin\Lib;
 
-use App\PlusCourtChemin\Modele\DataObject\DataContainer;
-use App\PlusCourtChemin\Modele\DataObject\NoeudRoutier;
 use App\PlusCourtChemin\Modele\Repository\NoeudRoutierRepository;
+use SplPriorityQueue;
 
 class PlusCourtChemin {
 
@@ -30,10 +29,13 @@ class PlusCourtChemin {
      */
     private int $index = 0;
     private ?string $numDepartementCourant;
-    private DataStructure $openSet;
+    private PriorityQueue $openSet;
+
+    private array $visited = [];
 
     public function __construct(private array $noeudsRoutier) {
-        $this->openSet = new BinarySearchTree();
+        $this->openSet = new PriorityQueue();
+        $this->openSet->setExtractFlags(SplPriorityQueue::EXTR_DATA);
     }
 
     /**
@@ -44,16 +46,17 @@ class PlusCourtChemin {
         $noeudRoutierRepository = new NoeudRoutierRepository();
         $cameFrom = $chemin = $coordTrocon= [];
         $distance = $temps = 0;
-        $cost[$this->noeudsRoutier[$this->index]->getGid()] = 0;
-        $vitesse[$this->noeudsRoutier[$this->index]->getGid()] = 50;
-        $gScore[$this->noeudsRoutier[$this->index]->getGid()] = 0;
-        $fScore[$this->noeudsRoutier[$this->index]->getGid()] = 0;
-        $this->openSet->insert(new DataContainer($this->noeudsRoutier[$this->index]->getGid(), 0));
+        $gid = $this->noeudsRoutier[$this->index]->getGid();
+        $cost[$gid] = 0;
+        $vitesse[$gid] = 50;
+        $gScore[$gid] = 0;
+        $fScore[$gid] = 0;
+        $this->openSet->insert($gid, 0);
+        $this->visited[$gid] = true;
 
-        while (!$this->openSet->isEmpty()) {
-            $nodeData = $this->openSet->getMinNode();
-            $noeudRoutierGidCourant = $nodeData->getGid();
-
+        while ($this->openSet->valid()) {
+            $noeudRoutierGidCourant = $this->openSet->extract();
+            unset($this->visited[$noeudRoutierGidCourant]);
             // Path found
             if ($noeudRoutierGidCourant == $this->noeudsRoutier[$this->index+1]->getGid()) {
                 $cheminReconstruit = $this->reconstruireChemin($cameFrom, $noeudRoutierGidCourant, $cost, $coordTrocon,$vitesse);
@@ -65,10 +68,12 @@ class PlusCourtChemin {
                 } else {
                     $this->index++;
                     $cameFrom = $cost = $coordTrocon = $gScore = $fScore = []; // reset des variables
-                    $this->openSet = new BinarySearchTree();
-                    $this->openSet->insert(new DataContainer($this->noeudsRoutier[$this->index]->getGid(), 0));
-                    $cost[$this->noeudsRoutier[$this->index]->getGid()] = $gScore[$this->noeudsRoutier[$this->index]->getGid()] = $fScore[$this->noeudsRoutier[$this->index]->getGid()] = 0;
-                    $noeudRoutierGidCourant = $this->openSet->getMinNode()->getGid();
+                    $this->openSet = new PriorityQueue();
+                    $this->openSet->setExtractFlags(SplPriorityQueue::EXTR_DATA);
+                    $gid = $this->noeudsRoutier[$this->index]->getGid();
+                    $this->openSet->insert(0, $gid);
+                    $cost[$this->noeudsRoutier[$this->index]->getGid()] = $gScore[$gid] = $fScore[$gid] = 0;
+                    $noeudRoutierGidCourant = $this->openSet->top();
                 }
             }
 
@@ -78,7 +83,6 @@ class PlusCourtChemin {
                 $this->numDepartementCourant = $this->getNumDepartement($noeudRoutierGidCourant);
             }
 
-            $this->openSet->delete($nodeData);
             $neighbors = $this->noeudsRoutierCache[$this->numDepartementCourant][$noeudRoutierGidCourant];
 
             foreach ($neighbors as $neighbor) {
@@ -91,15 +95,12 @@ class PlusCourtChemin {
                     $coordTrocon[$neighbor['noeud_gid']] = $neighbor['troncon_coord'];
                     $gScore[$neighbor['noeud_gid']] = $tentativeGScore;
                     $fScore[$neighbor['noeud_gid']] = $tentativeGScore + $this->getHeuristiqueEuclidienne($neighbor['noeud_coord_lat'],$neighbor['noeud_coord_long']);
-
-                    $dataContainer = new DataContainer($neighbor['noeud_gid'], $fScore[$neighbor['noeud_gid']]);
-                    $search = $this->openSet->search($dataContainer);
-                    if (!$search)
-                        $this->openSet->insert($dataContainer);
+                    if (!isset($this->visited[$neighbor['noeud_gid']]))
+                        $this->openSet->insert($neighbor['noeud_gid'], $fScore[$neighbor['noeud_gid']]);
                 }
             }
         }
-        return [-1, -1];
+        return [-1, -1, -1];
     }
 
 
