@@ -1,6 +1,6 @@
 <section>
-    <div class="container">
-        <h1>NaviGator</h1>
+    <div class="parallax">
+        <h1 class="object navigator-title" data-value="4">NaviGator</h1>
         <div class="cards">
             <img src="../ressources/img/logo_void.png" class="navigator object" data-value="3" alt="logo">
         </div>

@@ -43,7 +43,7 @@ class PlusCourtChemin {
     function aStarDistance(): ?array {
         $noeudRoutierRepository = new NoeudRoutierRepository();
         $cameFrom = $chemin = $coordTrocon= [];
-        $distance = 0;
+        $distance = $temps = 0;
         $cost[$this->noeudsRoutier[$this->index]->getGid()] = 0;
         $vitesse[$this->noeudsRoutier[$this->index]->getGid()] = 50;
         $gScore[$this->noeudsRoutier[$this->index]->getGid()] = 0;
@@ -59,8 +59,9 @@ class PlusCourtChemin {
                 $cheminReconstruit = $this->reconstruireChemin($cameFrom, $noeudRoutierGidCourant, $cost, $coordTrocon,$vitesse);
                 $chemin = array_merge($chemin, $cheminReconstruit[1]);
                 $distance += $cheminReconstruit[0];
+                $temps += $cheminReconstruit[2];
                 if ($this->index == count($this->noeudsRoutier) - 2) {
-                    return [$distance, $chemin, $cheminReconstruit[2]];
+                    return [$distance, $chemin, $temps];
                 } else {
                     $this->index++;
                     $cameFrom = $cost = $coordTrocon = $gScore = $fScore = []; // reset des variables
