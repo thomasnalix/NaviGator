@@ -31,8 +31,6 @@ class PlusCourtChemin {
     private ?string $numDepartementCourant;
     private PriorityQueue $openSet;
 
-    private array $visited = [];
-
     public function __construct(private array $noeudsRoutier) {
         $this->openSet = new PriorityQueue();
         $this->openSet->setExtractFlags(SplPriorityQueue::EXTR_DATA);
@@ -44,7 +42,7 @@ class PlusCourtChemin {
      */
     function aStarDistance(): ?array {
         $noeudRoutierRepository = new NoeudRoutierRepository();
-        $cameFrom = $chemin = $coordTrocon= [];
+        $cameFrom = $chemin = $coordTrocon = $numDepartement = [];
         $distance = $temps = 0;
         $gid = $this->noeudsRoutier[$this->index]->getGid();
         $cost[$gid] = 0;
@@ -52,14 +50,14 @@ class PlusCourtChemin {
         $gScore[$gid] = 0;
         $fScore[$gid] = 0;
         $this->openSet->insert($gid, 0);
-        $this->visited[$gid] = true;
+        $visited[$gid] = true;;
 
         while ($this->openSet->valid()) {
             $noeudRoutierGidCourant = $this->openSet->extract();
-            unset($this->visited[$noeudRoutierGidCourant]);
+            unset($visited[$noeudRoutierGidCourant]);
             // Path found
             if ($noeudRoutierGidCourant == $this->noeudsRoutier[$this->index+1]->getGid()) {
-                $cheminReconstruit = $this->reconstruireChemin($cameFrom, $noeudRoutierGidCourant, $cost, $coordTrocon,$vitesse);
+                $cheminReconstruit = $this->reconstruireChemin($cameFrom, $noeudRoutierGidCourant, $cost, $coordTrocon, $vitesse);
                 $chemin = array_merge($chemin, $cheminReconstruit[1]);
                 $distance += $cheminReconstruit[0];
                 $temps += $cheminReconstruit[2];
@@ -67,11 +65,11 @@ class PlusCourtChemin {
                     return [$distance, $chemin, $temps];
                 } else {
                     $this->index++;
-                    $cameFrom = $cost = $coordTrocon = $gScore = $fScore = []; // reset des variables
+                    $cameFrom = $cost = $coordTrocon = $gScore = $fScore = $visited = []; // reset des variables
                     $this->openSet = new PriorityQueue();
                     $this->openSet->setExtractFlags(SplPriorityQueue::EXTR_DATA);
                     $gid = $this->noeudsRoutier[$this->index]->getGid();
-                    $this->openSet->insert(0, $gid);
+                    $this->openSet->insert($gid, 0);
                     $cost[$this->noeudsRoutier[$this->index]->getGid()] = $gScore[$gid] = $fScore[$gid] = 0;
                     $noeudRoutierGidCourant = $this->openSet->top();
                 }
@@ -89,13 +87,14 @@ class PlusCourtChemin {
                 $tentativeGScore = $gScore[$noeudRoutierGidCourant] + $neighbor['longueur_troncon'];
                 $value = $gScore[$neighbor['noeud_gid']] ?? PHP_INT_MAX;
                 if ($tentativeGScore < $value) {
+                    $numDepartement[$neighbor['noeud_gid']] = $this->numDepartementCourant;
                     $cameFrom[$neighbor['noeud_gid']] = $noeudRoutierGidCourant;
                     $cost[$neighbor['noeud_gid']] = $neighbor['longueur_troncon'];
                     $vitesse[$neighbor['noeud_gid']] = $neighbor['vitesse'];
                     $coordTrocon[$neighbor['noeud_gid']] = $neighbor['troncon_coord'];
                     $gScore[$neighbor['noeud_gid']] = $tentativeGScore;
                     $fScore[$neighbor['noeud_gid']] = $tentativeGScore + $this->getHeuristiqueEuclidienne($neighbor['noeud_coord_lat'],$neighbor['noeud_coord_long']);
-                    if (!isset($this->visited[$neighbor['noeud_gid']]))
+                    if (!isset($visited[$neighbor['noeud_gid']]))
                         $this->openSet->insert($neighbor['noeud_gid'], $fScore[$neighbor['noeud_gid']]);
                 }
             }
@@ -157,6 +156,8 @@ class PlusCourtChemin {
     }
 
     private function getNumDepartement($noeudRoutierGidCourant) : ?string {
+        if (isset($this->numDepartementCourant) && isset($this->noeudsRoutierCache[$this->numDepartementCourant][$noeudRoutierGidCourant]))
+            return $this->numDepartementCourant;
         foreach (array_keys($this->noeudsRoutierCache) as $numDepartement)
             if (isset($this->noeudsRoutierCache[$numDepartement][$noeudRoutierGidCourant]))
                 return $numDepartement;
