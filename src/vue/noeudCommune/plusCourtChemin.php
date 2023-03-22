@@ -8,6 +8,7 @@
                 <input type="text" list="auto-completion-0" value="" placeholder="Commune de départ" name="commune0" class="commune" id="commune0" required>
                 <datalist id="auto-completion-0"></datalist>
                 <input type="hidden" name="gid0" id="gid0">
+                <span class="locate-button material-symbols-outlined">point_scan</span>
                 <span class="material-symbols-outlined close" style="display: none;">close</span>
             </div>
             <div class="input-box">
@@ -15,6 +16,7 @@
                 <input type="text" list="auto-completion-1" value="" placeholder="Commune d'arrivée" name="commune1" class="commune" id="commune1" required>
                 <datalist id="auto-completion-1"></datalist>
                 <input type="hidden" name="gid1" id="gid1">
+                <span class="locate-button material-symbols-outlined">point_scan</span>
                 <span class="material-symbols-outlined close" style="display: none;">close</span>
             </div>
         </div>

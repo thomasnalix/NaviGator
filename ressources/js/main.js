@@ -2,9 +2,20 @@ const calculButton = document.getElementById('calcul');
 const addDestination = document.getElementById('addDestination');
 const formDestination = document.getElementById('formDestination');
 const close = document.getElementsByClassName('close');
+const locateButton = document.getElementsByClassName('locate-button');
 const nbField = document.getElementById('nbField');
 
-// Création d'un field
+
+// If all field input of the fox formDestination are filled, addDestination is affiched
+formDestination.addEventListener('input', e => {
+    e.target.parentElement.children[3].value = '';
+    verifyFilledField();
+});
+
+initLocateButtons();
+
+
+// Création d'un field when click on addDestination
 addDestination.addEventListener('click', function () {
     let nbChild = formDestination.childElementCount;
     if (nbChild < 13) {
@@ -27,7 +38,9 @@ addDestination.addEventListener('click', function () {
         input.id = `commune${nbChild}`;
         input.setAttribute('list', dataList.id);
         input.required = true;
-        input.addEventListener('input', e => autocomplete(dataList, e.target.value));
+        input.addEventListener('input', e => {
+            autocomplete(dataList, e.target.value);
+        });
 
         div.appendChild(input);
         div.appendChild(dataList);
@@ -39,22 +52,30 @@ addDestination.addEventListener('click', function () {
         div.appendChild(gidInput);
 
         const iconRight = document.createElement('span');
-        iconRight.classList.add('material-symbols-outlined', 'close');
-        iconRight.textContent = 'close';
+        iconRight.classList.add('material-symbols-outlined', 'locate-button');
+        iconRight.textContent = 'point_scan';
         div.appendChild(iconRight);
+
+        const iconDelete = document.createElement('span');
+        iconDelete.classList.add('material-symbols-outlined', 'close');
+        iconDelete.textContent = 'close';
+        div.appendChild(iconDelete);
+
 
         formDestination.appendChild(div);
         nbField.setAttribute('value', nbChild + 1);
         verifyChild();
         verifyFilledField();
-        init();
+        initDeleteButtons();
+        initLocateButtons();
     } else {
         addDestination.style.display = 'none';
     }
 });
 
+// Init delete button event
 //when click on close class icon, remove the parent field
-function init() {
+function initDeleteButtons() {
     for (let i = 0; i < close.length; i++) {
         close[i].onclick = function () {
             let nbChild = formDestination.childElementCount;
@@ -73,6 +94,25 @@ function init() {
     }
 }
 
+// Init locate button event
+function initLocateButtons() {
+    for (let i = 0; i < locateButton.length; i++) {
+        locateButton[i].addEventListener('click', e => {
+            // wait for the user to click on the map
+            document.body.style.cursor = 'crosshair';
+            map.once('click', function (evt) {
+                let coord = ol.proj.transform(evt.coordinate, 'EPSG:3857', 'EPSG:4326');
+                let lon = coord[0];
+                let lat = coord[1];
+                let target = e.target.parentElement;
+                send(lon, lat, target);
+
+                document.body.style.cursor = 'default';
+            });
+        });
+    }
+}
+
 
 function verifyChild() {
     const nbChild = formDestination.childElementCount;
@@ -81,10 +121,6 @@ function verifyChild() {
         close[i].style.display = display;
 }
 
-// If all field input of the fox formDestination are filled, addDestination is affiched
-formDestination.addEventListener('input', function () {
-    verifyFilledField();
-});
 
 function verifyFilledField() {
     let nbChild = formDestination.childElementCount;
@@ -105,28 +141,13 @@ function verifyFilledField() {
     }
 }
 
-map.on('click', function (e) {
-    // get the coordinates of the click
-    let coord = ol.proj.transform(e.coordinate, 'EPSG:3857', 'EPSG:4326');
-    let lon = coord[0];
-    let lat = coord[1];
 
-    send(lon, lat);
-    //alert("Vous avez cliqué sur la longitude : " + lon + " et la latitude : " + lat);
-});
-
-async function send(long, lat) {
+async function send(long, lat, target) {
     const url = 'controleurFrontal.php?controleur=noeudCommune&action=getNoeudProche&long=' + long + '&lat=' + lat;
     const response = await fetch(url);
     const data = await response.json();
-    // set value with data response of the first field empty of formDestination
-    for (let i = 0; i < formDestination.childElementCount; i++) {
-        if (formDestination.children[i].children[1].value === '') {
-            formDestination.children[i].children[1].value = data.nom_comm;
-            formDestination.children[i].children[3].value = data.gid;
-            break;
-        }
-    }
-    verifyFilledField();
 
+    target.children[1].value = data.nom_comm;
+    target.children[3].value = data.gid;
+    verifyFilledField();
 }

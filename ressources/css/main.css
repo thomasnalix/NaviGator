@@ -196,6 +196,13 @@ button a {
     display: none;
 }
 
+.locate-button {
+    background: #eeeeee;
+    border-radius: 5px;
+    padding: 5px;
+    cursor: pointer;
+}
+
 /* =========================
            Form
   ======================= */
