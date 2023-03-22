@@ -8,20 +8,27 @@ CREATE TABLE nalixt.utilisateurs(
    PRIMARY KEY(login)
 );
 
+
 CREATE TABLE nalixt.historique(
   login VARCHAR(20) NOT NULL,
-  historique VARCHAR(2000) ARRAY,
+  historique INTEGER ARRAY,
   PRIMARY KEY(login),
   FOREIGN KEY (login) REFERENCES nalixt.utilisateurs(login)
 );
 
 
-CREATE TABLE nalixt.historique_2(
-    idHistorique SERIAL,
+CREATE TABLE nalixt.favoris(
     login VARCHAR(20) NOT NULL,
-    historique VARCHAR(2000) ARRAY,
-    PRIMARY KEY(idHistorique),
+    favoris INTEGER ARRAY,
+    PRIMARY KEY(login),
     FOREIGN KEY (login) REFERENCES nalixt.utilisateurs(login)
+);
+
+
+CREATE TABLE nalixt.trajets(
+    idTrajet SERIAL,
+    trajets VARCHAR ARRAY,
+    PRIMARY KEY (idTrajet)
 );
 
 
