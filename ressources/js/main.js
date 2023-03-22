@@ -9,7 +9,7 @@ const flagBox = document.getElementById('flag-box');
 
 // If all field input of the fox formDestination are filled, addDestination is affiched
 formDestination.addEventListener('input', e => {
-    e.target.parentElement.children[3].value = '';
+    e.target.parentElement.children[2].value = '';
     verifyFilledField();
 });
 
@@ -54,7 +54,7 @@ addDestination.addEventListener('click', function () {
 
         const iconRight = document.createElement('span');
         iconRight.classList.add('material-symbols-outlined', 'locate-button');
-        iconRight.textContent = 'point_scan';
+        iconRight.textContent = 'my_location';
         div.appendChild(iconRight);
 
         const iconDelete = document.createElement('span');
@@ -62,16 +62,15 @@ addDestination.addEventListener('click', function () {
         iconDelete.textContent = 'close';
         div.appendChild(iconDelete);
 
-        const point = document.createElement('span');
-        point.classList.add('point');
-        // append child end - 1
-        flagBox.insertBefore(point, flagBox.children[flagBox.childElementCount - 1]);
-        const point1 = document.createElement('span');
-        point1.classList.add('point');
-        // append child end - 1
-        flagBox.insertBefore(point1, flagBox.children[flagBox.childElementCount - 1]);
+        for (let i = 0; i < 3; i++) {
+            let point = document.createElement('span');
+            point.classList.add('point');
+            // append child end - 1
+            flagBox.insertBefore(point, flagBox.children[flagBox.childElementCount - 1]);
+        }
 
-        formDestination.appendChild(div);
+        // add new field in formDestination before end - 1
+        formDestination.insertBefore(div, formDestination.children[formDestination.childElementCount - 1]);
         nbField.setAttribute('value', nbChild + 1);
         verifyChild();
         verifyFilledField();
@@ -140,7 +139,7 @@ function verifyFilledField() {
         let nbChild = formDestination.childElementCount;
         let nbFilled = 0;
         for (let i = 0; i < nbChild; i++) {
-            if (formDestination.children[i].children[1].value !== '')
+            if (formDestination.children[i].children[0].value !== '')
                 nbFilled++;
         }
         if (nbFilled === nbChild) {

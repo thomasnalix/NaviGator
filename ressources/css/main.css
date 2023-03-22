@@ -176,14 +176,15 @@ button a {
 }
 
 .itinerary-box {
-    background: white;
+    background: #ffffff96;
     margin : 10px;
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
     padding: 10px;
     position: absolute;
     border-radius: 10px;
     z-index: 100;
-    width: 320px;
+    width: 370px;
+    backdrop-filter: blur(15px) saturate(140%);
 }
 
 .ol-zoom {
@@ -220,11 +221,14 @@ form {
     padding: 5px 10px;
     border-radius: 5px;
     cursor: pointer;
+    font-weight: 600;
+    color: #171717;
 }
 
 input[type="text"] {
-    background: #f5f5f5;
-    border: none;
+    background: rgb(255 255 255 / 49%);
+    border: 1px solid #d0d0d0;
+    border-right: none;
     border-radius: 5px 0 0 5px;
     padding: 10px 15px;
     width: 100%;
@@ -237,11 +241,14 @@ input[type="text"] {
     gap: 10px;
 }
 
-#addDestination { display: none; }
+#addDestination {
+    display: none;
+    padding-left: 10px;
+}
 
 .point {
-    width: 5px;
-    height: 5px;
+    width: 4px;
+    height: 4px;
     border-radius: 50%;
     background: #1a1a1a;
 }
@@ -251,18 +258,22 @@ input[type="text"] {
 }
 
 .close {
-    display: none;
     visibility: hidden;
     cursor: pointer;
+    padding-left: 5px;
 }
 
 .locate-button {
-    background: #f5f5f5;
+    background: rgb(255 255 255 / 49%);
+    border: 1px solid #d0d0d0;
     border-radius: 0 5px 5px 0;
     padding: 9px 10px;
     cursor: pointer;
     height: 40px;
     border-left: 2px solid #e1e1e1;
+}
+.locate-button:hover {
+    background: rgba(232, 232, 232, 0.27);
 }
 
 
@@ -308,4 +319,6 @@ input[type="text"] {
 .space-between { justify-content: space-between }
 .p-4 { padding: 10px }
 .items-center { align-items: center }
-
+.w-full { width: 100% }
+.mb-10 { margin-bottom: 10px }
+.mb-6 { margin-bottom: 6px }
