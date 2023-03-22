@@ -276,6 +276,12 @@ input[type="text"] {
     background: rgba(232, 232, 232, 0.27);
 }
 
+.etape {
+    font-size: 15px!important;
+}
+
+
+
 
 
 /* Bootstrap alerts */

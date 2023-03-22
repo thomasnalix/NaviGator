@@ -62,12 +62,30 @@ addDestination.addEventListener('click', function () {
         iconDelete.textContent = 'close';
         div.appendChild(iconDelete);
 
-        for (let i = 0; i < 3; i++) {
+
+        // if nbItem = 2, add more point
+        if (nbChild === 2) {
+            for (let i = 0; i < 2; i++) {
+                let point = document.createElement('span');
+                point.classList.add('point');
+                // append child end - 1
+                flagBox.insertBefore(point, flagBox.children[flagBox.childElementCount - 1]);
+            }
+        }
+
+        let iconEtape = document.createElement('span');
+        iconEtape.classList.add('material-symbols-outlined', 'etape');
+        iconEtape.textContent = 'fiber_manual_record';
+        // append child end - 1
+        flagBox.insertBefore(iconEtape, flagBox.children[flagBox.childElementCount - 1]);
+
+        for (let i = 0; i < 2; i++) {
             let point = document.createElement('span');
             point.classList.add('point');
             // append child end - 1
             flagBox.insertBefore(point, flagBox.children[flagBox.childElementCount - 1]);
         }
+
 
         // add new field in formDestination before end - 1
         formDestination.insertBefore(div, formDestination.children[formDestination.childElementCount - 1]);
@@ -88,10 +106,16 @@ function initDeleteButtons() {
         close[i].onclick = function () {
             let nbChild = formDestination.childElementCount;
             if (nbChild > 2) {
+                removePointOnMap(this.parentElement.children[0].name);
                 this.parentElement.remove();
                 // remove point last - 1 point in flagBox
-                flagBox.children[flagBox.childElementCount - 2].remove();
-                flagBox.children[flagBox.childElementCount - 2].remove();
+                for (let i = 0; i < 3; i++) {
+                    flagBox.children[flagBox.childElementCount - 2].remove();
+                }
+                if (nbChild === 3) {
+                    flagBox.children[flagBox.childElementCount - 2].remove();
+                    flagBox.children[flagBox.childElementCount - 2].remove();
+                }
             }
             // set all id of field
             for (let i = 0; i < formDestination.childElementCount; i++) {
@@ -111,6 +135,7 @@ function initLocateButtons() {
         locateButton[i].addEventListener('click', e => {
             // wait for the user to click on the map
             document.body.style.cursor = 'crosshair';
+
             map.once('click', function (evt) {
                 let coord = ol.proj.transform(evt.coordinate, 'EPSG:3857', 'EPSG:4326');
                 let lon = coord[0];
@@ -118,12 +143,50 @@ function initLocateButtons() {
                 let target = e.target.parentElement;
                 send(lon, lat, target);
 
+                // if there is already a point according to e.target.parentElement.children[0].value, remove it and add new point
+                let layer = map.getLayers().getArray();
+                for (let i = 0; i < layer.length; i++) {
+                    if (layer[i].get('name') === e.target.parentElement.children[0].name) {
+                        map.removeLayer(layer[i]);
+                    }
+                }
+
+                let point = new ol.geom.Point(ol.proj.fromLonLat([lon, lat]));
+                let feature = new ol.Feature({
+                    geometry: point,
+                    name: e.target.parentElement.children[0].name
+                });
+                let vectorSource = new ol.source.Vector({
+                    features: [feature]
+                });
+                let vectorLayer = new ol.layer.Vector({
+                    source: vectorSource,
+                    name: e.target.parentElement.children[0].name,
+                    style: new ol.style.Style({
+                        image: new ol.style.Icon({
+                            anchor: [0.5, 1],
+                            src: 'https://openlayers.org/en/v4.6.5/examples/data/icon.png'
+                        })
+                    })
+                });
+                map.addLayer(vectorLayer);
                 document.body.style.cursor = 'default';
             });
+
+            // when data changing, remove old point
         });
     }
 }
 
+
+function removePointOnMap(name) {
+    let layer = map.getLayers().getArray();
+    for (let i = 0; i < layer.length; i++) {
+        if (layer[i].get('name') === name) {
+            map.removeLayer(layer[i]);
+        }
+    }
+}
 
 function verifyChild() {
     const nbChild = formDestination.childElementCount;
