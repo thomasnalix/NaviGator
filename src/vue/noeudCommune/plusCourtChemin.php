@@ -1,17 +1,22 @@
-<script defer src="../ressources/js/main.js"></script>
+<script defer src="../ressources/js/main.js" xmlns="http://www.w3.org/1999/html" xmlns="http://www.w3.org/1999/html"></script>
+<script defer src="../ressources/js/autocompletion.js" xmlns="http://www.w3.org/1999/html"></script>
 <div class="itinerary-box">
-    <form action="" method="post">
+    <form action="" method="post" autocomplete="off">
         <div id="formDestination" class="flex flex-col gap-4">
             <div class="input-box">
                 <span class="material-symbols-outlined">pin_drop</span>
                 <input type="text" value="" placeholder="Commune de départ" name="commune0" id="commune0" required>
                 <input type="hidden" name="gid0" id="gid0">
+                <input type="text" list="auto-completion-0" value="" placeholder="Commune de départ" name="commune0" class="commune" id="commune0" required>
+                <datalist id="auto-completion-0"></datalist>
                 <span class="material-symbols-outlined close" style="display: none;">close</span>
             </div>
             <div class="input-box">
                 <span class="material-symbols-outlined">flag</span>
                 <input type="text" value="" placeholder="Commune d'arrivée" name="commune1" id="commune1" required>
                 <input type="hidden" name="gid1" id="gid1">
+                <input type="text" list="auto-completion-1" value="" placeholder="Commune d'arrivée" name="commune1" class="commune" id="commune1" required>
+                <datalist id="auto-completion-1"></datalist>
                 <span class="material-symbols-outlined close" style="display: none;">close</span>
             </div>
         </div>
@@ -49,7 +54,6 @@
             zoomControl: false
         })
     });
-
 
     // if the php variable is not empty, we display the map
     let wkb = <?php echo json_encode($chemin ?? []) ?>;

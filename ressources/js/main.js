@@ -16,13 +16,21 @@ addDestination.addEventListener('click', function () {
         iconLeft.textContent = 'flag';
         div.appendChild(iconLeft);
 
+        const dataList = document.createElement('datalist');
+        dataList.id = `auto-completion-${nbChild}`;
+
         const input = document.createElement('input');
         input.type = 'text';
         input.placeholder = 'Commune de transition';
+        input.classList.add('commune');
         input.name = `commune${nbChild}`;
         input.id = `commune${nbChild}`;
+        input.setAttribute('list', dataList.id);
         input.required = true;
+        input.addEventListener('input', e => autocomplete(dataList, e.target.value));
+
         div.appendChild(input);
+        div.appendChild(dataList);
 
         const gidInput = document.createElement('input');
         gidInput.type = 'hidden';

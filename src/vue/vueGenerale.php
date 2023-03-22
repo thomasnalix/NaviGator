@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <title><?= $pagetitle ?></title>
     <link rel="icon" type="image/png" href="../ressources/img/favicon.png" />
-    <link rel="stylesheet" href="../ressources/css/navstyle.css">
+    <link rel="stylesheet" href="../ressources/css/main.css">
     <link rel="stylesheet" href="https://openlayers.org/en/v6.6.1/css/ol.css" type="text/css">
     <script src="https://openlayers.org/en/v6.6.1/build/ol.js"></script>
     <script src="../ressources/js/scroll.js"></script>

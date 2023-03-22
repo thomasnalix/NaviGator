@@ -276,10 +276,6 @@ input[type="text"] {
     border-color: #ebccd1;
 }
 
-
-
-
-
 /*Tailwind*/
 .flex { display: flex }
 .flex-col { flex-direction: column }
