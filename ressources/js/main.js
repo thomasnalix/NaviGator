@@ -4,6 +4,7 @@ const formDestination = document.getElementById('formDestination');
 const close = document.getElementsByClassName('close');
 const locateButton = document.getElementsByClassName('locate-button');
 const nbField = document.getElementById('nbField');
+const flagBox = document.getElementById('flag-box');
 
 
 // If all field input of the fox formDestination are filled, addDestination is affiched
@@ -22,10 +23,10 @@ addDestination.addEventListener('click', function () {
         const div = document.createElement('div');
         div.classList.add('input-box');
 
-        const iconLeft = document.createElement('span');
-        iconLeft.classList.add('material-symbols-outlined');
-        iconLeft.textContent = 'flag';
-        div.appendChild(iconLeft);
+        // const iconLeft = document.createElement('span');
+        // iconLeft.classList.add('material-symbols-outlined');
+        // iconLeft.textContent = 'flag';
+        // div.appendChild(iconLeft);
 
         const dataList = document.createElement('datalist');
         dataList.id = `auto-completion-${nbChild}`;
@@ -61,6 +62,14 @@ addDestination.addEventListener('click', function () {
         iconDelete.textContent = 'close';
         div.appendChild(iconDelete);
 
+        const point = document.createElement('span');
+        point.classList.add('point');
+        // append child end - 1
+        flagBox.insertBefore(point, flagBox.children[flagBox.childElementCount - 1]);
+        const point1 = document.createElement('span');
+        point1.classList.add('point');
+        // append child end - 1
+        flagBox.insertBefore(point1, flagBox.children[flagBox.childElementCount - 1]);
 
         formDestination.appendChild(div);
         nbField.setAttribute('value', nbChild + 1);
@@ -81,11 +90,14 @@ function initDeleteButtons() {
             let nbChild = formDestination.childElementCount;
             if (nbChild > 2) {
                 this.parentElement.remove();
+                // remove point last - 1 point in flagBox
+                flagBox.children[flagBox.childElementCount - 2].remove();
+                flagBox.children[flagBox.childElementCount - 2].remove();
             }
             // set all id of field
             for (let i = 0; i < formDestination.childElementCount; i++) {
-                formDestination.children[i].children[1].setAttribute('id', `commune${i}`);
-                formDestination.children[i].children[1].setAttribute('name', `commune${i}`);
+                formDestination.children[i].children[0].setAttribute('id', `commune${i}`);
+                formDestination.children[i].children[0].setAttribute('name', `commune${i}`);
             }
             nbField.setAttribute('value', nbChild - 1);
             verifyChild();
@@ -147,7 +159,7 @@ async function send(long, lat, target) {
     const response = await fetch(url);
     const data = await response.json();
 
-    target.children[1].value = data.nom_comm;
-    target.children[3].value = data.gid;
+    target.children[0].value = data.nom_comm + ' (' + data.departement + ')';
+    target.children[2].value = data.gid;
     verifyFilledField();
 }
