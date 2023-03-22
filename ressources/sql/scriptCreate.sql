@@ -8,6 +8,22 @@ CREATE TABLE nalixt.utilisateurs(
    PRIMARY KEY(login)
 );
 
+CREATE TABLE nalixt.historique(
+  login VARCHAR(20) NOT NULL,
+  historique VARCHAR(2000) ARRAY,
+  PRIMARY KEY(login),
+  FOREIGN KEY (login) REFERENCES nalixt.utilisateurs(login)
+);
+
+
+CREATE TABLE nalixt.historique_2(
+    idHistorique SERIAL,
+    login VARCHAR(20) NOT NULL,
+    historique VARCHAR(2000) ARRAY,
+    PRIMARY KEY(idHistorique),
+    FOREIGN KEY (login) REFERENCES nalixt.utilisateurs(login)
+);
+
 
 CREATE MATERIALIZED VIEW nalixt.noeuds_from_troncon AS
 SELECT
