@@ -28,6 +28,8 @@ class PlusCourtChemin {
      * a chaque fois qu'on a trouve le chemin le plus court entre 2 noeuds
      */
     private int $index = 0;
+    private const EARTH_RADIUS = 6371;
+    private $test= 0;
     private ?string $numDepartementCourant;
     private PriorityQueue $openSet;
 
@@ -62,6 +64,7 @@ class PlusCourtChemin {
                 $distance += $cheminReconstruit[0];
                 $temps += $cheminReconstruit[2];
                 if ($this->index == count($this->noeudsRoutier) - 2) {
+                    //echo "Temps d'execution : " . $this->test . "s<br>";
                     return [$distance, $chemin, $temps];
                 } else {
                     $this->index++;
@@ -81,6 +84,7 @@ class PlusCourtChemin {
                 $this->numDepartementCourant = $this->getNumDepartement($noeudRoutierGidCourant);
             }
 
+
             $neighbors = $this->noeudsRoutierCache[$this->numDepartementCourant][$noeudRoutierGidCourant];
 
             foreach ($neighbors as $neighbor) {
@@ -91,9 +95,11 @@ class PlusCourtChemin {
                     $cameFrom[$neighbor['noeud_gid']] = $noeudRoutierGidCourant;
                     $cost[$neighbor['noeud_gid']] = $neighbor['longueur_troncon'];
                     $vitesse[$neighbor['noeud_gid']] = $neighbor['vitesse'];
-                    $coordTrocon[$neighbor['noeud_gid']] = $neighbor['troncon_coord'];
+                    $coordTrocon[$neighbor['noeud_gid']] = $neighbor['troncon_gid'];
                     $gScore[$neighbor['noeud_gid']] = $tentativeGScore;
+                    $now = microtime(true);
                     $fScore[$neighbor['noeud_gid']] = $tentativeGScore + $this->getHeuristiqueEuclidienne($neighbor['noeud_coord_lat'],$neighbor['noeud_coord_long']);
+                    $this->test += microtime(true) - $now;
                     if (!isset($visited[$neighbor['noeud_gid']]))
                         $this->openSet->insert($neighbor['noeud_gid'], $fScore[$neighbor['noeud_gid']]);
                 }
@@ -111,24 +117,15 @@ class PlusCourtChemin {
      * @return float distance entre le noeud courant et le noeud d'arrivee
      */
     private function getHeuristiqueEuclidienne(float $lat, float $long): float {
-        static $earthRadius = 6371; // rayon de la Terre en kilomètres
-        static $latArrivee, $longArrivee;
+        $latArrivee = $this->noeudsRoutier[$this->index+1]->getLat();
+        $longArrivee = $this->noeudsRoutier[$this->index+1]->getLong();
 
-        if (!isset($latArrivee)) {
-            $latArrivee = $this->noeudsRoutier[$this->index+1]->getLat();
-            $longArrivee = $this->noeudsRoutier[$this->index+1]->getLong();
-        }
-
-        $latCourant = $lat;
-        $longCourant = $long;
-
-        $dLat = deg2rad($latArrivee - $latCourant);
-        $dLon = deg2rad($longArrivee - $longCourant);
-        $sinLat = sin($dLat / 2);
-        $sinLon = sin($dLon / 2);
-        $a = $sinLat * $sinLat + cos(deg2rad($latCourant)) * cos(deg2rad($latArrivee)) * $sinLon * $sinLon;
+        $dLat = deg2rad($latArrivee - $lat);
+        $dLon = deg2rad($longArrivee - $long);
+        $a = sin($dLat / 2) ** 2 + cos(deg2rad($lat)) * cos(deg2rad($latArrivee)) * sin($dLon / 2) ** 2;
         $c = 2 * asin(sqrt($a));
-        return $earthRadius * $c; // distance en kilomètres
+
+        return self::EARTH_RADIUS * $c;
     }
 
     /**

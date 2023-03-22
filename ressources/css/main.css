@@ -196,6 +196,13 @@ button a {
     display: none;
 }
 
+.locate-button {
+    background: #eeeeee;
+    border-radius: 5px;
+    padding: 5px;
+    cursor: pointer;
+}
+
 /* =========================
            Form
   ======================= */
@@ -275,10 +282,6 @@ input[type="text"] {
     background-color: #f2dede;
     border-color: #ebccd1;
 }
-
-
-
-
 
 /*Tailwind*/
 .flex { display: flex }

@@ -4,7 +4,6 @@ namespace App\PlusCourtChemin\Controleur;
 
 use App\PlusCourtChemin\Lib\MessageFlash;
 use App\PlusCourtChemin\Lib\PlusCourtChemin;
-use App\PlusCourtChemin\Modele\DataObject\NoeudCommune;
 use App\PlusCourtChemin\Modele\Repository\NoeudCommuneRepository;
 use App\PlusCourtChemin\Modele\Repository\NoeudRoutierRepository;
 
@@ -33,7 +32,7 @@ class ControleurNoeudCommune extends ControleurGenerique {
         $noeudCommune = (new NoeudCommuneRepository())->recupererParClePrimaire($gid);
 
         if ($noeudCommune === null) {
-            MessageFlash::ajouter("warning", "gid inconnue.");
+            MessageFlash::ajouter("warning", "gid inconnue.");;
             ControleurNoeudCommune::rediriger("noeudCommune", "afficherListe");
         }
 
@@ -44,6 +43,28 @@ class ControleurNoeudCommune extends ControleurGenerique {
         ]);
     }
 
+    public static function getNoeudProche():void {
+        $noeudCommuneRepository = new NoeudCommuneRepository();
+        $information = $noeudCommuneRepository->getNoeudProche($_GET['lat'], $_GET['long']);
+
+        echo json_encode($information);
+    }
+
+    public static function recupererListeCommunes(): void {
+        $text = $_GET['text'];
+        $noeudsCommunes = (new NoeudRoutierRepository())->getNomCommunes($text);
+        // trie par ordre alphabétique
+        usort($noeudsCommunes, function($a, $b) use ($text) {
+            if (str_starts_with($a, $text) && str_starts_with($b, $text))
+                return 0;
+            if (str_starts_with($a, $text))
+                return -1;
+            if (str_starts_with($b, $text))
+                return 1;
+            return 0;
+        });
+        echo json_encode($noeudsCommunes);
+    }
 
     public static function plusCourtChemin(): void {
         $parameters = [
@@ -53,27 +74,33 @@ class ControleurNoeudCommune extends ControleurGenerique {
 
         if (!empty($_POST)) {
 
-            $communes = [];
-            for($i = 0; $i < $_POST['nbField']; $i++)
-                $communes[] = $_POST["commune" . $i];
-
             $noeudCommuneRepository = new NoeudCommuneRepository();
-
-            $noeudCommunes = [];
-            foreach ($communes as $commune)
-                $noeudCommunes[] = $noeudCommuneRepository->recupererPar(["nom_comm" => $commune])[0];
-
             $noeudRoutierRepository = new NoeudRoutierRepository();
+
+            $communes = [];
             $noeudRoutier = [];
-            foreach ($noeudCommunes as $noeudCommune)
-                $noeudRoutier[] = $noeudRoutierRepository->recupererNoeudRoutier($noeudCommune->getId_nd_rte());
+            for($i = 0; $i < $_POST['nbField']; $i++) {
+                if ($_POST["gid" . $i] != "") {
+                    $noeudRoutier[] = $noeudRoutierRepository->recupererParGid($_POST["gid" . $i]);
+                    $communes[] = $_POST["gid" . $i];
+                } else {
+                    $noeudCommune = $noeudCommuneRepository->recupererPar(["nom_comm" => $_POST["commune" . $i]])[0];
+                    $noeudRoutier[] = $noeudRoutierRepository->recupererNoeudRoutier($noeudCommune->getId_nd_rte());
+                    $communes[] = $_POST["commune" . $i];
+                }
+            }
 
             $pcc = new PlusCourtChemin($noeudRoutier);
 
-
+            $now = microtime(true);
             $distance = $pcc->aStarDistance();
+            //echo "Temps d'A* : " . (microtime(true) - $now) . "s<br>";
             $parameters["distance"] = $distance[0];
-            $parameters["chemin"] = $distance[1];
+
+            $now = microtime(true);
+            $parameters["chemin"] = $noeudRoutierRepository->calculerItineraire($distance[1]);
+            //echo "Temps chemin : " . (microtime(true) - $now) . "s<br>";
+
             $parameters["temps"] = $distance[2];
 
             $parameters["nomCommuneDepart"] = $communes[0];
