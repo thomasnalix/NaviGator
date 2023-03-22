@@ -24,6 +24,12 @@ addDestination.addEventListener('click', function () {
         input.required = true;
         div.appendChild(input);
 
+        const gidInput = document.createElement('input');
+        gidInput.type = 'hidden';
+        gidInput.name = `gid${nbChild}`;
+        gidInput.id = `gid${nbChild}`;
+        div.appendChild(gidInput);
+
         const iconRight = document.createElement('span');
         iconRight.classList.add('material-symbols-outlined', 'close');
         iconRight.textContent = 'close';
@@ -89,4 +95,30 @@ function verifyFilledField() {
             addDestination.style.display = 'none';
         }
     }
+}
+
+map.on('click', function (e) {
+    // get the coordinates of the click
+    let coord = ol.proj.transform(e.coordinate, 'EPSG:3857', 'EPSG:4326');
+    let lon = coord[0];
+    let lat = coord[1];
+
+    send(lon, lat);
+    //alert("Vous avez cliqué sur la longitude : " + lon + " et la latitude : " + lat);
+});
+
+async function send(long, lat) {
+    const url = 'controleurFrontal.php?controleur=noeudCommune&action=getNoeudProche&long=' + long + '&lat=' + lat;
+    const response = await fetch(url);
+    const data = await response.json();
+    // set value with data response of the first field empty of formDestination
+    for (let i = 0; i < formDestination.childElementCount; i++) {
+        if (formDestination.children[i].children[1].value === '') {
+            formDestination.children[i].children[1].value = data.route;
+            formDestination.children[i].children[2].value = data.gid;
+            break;
+        }
+    }
+    verifyFilledField();
+
 }

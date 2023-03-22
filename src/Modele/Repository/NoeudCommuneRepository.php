@@ -4,6 +4,7 @@ namespace App\PlusCourtChemin\Modele\Repository;
 
 use App\PlusCourtChemin\Modele\DataObject\AbstractDataObject;
 use App\PlusCourtChemin\Modele\DataObject\NoeudCommune;
+use PDO;
 
 class NoeudCommuneRepository extends AbstractRepository
 {
@@ -15,6 +16,15 @@ class NoeudCommuneRepository extends AbstractRepository
             $noeudRoutierTableau["nom_comm"],
             $noeudRoutierTableau["id_nd_rte"]
         );
+    }
+
+    public function getNoeudProche(float $lat, float $long) {
+       // $sql = "SELECT * FROM nalixt.noeud_commune ORDER BY ST_Distance(geom, ST_GeomFromText('POINT($long $lat)', 4326)) LIMIT 1";
+        //$pdoStatement = ConnexionBaseDeDonnees::getPdo()->prepare($sql);
+        //$pdoStatement->execute([$long, $lat]);
+        //$noeudCommune = $pdoStatement->fetch(PDO::FETCH_ASSOC);
+        $noeudCommune = ["gid" => 1793, "route" => 'A75'];
+        return $noeudCommune;
     }
 
     protected function getNomTable(): string {

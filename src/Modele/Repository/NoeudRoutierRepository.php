@@ -61,66 +61,6 @@ class NoeudRoutierRepository extends AbstractRepository
         return false;
     }
 
-
-    /**
-     * @param int $noeudRoutierGid
-     * @return une array avec en clé un noeud routier et en valeur un tableau de voisins
-     * TODO: explorer la piste des groupes avec un GROUP BY côté SQL pour accélérer le traitement en PHP ?
-     */
-    public function getNoeudsRoutierDepartement(int $noeudRoutierGid) : array {
-        $numDepartementNoeudRoutier = $this->getDepartementGid($noeudRoutierGid);
-        $requeteSQL = <<<SQL
-            SELECT *
-            FROM nalixt.noeuds_from_troncon
-            WHERE num_departement_depart = :departement
-            OR
-            num_departement_arrivee = :departement;
-        SQL;
-        $pdoStatement = ConnexionBaseDeDonnees::getPdo()->prepare($requeteSQL);
-        $pdoStatement->execute(array(
-                "departement" => $numDepartementNoeudRoutier
-        ));
-        $noeudsRoutierRegion = $pdoStatement->fetchAll(PDO::FETCH_ASSOC);
-        /**
-         * On construit un tableau de noeuds routiers avec leurs voisins tel que :
-         * [
-         *     numDepartement => [
-         *          1 => [2, 3, 4],
-         *          2 => [5, 6],
-         *     ],
-         *     numDepartement2 => [ ... ],
-         * ]
-         */
-        $noeudsRoutierRegionAvecVoisins = [];
-
-        foreach ($noeudsRoutierRegion as $noeudRoutierRegion) {
-            // en fonction de $numDepartementNoeudRoutier, on va ajouter dans le tableau avec les bonnes valeurs donc noeudArrive ou noeudArrive
-            if ($numDepartementNoeudRoutier === $noeudRoutierRegion["num_departement_depart"]) {
-                $noeudsRoutierRegionAvecVoisins[$numDepartementNoeudRoutier][$noeudRoutierRegion["noeud_depart_gid"]][] = [
-                    "noeud_gid" => $noeudRoutierRegion["noeud_arrivee_gid"],
-                    "noeud_courant_lat" => $noeudRoutierRegion["noeud_depart_lat"],
-                    "noeud_courant_long" => $noeudRoutierRegion["noeud_depart_long"],
-                    "noeud_coord_lat" => $noeudRoutierRegion["noeud_arrivee_lat"],
-                    "noeud_coord_long" => $noeudRoutierRegion["noeud_arrivee_long"],
-                    "troncon_gid" => $noeudRoutierRegion["troncon_gid"],
-                    "longueur_troncon" => $noeudRoutierRegion["longueur_troncon"],
-                ];
-            }
-            if ($numDepartementNoeudRoutier ===  $noeudRoutierRegion["num_departement_arrivee"]) {
-                $noeudsRoutierRegionAvecVoisins[$numDepartementNoeudRoutier][$noeudRoutierRegion["noeud_arrivee_gid"]][] = [
-                    "noeud_gid" => $noeudRoutierRegion["noeud_depart_gid"],
-                    "noeud_courant_lat" => $noeudRoutierRegion["noeud_arrivee_lat"],
-                    "noeud_courant_long" => $noeudRoutierRegion["noeud_arrivee_long"],
-                    "noeud_coord_lat" => $noeudRoutierRegion["noeud_depart_lat"],
-                    "noeud_coord_long" => $noeudRoutierRegion["noeud_depart_long"],
-                    "troncon_gid" => $noeudRoutierRegion["troncon_gid"],
-                    "longueur_troncon" => $noeudRoutierRegion["longueur_troncon"],
-                ];
-            }
-        }
-        return $noeudsRoutierRegionAvecVoisins;
-    }
-
     public function getNoeudsRoutierDepartementTime(int $noeudRoutierGid): array {
         $numDepartementNoeudRoutier = $this->getDepartementGid($noeudRoutierGid);
         $requeteSQL = <<<SQL
@@ -186,13 +126,32 @@ class NoeudRoutierRepository extends AbstractRepository
         $requeteSQL = <<<SQL
             SELECT gid,
                    ST_X(ST_AsText(geom)) as long,
-                ST_Y(ST_AsText(geom)) as lat
+                   ST_Y(ST_AsText(geom)) as lat
             FROM nalixt.noeud_routier
             WHERE id_rte500 = :idRteTag;
         SQL;
         $pdoStatement = ConnexionBaseDeDonnees::getPdo()->prepare($requeteSQL);
         $pdoStatement->execute(array(
             "idRteTag" => $idRte
+        ));
+        $objetFormatTableau = $pdoStatement->fetch();
+        if ($objetFormatTableau !== false) {
+            return $this->construireDepuisTableau($objetFormatTableau);
+        }
+        return null;
+    }
+
+    public function recupererParGid($gid): ?NoeudRoutier {
+        $requeteSQL = <<<SQL
+            SELECT gid,
+                   ST_X(ST_AsText(geom)) as long,
+                   ST_Y(ST_AsText(geom)) as lat
+            FROM nalixt.noeud_routier
+            WHERE gid = :gid;
+        SQL;
+        $pdoStatement = ConnexionBaseDeDonnees::getPdo()->prepare($requeteSQL);
+        $pdoStatement->execute(array(
+            "gid" => $gid
         ));
         $objetFormatTableau = $pdoStatement->fetch();
         if ($objetFormatTableau !== false) {

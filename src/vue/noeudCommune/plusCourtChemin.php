@@ -5,11 +5,13 @@
             <div class="input-box">
                 <span class="material-symbols-outlined">pin_drop</span>
                 <input type="text" value="" placeholder="Commune de départ" name="commune0" id="commune0" required>
+                <input type="hidden" name="gid0" id="gid0">
                 <span class="material-symbols-outlined close" style="display: none;">close</span>
             </div>
             <div class="input-box">
                 <span class="material-symbols-outlined">flag</span>
                 <input type="text" value="" placeholder="Commune d'arrivée" name="commune1" id="commune1" required>
+                <input type="hidden" name="gid1" id="gid1">
                 <span class="material-symbols-outlined close" style="display: none;">close</span>
             </div>
         </div>
@@ -48,6 +50,7 @@
         })
     });
 
+
     // if the php variable is not empty, we display the map
     let wkb = <?php echo json_encode($chemin ?? []) ?>;
     if (wkb.length > 0) {
@@ -78,6 +81,7 @@
 
         // add to the map the vector layer
         map.addLayer(vectorLayer);
+        zoomToLine();
     }
 
     function zoomToLine() {
@@ -87,7 +91,7 @@
         view.fit(extent, {maxZoom: 20, duration: 2000, padding: [150, 150, 150, 150]});
     }
 
-    window.onload = zoomToLine;
+    //window.onload = zoomToLine;
 
 
 </script>

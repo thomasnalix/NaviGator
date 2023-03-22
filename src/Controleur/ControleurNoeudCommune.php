@@ -44,6 +44,13 @@ class ControleurNoeudCommune extends ControleurGenerique {
         ]);
     }
 
+    public static function getNoeudProche():void {
+        $noeudCommuneRepository = new NoeudCommuneRepository();
+        $information = $noeudCommuneRepository->getNoeudProche($_GET['lat'], $_GET['long']);
+
+        echo json_encode($information);
+    }
+
 
     public static function plusCourtChemin(): void {
         $parameters = [
@@ -53,20 +60,24 @@ class ControleurNoeudCommune extends ControleurGenerique {
 
         if (!empty($_POST)) {
 
-            $communes = [];
-            for($i = 0; $i < $_POST['nbField']; $i++)
-                $communes[] = $_POST["commune" . $i];
+
+
 
             $noeudCommuneRepository = new NoeudCommuneRepository();
-
-            $noeudCommunes = [];
-            foreach ($communes as $commune)
-                $noeudCommunes[] = $noeudCommuneRepository->recupererPar(["nom_comm" => $commune])[0];
-
             $noeudRoutierRepository = new NoeudRoutierRepository();
+
+            $communes = [];
             $noeudRoutier = [];
-            foreach ($noeudCommunes as $noeudCommune)
-                $noeudRoutier[] = $noeudRoutierRepository->recupererNoeudRoutier($noeudCommune->getId_nd_rte());
+            for($i = 0; $i < $_POST['nbField']; $i++) {
+                if ($_POST["gid" . $i] != "") {
+                    $noeudRoutier[] = $noeudRoutierRepository->recupererParGid($_POST["gid" . $i]);
+                    $communes[] = $_POST["gid" . $i];
+                } else {
+                    $noeudCommune = $noeudCommuneRepository->recupererPar(["nom_comm" => $_POST["commune" . $i]])[0];
+                    $noeudRoutier[] = $noeudRoutierRepository->recupererNoeudRoutier($noeudCommune->getId_nd_rte());
+                    $communes[] = $_POST["commune" . $i];
+                }
+            }
 
             $pcc = new PlusCourtChemin($noeudRoutier);
 
