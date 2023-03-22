@@ -70,10 +70,15 @@ class ControleurNoeudCommune extends ControleurGenerique {
 
             $pcc = new PlusCourtChemin($noeudRoutier);
 
-
+            $now = microtime(true);
             $distance = $pcc->aStarDistance();
+            echo "Temps d'A* : " . (microtime(true) - $now) . "s<br>";
             $parameters["distance"] = $distance[0];
-            $parameters["chemin"] = $distance[1];
+
+            $now = microtime(true);
+            $parameters["chemin"] = $noeudRoutierRepository->calculerItineraire($distance[1]);
+            echo "Temps chemin : " . (microtime(true) - $now) . "s<br>";
+
             $parameters["temps"] = $distance[2];
 
             $parameters["nomCommuneDepart"] = $communes[0];

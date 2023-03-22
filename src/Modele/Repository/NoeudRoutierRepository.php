@@ -10,12 +10,28 @@ use PDO;
 class NoeudRoutierRepository extends AbstractRepository
 {
 
+
     public function construireDepuisTableau(array $noeudRoutierTableau): NoeudRoutier {
         return new NoeudRoutier(
             $noeudRoutierTableau["gid"],
             $noeudRoutierTableau["lat"],
             $noeudRoutierTableau["long"]
         );
+    }
+
+    public function calculerItineraire(array $var)
+    {
+        $variables = $var;
+        // With array, explose all data and put it in a string separated by a comma
+        $placeholders = implode(',', array_fill(0, count($variables), '?'));
+        $pdoStatement = ConnexionBaseDeDonnees::getPdo()->prepare("SELECT geom FROM nalixt.troncon_route WHERE gid IN($placeholders)");
+        $pdoStatement->execute($variables);
+        $noeudsRoutierRegion = $pdoStatement->fetchAll(PDO::FETCH_ASSOC);
+        $noeudsRoutier = [];
+        foreach ($noeudsRoutierRegion as $noeudRoutier) {
+            $noeudsRoutier[] = $noeudRoutier['geom'];
+        }
+        return $noeudsRoutier;
     }
 
 
@@ -44,6 +60,7 @@ class NoeudRoutierRepository extends AbstractRepository
     public function ajouter(AbstractDataObject $object): bool {
         return false;
     }
+
 
     /**
      * @param int $noeudRoutierGid
@@ -86,7 +103,6 @@ class NoeudRoutierRepository extends AbstractRepository
                     "noeud_coord_lat" => $noeudRoutierRegion["noeud_arrivee_lat"],
                     "noeud_coord_long" => $noeudRoutierRegion["noeud_arrivee_long"],
                     "troncon_gid" => $noeudRoutierRegion["troncon_gid"],
-                    "troncon_coord" => $noeudRoutierRegion["troncon_coord"],
                     "longueur_troncon" => $noeudRoutierRegion["longueur_troncon"],
                 ];
             }
@@ -98,7 +114,6 @@ class NoeudRoutierRepository extends AbstractRepository
                     "noeud_coord_lat" => $noeudRoutierRegion["noeud_depart_lat"],
                     "noeud_coord_long" => $noeudRoutierRegion["noeud_depart_long"],
                     "troncon_gid" => $noeudRoutierRegion["troncon_gid"],
-                    "troncon_coord" => $noeudRoutierRegion["troncon_coord"],
                     "longueur_troncon" => $noeudRoutierRegion["longueur_troncon"],
                 ];
             }
@@ -110,7 +125,7 @@ class NoeudRoutierRepository extends AbstractRepository
         $numDepartementNoeudRoutier = $this->getDepartementGid($noeudRoutierGid);
         $requeteSQL = <<<SQL
             SELECT *
-            FROM nalixt.vitesses_route
+            FROM nalixt.vitesses_route_test
             WHERE num_departement_depart = :departement
             OR
             num_departement_arrivee = :departement;
@@ -142,7 +157,6 @@ class NoeudRoutierRepository extends AbstractRepository
                     "noeud_coord_lat" => $noeudRoutierRegion["noeud_arrivee_lat"],
                     "noeud_coord_long" => $noeudRoutierRegion["noeud_arrivee_long"],
                     "troncon_gid" => $noeudRoutierRegion["troncon_gid"],
-                    "troncon_coord" => $noeudRoutierRegion["troncon_coord"],
                     "longueur_troncon" => $noeudRoutierRegion["longueur_troncon"],
                     "vitesse" => $noeudRoutierRegion["vitesse"],
                 ];
@@ -155,7 +169,6 @@ class NoeudRoutierRepository extends AbstractRepository
                     "noeud_coord_lat" => $noeudRoutierRegion["noeud_depart_lat"],
                     "noeud_coord_long" => $noeudRoutierRegion["noeud_depart_long"],
                     "troncon_gid" => $noeudRoutierRegion["troncon_gid"],
-                    "troncon_coord" => $noeudRoutierRegion["troncon_coord"],
                     "longueur_troncon" => $noeudRoutierRegion["longueur_troncon"],
                     "vitesse" => $noeudRoutierRegion["vitesse"],
                 ];
