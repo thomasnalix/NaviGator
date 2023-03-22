@@ -18,15 +18,6 @@ class NoeudCommuneRepository extends AbstractRepository
         );
     }
 
-    public function getNoeudProche(float $lat, float $long) {
-       // $sql = "SELECT * FROM nalixt.noeud_commune ORDER BY ST_Distance(geom, ST_GeomFromText('POINT($long $lat)', 4326)) LIMIT 1";
-        //$pdoStatement = ConnexionBaseDeDonnees::getPdo()->prepare($sql);
-        //$pdoStatement->execute([$long, $lat]);
-        //$noeudCommune = $pdoStatement->fetch(PDO::FETCH_ASSOC);
-        $noeudCommune = ["gid" => 1793, "route" => 'A75'];
-        return $noeudCommune;
-    }
-
     protected function getNomTable(): string {
         return 'nalixt.noeud_commune';
     }
@@ -51,6 +42,19 @@ class NoeudCommuneRepository extends AbstractRepository
 
     public function ajouter(AbstractDataObject $object): bool {
         return false;
+    }
+
+    public function getNoeudProche(float $lat, float $long) {
+        $sql = <<<SQL
+            SELECT nr.gid, "left"(nr.insee_comm::text, 2) as departement, nom_comm FROM noeud_routier nr
+            JOIN noeud_commune nc ON nr.insee_comm = nc.insee_comm
+            ORDER BY ST_DistanceSphere(ST_SetSRID(ST_MakePoint(:long, :lat), 4326), nr.geom)
+            LIMIT 1;
+        SQL;
+        $pdoStatement = ConnexionBaseDeDonnees::getPdo()->prepare($sql);
+        $pdoStatement->execute([$long, $lat]);
+        $noeudCommune = $pdoStatement->fetch(PDO::FETCH_ASSOC);
+        return $noeudCommune;
     }
 
 }

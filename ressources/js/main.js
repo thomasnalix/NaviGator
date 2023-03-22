@@ -122,8 +122,8 @@ async function send(long, lat) {
     // set value with data response of the first field empty of formDestination
     for (let i = 0; i < formDestination.childElementCount; i++) {
         if (formDestination.children[i].children[1].value === '') {
-            formDestination.children[i].children[1].value = data.route;
-            formDestination.children[i].children[2].value = data.gid;
+            formDestination.children[i].children[1].value = data.nom_comm;
+            formDestination.children[i].children[3].value = data.gid;
             break;
         }
     }

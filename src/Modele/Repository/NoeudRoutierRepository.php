@@ -19,8 +19,7 @@ class NoeudRoutierRepository extends AbstractRepository
         );
     }
 
-    public function calculerItineraire(array $var)
-    {
+    public function calculerItineraire(array $var) {
         $variables = $var;
         // With array, explose all data and put it in a string separated by a comma
         $placeholders = implode(',', array_fill(0, count($variables), '?'));

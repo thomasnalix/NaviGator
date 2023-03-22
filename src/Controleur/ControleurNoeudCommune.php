@@ -74,9 +74,6 @@ class ControleurNoeudCommune extends ControleurGenerique {
 
         if (!empty($_POST)) {
 
-
-
-
             $noeudCommuneRepository = new NoeudCommuneRepository();
             $noeudRoutierRepository = new NoeudRoutierRepository();
 
@@ -97,12 +94,12 @@ class ControleurNoeudCommune extends ControleurGenerique {
 
             $now = microtime(true);
             $distance = $pcc->aStarDistance();
-            echo "Temps d'A* : " . (microtime(true) - $now) . "s<br>";
+            //echo "Temps d'A* : " . (microtime(true) - $now) . "s<br>";
             $parameters["distance"] = $distance[0];
 
             $now = microtime(true);
             $parameters["chemin"] = $noeudRoutierRepository->calculerItineraire($distance[1]);
-            echo "Temps chemin : " . (microtime(true) - $now) . "s<br>";
+            //echo "Temps chemin : " . (microtime(true) - $now) . "s<br>";
 
             $parameters["temps"] = $distance[2];
 
