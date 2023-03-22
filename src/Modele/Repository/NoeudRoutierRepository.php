@@ -214,4 +214,22 @@ class NoeudRoutierRepository extends AbstractRepository
         $objetFormatTableau = $pdoStatement->fetch();
         return $objetFormatTableau["num_departement"];
     }
+
+    public function getNomCommunes($substring) {
+        $requeteSQL = <<<SQL
+            SELECT nom_comm
+            FROM nalixt.noeud_commune
+            WHERE LOWER(nom_comm) LIKE LOWER(:substring)
+        SQL;
+        $pdoStatement = ConnexionBaseDeDonnees::getPdo()->prepare($requeteSQL);
+        $pdoStatement->execute(array(
+            "substring" => "%$substring%"
+        ));
+        $objetFormatTableau = $pdoStatement->fetchAll();
+        $communes = [];
+        foreach ($objetFormatTableau as $commune) {
+            $communes[] = $commune["nom_comm"];
+        }
+        return $communes;
+    }
 }

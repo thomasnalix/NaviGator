@@ -4,7 +4,6 @@ namespace App\PlusCourtChemin\Controleur;
 
 use App\PlusCourtChemin\Lib\MessageFlash;
 use App\PlusCourtChemin\Lib\PlusCourtChemin;
-use App\PlusCourtChemin\Modele\DataObject\NoeudCommune;
 use App\PlusCourtChemin\Modele\Repository\NoeudCommuneRepository;
 use App\PlusCourtChemin\Modele\Repository\NoeudRoutierRepository;
 
@@ -33,7 +32,7 @@ class ControleurNoeudCommune extends ControleurGenerique {
         $noeudCommune = (new NoeudCommuneRepository())->recupererParClePrimaire($gid);
 
         if ($noeudCommune === null) {
-            MessageFlash::ajouter("warning", "gid inconnue.");
+            MessageFlash::ajouter("warning", "gid inconnue.");;
             ControleurNoeudCommune::rediriger("noeudCommune", "afficherListe");
         }
 
@@ -44,6 +43,20 @@ class ControleurNoeudCommune extends ControleurGenerique {
         ]);
     }
 
+    public static function recupererListeCommunes(): void {
+        $text = $_GET['text'];
+        $noeudsCommunes = (new NoeudRoutierRepository())->getNomCommunes($text);
+        usort($noeudsCommunes, function($a, $b) use ($text) {
+            if (str_starts_with($a, $text) && str_starts_with($b, $text))
+                return 0;
+            if (str_starts_with($a, $text))
+                return -1;
+            if (str_starts_with($b, $text))
+                return 1;
+            return 0;
+        });
+        echo json_encode($noeudsCommunes);
+    }
 
     public static function plusCourtChemin(): void {
         $parameters = [

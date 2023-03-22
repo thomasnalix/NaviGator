@@ -7,7 +7,7 @@ const nbField = document.getElementById('nbField');
 // Création d'un field
 addDestination.addEventListener('click', function () {
     let nbChild = formDestination.childElementCount;
-    if (nbChild < 13) {
+    if (nbChild < 13) {s
         const div = document.createElement('div');
         div.classList.add('input-box');
 
@@ -16,12 +16,21 @@ addDestination.addEventListener('click', function () {
         iconLeft.textContent = 'flag';
         div.appendChild(iconLeft);
 
+        const dataList = document.createElement('div');
+        dataList.id = 'cities';
+
         const input = document.createElement('input');
         input.type = 'text';
         input.placeholder = 'Commune de transition';
+        input.classList.add('commune');
         input.name = `commune${nbChild}`;
         input.id = `commune${nbChild}`;
+        input.list = 'cities';
         input.required = true;
+        input.addEventListener('input', debounce( function(e) { autocomplete(dataList, e.target.value) }, 200));
+
+        input.appendChild(dataList);
+
         div.appendChild(input);
 
         const iconRight = document.createElement('span');
