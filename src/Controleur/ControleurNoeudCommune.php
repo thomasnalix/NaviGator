@@ -46,6 +46,7 @@ class ControleurNoeudCommune extends ControleurGenerique {
     public static function recupererListeCommunes(): void {
         $text = $_GET['text'];
         $noeudsCommunes = (new NoeudRoutierRepository())->getNomCommunes($text);
+        // trie par ordre alphabétique
         usort($noeudsCommunes, function($a, $b) use ($text) {
             if (str_starts_with($a, $text) && str_starts_with($b, $text))
                 return 0;

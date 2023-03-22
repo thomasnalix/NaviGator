@@ -7,7 +7,7 @@ const nbField = document.getElementById('nbField');
 // Création d'un field
 addDestination.addEventListener('click', function () {
     let nbChild = formDestination.childElementCount;
-    if (nbChild < 13) {s
+    if (nbChild < 13) {
         const div = document.createElement('div');
         div.classList.add('input-box');
 
@@ -16,8 +16,8 @@ addDestination.addEventListener('click', function () {
         iconLeft.textContent = 'flag';
         div.appendChild(iconLeft);
 
-        const dataList = document.createElement('div');
-        dataList.id = 'cities';
+        const dataList = document.createElement('datalist');
+        dataList.id = `auto-completion-${nbChild}`;
 
         const input = document.createElement('input');
         input.type = 'text';
@@ -25,13 +25,12 @@ addDestination.addEventListener('click', function () {
         input.classList.add('commune');
         input.name = `commune${nbChild}`;
         input.id = `commune${nbChild}`;
-        input.list = 'cities';
+        input.setAttribute('list', dataList.id);
         input.required = true;
-        input.addEventListener('input', debounce( function(e) { autocomplete(dataList, e.target.value) }, 200));
-
-        input.appendChild(dataList);
+        input.addEventListener('input', e => autocomplete(dataList, e.target.value));
 
         div.appendChild(input);
+        div.appendChild(dataList);
 
         const iconRight = document.createElement('span');
         iconRight.classList.add('material-symbols-outlined', 'close');

@@ -276,34 +276,6 @@ input[type="text"] {
     border-color: #ebccd1;
 }
 
-
-.autocompletion {
-    width: inherit;
-    background-color: white;
-    border: 1px solid grey;
-    line-height:1.5;
-    position: absolute;
-    top: 5vh;
-    left: 2.5vw;
-    max-height: 100px;
-    overflow: hidden;
-}
-
-.autocompletion p {
-    margin: 0 0 0 0;
-    padding: 0 5px 0 5px;
-}
-
-.autocompletion p:hover {
-    background-color:aliceblue;
-    cursor:default;
-}
-
-.autocompletion p.selected {
-    background-color: lightgrey;
-}
-
-
 /*Tailwind*/
 .flex { display: flex }
 .flex-col { flex-direction: column }

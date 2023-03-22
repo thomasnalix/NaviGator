@@ -14,7 +14,6 @@ for (let destionationInput of destionationInputs)
 
 function autocomplete(citiesList, text) {
     // should send a request to the server to get the list of cities and display them in the datalist
-    console.log(text);
     if (text.length < 3) return;
     const url = 'controleurFrontal.php?action=recupererListeCommunes&controleur=noeudCommune&text=' + text;
     fetch(url)
@@ -22,8 +21,8 @@ function autocomplete(citiesList, text) {
         .then(data => {
             citiesList.innerHTML = '';
             for (let city of data) {
-                const option = document.createElement('p');
-                option.textContent = city;
+                const option = document.createElement('option');
+                option.value = city;
                 citiesList.appendChild(option);
             }
         })
