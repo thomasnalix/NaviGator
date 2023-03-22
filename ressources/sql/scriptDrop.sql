@@ -1,7 +1,7 @@
-DROP TABLE utilisateurs;
 DROP TABLE trajets;
 DROP TABLE historique;
 DROP TABLE favoris;
+DROP TABLE utilisateurs;
 
 DROP PROCEDURE ajouter_favoris;
 DROP PROCEDURE supprimer_favoris;
