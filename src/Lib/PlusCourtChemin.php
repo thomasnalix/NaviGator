@@ -64,7 +64,7 @@ class PlusCourtChemin {
                 $distance += $cheminReconstruit[0];
                 $temps += $cheminReconstruit[2];
                 if ($this->index == count($this->noeudsRoutier) - 2) {
-                    //echo "Temps d'execution : " . $this->test . "s<br>";
+                    echo "Temps d'execution : " . $this->test . "s<br>";
                     return [$distance, $chemin, $temps];
                 } else {
                     $this->index++;
@@ -80,7 +80,9 @@ class PlusCourtChemin {
 
             $this->numDepartementCourant = $this->getNumDepartement($noeudRoutierGidCourant);
             if (!isset($this->numDepartementCourant)) {
+                $now = microtime(true);
                 $this->noeudsRoutierCache += $noeudRoutierRepository->getNoeudsRoutierDepartementTime($noeudRoutierGidCourant);
+                $this->test += microtime(true) - $now;
                 $this->numDepartementCourant = $this->getNumDepartement($noeudRoutierGidCourant);
             }
 

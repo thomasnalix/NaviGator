@@ -144,41 +144,45 @@ function initLocateButtons() {
                 send(lon, lat, target);
 
                 // if there is already a point according to e.target.parentElement.children[0].value, remove it and add new point
-                let layer = map.getLayers().getArray();
-                for (let i = 0; i < layer.length; i++) {
-                    if (layer[i].get('name') === e.target.parentElement.children[0].name) {
-                        map.removeLayer(layer[i]);
-                    }
-                }
-
-                let point = new ol.geom.Point(ol.proj.fromLonLat([lon, lat]));
-                let feature = new ol.Feature({
-                    geometry: point,
-                    name: e.target.parentElement.children[0].name
-                });
-                let vectorSource = new ol.source.Vector({
-                    features: [feature]
-                });
-                let vectorLayer = new ol.layer.Vector({
-                    source: vectorSource,
-                    name: e.target.parentElement.children[0].name,
-                    style: new ol.style.Style({
-                        image: new ol.style.Icon({
-                            anchor: [0.5, 1],
-                            src: 'https://openlayers.org/en/v4.6.5/examples/data/icon.png'
-                        })
-                    })
-                });
-                map.addLayer(vectorLayer);
+                addPointOnMap(target.children[0].name, lon, lat);
                 document.body.style.cursor = 'default';
             });
 
-            // when data changing, remove old point
         });
     }
 }
 
+// add point on map according to lon and lat and remove old point if exist
+function addPointOnMap(target, lon, lat) {
+    let layer = map.getLayers().getArray();
+    for (let i = 0; i < layer.length; i++) {
+        if (layer[i].get('name') === target) {
+            map.removeLayer(layer[i]);
+        }
+    }
 
+    let point = new ol.geom.Point(ol.proj.fromLonLat([lon, lat]));
+    let feature = new ol.Feature({
+        geometry: point,
+        name:target
+    });
+    let vectorSource = new ol.source.Vector({
+        features: [feature]
+    });
+    let vectorLayer = new ol.layer.Vector({
+        source: vectorSource,
+        name: target,
+        style: new ol.style.Style({
+            image: new ol.style.Icon({
+                anchor: [0.5, 1],
+                src: '../ressources/img/map_point.png'
+            })
+        })
+    });
+    map.addLayer(vectorLayer);
+}
+
+// remove point on map according to name
 function removePointOnMap(name) {
     let layer = map.getLayers().getArray();
     for (let i = 0; i < layer.length; i++) {
@@ -223,5 +227,6 @@ async function send(long, lat, target) {
 
     target.children[0].value = data.nom_comm + ' (' + data.departement + ')';
     target.children[2].value = data.gid;
+    addPointOnMap(target.children[0].name, data.long, data.lat);
     verifyFilledField();
 }

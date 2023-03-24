@@ -46,7 +46,7 @@ class NoeudCommuneRepository extends AbstractRepository
 
     public function getNoeudProche(float $lat, float $long) {
         $sql = <<<SQL
-            SELECT nr.gid, "left"(nr.insee_comm::text, 2) as departement, nom_comm 
+            SELECT nr.gid, "left"(nr.insee_comm::text, 2) as departement, nom_comm, nr.lat, nr.long
             FROM nalixt.noeud_routier nr
             JOIN nalixt.noeud_commune nc ON nr.insee_comm = nc.insee_comm
             ORDER BY ST_DistanceSphere(ST_SetSRID(ST_MakePoint(:long, :lat), 4326), nr.geom)
