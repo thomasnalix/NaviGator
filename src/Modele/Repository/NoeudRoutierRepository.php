@@ -175,7 +175,7 @@ class NoeudRoutierRepository extends AbstractRepository
 
     public function getNomCommunes($substring) {
         $requeteSQL = <<<SQL
-            SELECT nom_comm
+            SELECT insee_comm, nom_comm
             FROM nalixt.noeud_commune
             WHERE LOWER(nom_comm) LIKE LOWER(:substring)
         SQL;
@@ -185,9 +185,8 @@ class NoeudRoutierRepository extends AbstractRepository
         ));
         $objetFormatTableau = $pdoStatement->fetchAll();
         $communes = [];
-        foreach ($objetFormatTableau as $commune) {
-            $communes[] = $commune["nom_comm"];
-        }
+        foreach ($objetFormatTableau as $commune)
+            $communes[] = $commune["nom_comm"] . " (" . $commune["insee_comm"] . ")";
         return $communes;
     }
 }
