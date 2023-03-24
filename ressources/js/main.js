@@ -16,27 +16,24 @@ formDestination.addEventListener('input', e => {
 initLocateButtons();
 
 
-// Création d'un field when click on addDestination
+/**
+ * Add event listener on add destination button and add new field in formDestination
+ */
 addDestination.addEventListener('click', function () {
     let nbChild = formDestination.childElementCount;
     if (nbChild < 13) {
         const div = document.createElement('div');
         div.classList.add('input-box');
 
-        // const iconLeft = document.createElement('span');
-        // iconLeft.classList.add('material-symbols-outlined');
-        // iconLeft.textContent = 'flag';
-        // div.appendChild(iconLeft);
-
         const dataList = document.createElement('datalist');
-        dataList.id = `auto-completion-${nbChild}`;
+        dataList.id = `auto-completion-${nbChild - 1}`;
 
         const input = document.createElement('input');
         input.type = 'text';
         input.placeholder = 'Commune de transition';
         input.classList.add('commune');
-        input.name = `commune${nbChild}`;
-        input.id = `commune${nbChild}`;
+        input.name = `commune${nbChild - 1}`;
+        input.id = `commune${nbChild - 1}`;
         input.setAttribute('list', dataList.id);
         input.required = true;
         input.addEventListener('input', e => {
@@ -48,8 +45,8 @@ addDestination.addEventListener('click', function () {
 
         const gidInput = document.createElement('input');
         gidInput.type = 'hidden';
-        gidInput.name = `gid${nbChild}`;
-        gidInput.id = `gid${nbChild}`;
+        gidInput.name = `gid${nbChild - 1}`;
+        gidInput.id = `gid${nbChild - 1}`;
         div.appendChild(gidInput);
 
         const iconRight = document.createElement('span');
@@ -73,7 +70,7 @@ addDestination.addEventListener('click', function () {
             }
         }
 
-        let iconEtape = document.createElement('span');
+        const iconEtape = document.createElement('span');
         iconEtape.classList.add('material-symbols-outlined', 'etape');
         iconEtape.textContent = 'fiber_manual_record';
         // append child end - 1
@@ -91,6 +88,7 @@ addDestination.addEventListener('click', function () {
         formDestination.insertBefore(div, formDestination.children[formDestination.childElementCount - 1]);
         nbField.setAttribute('value', nbChild + 1);
         verifyChild();
+        updateChild();
         verifyFilledField();
         initDeleteButtons();
         initLocateButtons();
@@ -99,8 +97,10 @@ addDestination.addEventListener('click', function () {
     }
 });
 
-// Init delete button event
-//when click on close class icon, remove the parent field
+/**
+ * Init delete button event listener
+ * When click on close class icon, remove the parent field
+ */
 function initDeleteButtons() {
     for (let i = 0; i < close.length; i++) {
         close[i].onclick = function () {
@@ -118,10 +118,7 @@ function initDeleteButtons() {
                 }
             }
             // set all id of field
-            for (let i = 0; i < formDestination.childElementCount; i++) {
-                formDestination.children[i].children[0].setAttribute('id', `commune${i}`);
-                formDestination.children[i].children[0].setAttribute('name', `commune${i}`);
-            }
+            updateChild();
             nbField.setAttribute('value', nbChild - 1);
             verifyChild();
             verifyFilledField();
@@ -129,7 +126,26 @@ function initDeleteButtons() {
     }
 }
 
-// Init locate button event
+/**
+ * Update all id of children of input-box
+ */
+function updateChild() {
+    for (let i = 0; i < formDestination.childElementCount; i++) {
+        formDestination.children[i].children[0].setAttribute('id', `commune${i}`);
+        formDestination.children[i].children[0].setAttribute('name', `commune${i}`);
+        formDestination.children[i].children[0].setAttribute('list', `auto-completion-${i}`);
+        formDestination.children[i].children[1].setAttribute('id', `auto-completion-${i}`);
+        formDestination.children[i].children[2].setAttribute('id', `gid${i}`);
+        formDestination.children[i].children[2].setAttribute('name', `gid${i}`);
+    }
+}
+
+/**
+ * Init the event listener of all locate button
+ * When click on locate button, wait for the user to click on the map
+ * Then send the coordinates to the server
+ * And add a point on the map
+ */
 function initLocateButtons() {
     for (let i = 0; i < locateButton.length; i++) {
         locateButton[i].addEventListener('click', e => {
@@ -147,12 +163,16 @@ function initLocateButtons() {
                 addPointOnMap(target.children[0].name, lon, lat);
                 document.body.style.cursor = 'default';
             });
-
         });
     }
 }
 
-// add point on map according to lon and lat and remove old point if exist
+/**
+ * add point on map according to lon and lat and remove old point if exist
+ * @param target
+ * @param lon
+ * @param lat
+ */
 function addPointOnMap(target, lon, lat) {
     let layer = map.getLayers().getArray();
     for (let i = 0; i < layer.length; i++) {
@@ -182,7 +202,10 @@ function addPointOnMap(target, lon, lat) {
     map.addLayer(vectorLayer);
 }
 
-// remove point on map according to name
+/**
+ * remove point on map according to name
+ * @param name
+ */
 function removePointOnMap(name) {
     let layer = map.getLayers().getArray();
     for (let i = 0; i < layer.length; i++) {
@@ -202,7 +225,7 @@ function verifyChild() {
 
 function verifyFilledField() {
     let nbChild = formDestination.childElementCount;
-    if (nbChild < 13) {
+    if (nbChild < 8) {
         let nbChild = formDestination.childElementCount;
         let nbFilled = 0;
         for (let i = 0; i < nbChild; i++) {
@@ -220,12 +243,18 @@ function verifyFilledField() {
 }
 
 
+/**
+ * Send request to get the nearest node
+ * @param long of the clicked point
+ * @param lat
+ * @param target of the clicked box
+ */
 async function send(long, lat, target) {
     const url = 'controleurFrontal.php?controleur=noeudCommune&action=getNoeudProche&long=' + long + '&lat=' + lat;
     const response = await fetch(url);
     const data = await response.json();
 
-    target.children[0].value = data.nom_comm + ' (' + data.departement + ')';
+    target.children[0].value = data.nom_comm + ' - ' + data.departement + ' (Périphérie)';
     target.children[2].value = data.gid;
     addPointOnMap(target.children[0].name, data.long, data.lat);
     verifyFilledField();

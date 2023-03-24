@@ -1,47 +1,58 @@
 <script defer src="../ressources/js/main.js"></script>
 <script defer src="../ressources/js/autocompletion.js"></script>
-<div class="itinerary-box">
-    <form action="" method="post" autocomplete="off">
-        <div class="flex mb-6">
-            <div class="flex-col items-center flex space-between p-4" id="flag-box">
-                <span class="material-symbols-outlined">pin_drop</span>
-                <span class="material-symbols-outlined">flag</span>
-            </div>
-            <div class="flex-col flex gap-4 w-full">
-                <div id="formDestination" class="flex flex-col gap-4 w-full">
-                    <div class="input-box">
-                        <input type="text" list="auto-completion-0" value="" placeholder="Commune de départ" name="commune0" class="commune" id="commune0" required>
-                        <datalist id="auto-completion-0"></datalist>
-                        <input type="hidden" name="gid0" id="gid0">
-                        <span class="locate-button material-symbols-outlined">my_location</span>
-                        <span class="material-symbols-outlined close">close</span>
-                    </div>
-                    <div class="input-box">
-                        <input type="text" list="auto-completion-1" value="" placeholder="Commune d'arrivée" name="commune1" class="commune" id="commune1" required>
-                        <datalist id="auto-completion-1"></datalist>
-                        <input type="hidden" name="gid1" id="gid1">
-                        <span class="locate-button material-symbols-outlined">my_location</span>
-                        <span class="material-symbols-outlined close">close</span>
+<div class="flex flex-col absolute z-100">
+    <div class="itinerary-box box-blur">
+        <form action="" method="post" autocomplete="off">
+            <div class="flex mb-6">
+                <div class="flex-col items-center flex space-between p-4" id="flag-box">
+                    <span class="material-symbols-outlined">pin_drop</span>
+                    <span class="material-symbols-outlined">flag</span>
+                </div>
+                <div class="flex-col flex gap-4 w-full">
+                    <div id="formDestination" class="flex flex-col gap-4 w-full">
+                        <div class="input-box">
+                            <input type="text" list="auto-completion-0" value="<?= (isset($nomCommuneDepart)) ? $nomCommuneDepart : ""?>" placeholder="Commune de départ" name="commune0" class="commune" id="commune0" required>
+                            <datalist id="auto-completion-0"></datalist>
+                            <input type="hidden" name="gid0" id="gid0">
+                            <span class="locate-button material-symbols-outlined">my_location</span>
+                            <span class="material-symbols-outlined close">close</span>
+                        </div>
+                        <div class="input-box">
+                            <input type="text" list="auto-completion-1" value="<?= (isset($nomCommuneArrivee)) ? $nomCommuneArrivee : ""?>" placeholder="Commune d'arrivée" name="commune1" class="commune" id="commune1" required>
+                            <datalist id="auto-completion-1"></datalist>
+                            <input type="hidden" name="gid1" id="gid1">
+                            <span class="locate-button material-symbols-outlined">my_location</span>
+                            <span class="material-symbols-outlined close">close</span>
+                        </div>
                     </div>
                 </div>
             </div>
-        </div>
-        <div id="addDestination" class="box-flex mb-10">
-            <span class="material-symbols-outlined">add_circle</span>
-            <p>Ajouter une étape</p>
-        </div>
-        <input type="hidden" name="nbField" id="nbField" value="2">
-        <input type="hidden" name="XDEBUG_TRIGGER">
-        <input class="button-box"  id="calcul" type="submit" disabled value="Calculer"/>
-    </form>
-    <?php if (!empty($_POST)) {
-        echo '<p>
-                ' . $nomCommuneDepart . ' vers ' . $nomCommuneArrivee . ' : ' . $distance . 'km. temps : ' . gmdate('H:i:s', floor($temps * 3600)) . ' 
-              </p>';
+            <div id="addDestination" class="box-flex mb-10">
+                <span class="material-symbols-outlined">add_circle</span>
+                <p>Ajouter une étape</p>
+            </div>
+            <input type="hidden" name="nbField" id="nbField" value="2">
+            <input type="hidden" name="XDEBUG_TRIGGER">
+            <input class="button-box"  id="calcul" type="submit" disabled value="Calculer"/>
+        </form>
+    </div>
+    <?php
+    if (!empty($_POST)) {
+        echo '
+        <div class="box-blur flex-col flex">
+           <p>' . $nomCommuneDepart . ' vers ' . $nomCommuneArrivee . '</p> 
+            <div class="flex gap-4">
+                <span class="material-symbols-outlined">schedule</span>
+                <p>' . gmdate('H:i', floor($temps * 3600)) . '</p>
+            </div>
+            <div class="flex gap-4">
+                <span class="material-symbols-outlined">directions_car</span>
+                <p>' . $distance . 'km</p>
+            </div>
+        </div>';
     }
     ?>
 </div>
-
 <div id="map"></div>
 <script defer>
 

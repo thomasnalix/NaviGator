@@ -176,15 +176,7 @@ button a {
 }
 
 .itinerary-box {
-    background: #ffffff96;
-    margin : 10px;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
-    padding: 10px;
-    position: absolute;
-    border-radius: 10px;
-    z-index: 100;
     width: 370px;
-    backdrop-filter: blur(15px) saturate(140%);
 }
 
 .ol-zoom {
@@ -283,6 +275,21 @@ input[type="text"] {
 
 
 
+/* =========================
+           General
+  ======================= */
+
+.box-blur {
+    background: #ffffff96;
+    margin : 10px 10px 0 10px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+    padding: 10px;
+    border-radius: 10px;
+    width: 370px;
+    backdrop-filter: blur(15px) saturate(140%);
+}
+
+
 
 /* Bootstrap alerts */
 /* https://getbootstrap.com/docs/3.4/components/#alerts */
@@ -318,7 +325,7 @@ input[type="text"] {
     border-color: #ebccd1;
 }
 
-/*Tailwind*/
+/* Tailwind */
 .flex { display: flex }
 .flex-col { flex-direction: column }
 .gap-4 { gap: 10px }
@@ -328,3 +335,7 @@ input[type="text"] {
 .w-full { width: 100% }
 .mb-10 { margin-bottom: 10px }
 .mb-6 { margin-bottom: 6px }
+.absolute { position: absolute }
+.z-100 { z-index: 100 }
+.align-middle { vertical-align: middle }
+.none { display: none }

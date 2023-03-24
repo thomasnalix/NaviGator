@@ -46,7 +46,6 @@ class ControleurNoeudCommune extends ControleurGenerique {
     public static function getNoeudProche():void {
         $noeudCommuneRepository = new NoeudCommuneRepository();
         $information = $noeudCommuneRepository->getNoeudProche($_GET['lat'], $_GET['long']);
-
         echo json_encode($information);
     }
 
@@ -84,7 +83,12 @@ class ControleurNoeudCommune extends ControleurGenerique {
                     $noeudRoutier[] = $noeudRoutierRepository->recupererParGid($_POST["gid" . $i]);
                     $communes[] = $_POST["gid" . $i];
                 } else {
-                    $noeudCommune = $noeudCommuneRepository->recupererPar(["nom_comm" => $_POST["commune" . $i]])[0];
+                    if (preg_match('/\((\d{5})\)/', $_POST["commune" . $i]))
+                        $nomCommune = substr($_POST["commune" . $i], 0, strlen($_POST["commune" . $i]) - 8);
+                    else
+                        $nomCommune = $_POST["commune" . $i];
+
+                    $noeudCommune = $noeudCommuneRepository->recupererPar(["nom_comm" => $nomCommune])[0];
                     $noeudRoutier[] = $noeudRoutierRepository->recupererNoeudRoutier($noeudCommune->getId_nd_rte());
                     $communes[] = $_POST["commune" . $i];
                 }
@@ -94,7 +98,7 @@ class ControleurNoeudCommune extends ControleurGenerique {
 
             $now = microtime(true);
             $distance = $pcc->aStarDistance();
-            echo "Temps d'A* : " . (microtime(true) - $now) . "s<br>";
+            //echo "Temps d'A* : " . (microtime(true) - $now) . "s<br>";
             $parameters["distance"] = $distance[0];
 
             $now = microtime(true);
