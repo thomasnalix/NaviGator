@@ -10,10 +10,12 @@ const flagBox = document.getElementById('flag-box');
 // If all field input of the fox formDestination are filled, addDestination is affiched
 formDestination.addEventListener('input', e => {
     e.target.parentElement.children[2].value = '';
+    removePointOnMap(e.target.name);
     verifyFilledField();
 });
 
 initLocateButtons();
+
 
 
 /**
@@ -21,7 +23,7 @@ initLocateButtons();
  */
 addDestination.addEventListener('click', function () {
     let nbChild = formDestination.childElementCount;
-    if (nbChild < 13) {
+    if (nbChild < 10) {
         const div = document.createElement('div');
         div.classList.add('input-box');
 
@@ -87,8 +89,9 @@ addDestination.addEventListener('click', function () {
         // add new field in formDestination before end - 1
         formDestination.insertBefore(div, formDestination.children[formDestination.childElementCount - 1]);
         nbField.setAttribute('value', nbChild + 1);
+        updateWhenAdd(nbChild - 1)
         verifyChild();
-        updateChild();
+        updateIdInput();
         verifyFilledField();
         initDeleteButtons();
         initLocateButtons();
@@ -107,6 +110,7 @@ function initDeleteButtons() {
             let nbChild = formDestination.childElementCount;
             if (nbChild > 2) {
                 removePointOnMap(this.parentElement.children[0].name);
+                updateWhenDelete(this.parentElement.children[0].name)
                 this.parentElement.remove();
                 // remove point last - 1 point in flagBox
                 for (let i = 0; i < 3; i++) {
@@ -117,9 +121,9 @@ function initDeleteButtons() {
                     flagBox.children[flagBox.childElementCount - 2].remove();
                 }
             }
-            // set all id of field
-            updateChild();
             nbField.setAttribute('value', nbChild - 1);
+            // set all id of field
+            updateIdInput(false);
             verifyChild();
             verifyFilledField();
         }
@@ -127,9 +131,9 @@ function initDeleteButtons() {
 }
 
 /**
- * Update all id of children of input-box
+ * Update all id of children of input-box and point on map
  */
-function updateChild() {
+function updateIdInput(add = true) {
     for (let i = 0; i < formDestination.childElementCount; i++) {
         formDestination.children[i].children[0].setAttribute('id', `commune${i}`);
         formDestination.children[i].children[0].setAttribute('name', `commune${i}`);
@@ -139,6 +143,39 @@ function updateChild() {
         formDestination.children[i].children[2].setAttribute('name', `gid${i}`);
     }
 }
+
+/**
+ * When delete a field, update the name of all layer on map
+ * @param nomCommune
+ */
+function updateWhenDelete(nomCommune) {
+    let layer = map.getLayers().getArray();
+    let numCommune = Number(nomCommune);
+    let nbChild = formDestination.childElementCount;
+    for (let i = nbChild; i < numCommune; i--) {
+
+        if (layer.find(layer => layer.get('name') === `commune${i}`)) {
+            layer[i].set('name', `commune${i}`);
+        }
+    }
+}
+
+/**
+ * When add a new field, update the name of all layer on map
+ * @param nomCommune
+ */
+function updateWhenAdd(nomCommune) {
+    let layer = map.getLayers().getArray();
+    let numCommune = Number(nomCommune);
+    let nbChild = formDestination.childElementCount;
+    for (let i = numCommune; i < nbChild - 1; i++) {
+        if (layer.find(layer => layer.get('name') === `commune${i}`)) {
+            layer.find(layer => layer.get('name') === `commune${i}`).set('name', `commune${i + 1}`);
+        }
+    }
+
+}
+
 
 /**
  * Init the event listener of all locate button
@@ -166,6 +203,7 @@ function initLocateButtons() {
         });
     }
 }
+
 
 /**
  * add point on map according to lon and lat and remove old point if exist
@@ -196,14 +234,14 @@ function addPointOnMap(target, lon, lat) {
             image: new ol.style.Icon({
                 anchor: [0.5, 1],
                 src: '../ressources/img/map_point.png'
-            })
+            }),
         })
     });
     map.addLayer(vectorLayer);
 }
 
 /**
- * remove point on map according to name
+ * Remove point on map according to name
  * @param name
  */
 function removePointOnMap(name) {
@@ -215,6 +253,10 @@ function removePointOnMap(name) {
     }
 }
 
+
+/**
+ * If there is more than 2 field, display the close icon
+ */
 function verifyChild() {
     const nbChild = formDestination.childElementCount;
     const display = nbChild > 2 ? '' : 'none';
@@ -222,7 +264,9 @@ function verifyChild() {
         close[i].style.display = display;
 }
 
-
+/**
+ * Verify if all field are filled and if yes, display the button to add a destination
+ */
 function verifyFilledField() {
     let nbChild = formDestination.childElementCount;
     if (nbChild < 8) {
