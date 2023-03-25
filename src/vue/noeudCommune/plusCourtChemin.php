@@ -6,24 +6,55 @@
             <div class="flex mb-6">
                 <div class="flex-col items-center flex space-between p-4" id="flag-box">
                     <span class="material-symbols-outlined">pin_drop</span>
+                    <?php
+                    if (!empty($_POST)) {
+                        echo '<span class="point"></span>';
+                        for ($i = 0; $i < count($communes) - 2; $i++) {
+                            echo <<<HTML
+                            <span class="point"></span>
+                            <span class="material-symbols-outlined etape">fiber_manual_record</span>
+                            <span class="point"></span>
+                            HTML;
+                        }
+                        echo '<span class="point"></span>';
+                    }
+                    ?>
                     <span class="material-symbols-outlined">flag</span>
                 </div>
                 <div class="flex-col flex gap-4 w-full">
                     <div id="formDestination" class="flex flex-col gap-4 w-full">
+                        <?php
+                        if (!empty($_POST)) {
+                            foreach ($communes as $key => $commune) {
+                                echo <<<HTML
+                                <div class="input-box">
+                                    <input type="text" list="auto-completion-$key" value="$commune" placeholder="Commune de départ" name="commune$key" class="commune" id="commune$key" required>
+                                    <datalist id="auto-completion-$key"></datalist>
+                                    <input type="hidden" name="gid$key" id="gid$key">
+                                    <span class="locate-button material-symbols-outlined">my_location</span>
+                                    <span class="material-symbols-outlined close">close</span>
+                                </div>
+                                HTML;
+                            }
+                        } else {
+                            echo <<<HTML
                         <div class="input-box">
-                            <input type="text" list="auto-completion-0" value="<?= (isset($nomCommuneDepart)) ? $nomCommuneDepart : ""?>" placeholder="Commune de départ" name="commune0" class="commune" id="commune0" required>
+                            <input type="text" list="auto-completion-0" value="" placeholder="Commune de départ" name="commune0" class="commune" id="commune0" required>
                             <datalist id="auto-completion-0"></datalist>
                             <input type="hidden" name="gid0" id="gid0">
                             <span class="locate-button material-symbols-outlined">my_location</span>
                             <span class="material-symbols-outlined close">close</span>
                         </div>
                         <div class="input-box">
-                            <input type="text" list="auto-completion-1" value="<?= (isset($nomCommuneArrivee)) ? $nomCommuneArrivee : ""?>" placeholder="Commune d'arrivée" name="commune1" class="commune" id="commune1" required>
+                            <input type="text" list="auto-completion-1" value="" placeholder="Commune d'arrivée" name="commune1" class="commune" id="commune1" required>
                             <datalist id="auto-completion-1"></datalist>
                             <input type="hidden" name="gid1" id="gid1">
                             <span class="locate-button material-symbols-outlined">my_location</span>
                             <span class="material-symbols-outlined close">close</span>
                         </div>
+                        HTML;
+                        }
+                        ?>
                     </div>
                 </div>
             </div>
@@ -40,7 +71,7 @@
     if (!empty($_POST)) {
         echo '
         <div class="box-blur flex-col flex">
-           <p>' . $nomCommuneDepart . ' vers ' . $nomCommuneArrivee . '</p> 
+           <p>' . $nomCommuneDepart . ' vers ' . $nomCommuneArrivee . ' (via ' . count($communes) - 2 . ' étapes)</p> 
             <div class="flex gap-4">
                 <span class="material-symbols-outlined">schedule</span>
                 <p>' . gmdate('H:i', floor($temps * 3600)) . '</p>

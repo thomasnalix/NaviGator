@@ -109,7 +109,7 @@ class ControleurNoeudCommune extends ControleurGenerique {
             //echo "Temps chemin : " . (microtime(true) - $now) . "s<br>";
 
             $parameters["temps"] = $distance[2];
-
+            $parameters["communes"] = $communes;
             $parameters["nomCommuneDepart"] = $communes[0];
             $parameters["nomCommuneArrivee"] = $communes[count($communes) - 1];
 
