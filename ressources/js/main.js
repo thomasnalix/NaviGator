@@ -82,7 +82,8 @@ addDestination.addEventListener('click', function () {
         input.id = `commune${nbChild - 1}`;
         input.setAttribute('list', dataList.id);
         input.required = true;
-        input.addEventListener('input', debounce(e => autocomplete(destionationInput.nextSibling.nextSibling, e.target.value), 200));
+        input.addEventListener('input', debounce(e => autocomplete(input.list, e.target.value), 200));
+        input.oninput = e => checkForValidInput(e.target);
 
         div.appendChild(input);
         div.appendChild(dataList);

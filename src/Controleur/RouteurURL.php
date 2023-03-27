@@ -2,16 +2,15 @@
 namespace Navigator\Controleur;
 use Navigator\Lib\Conteneur;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\HttpFoundation\UrlHelper;
-use Symfony\Component\Routing\Route;
-use Symfony\Component\Routing\RouteCollection;
-use Symfony\Component\Routing\RequestContext;
-use Symfony\Component\Routing\Matcher\UrlMatcher;
-use Navigator\Controleur\ControleurUtilisateur;
 use Symfony\Component\HttpKernel\Controller\ArgumentResolver;
 use Symfony\Component\HttpKernel\Controller\ControllerResolver;
-use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\Routing\Generator\UrlGenerator;
+use Symfony\Component\Routing\Matcher\UrlMatcher;
+use Symfony\Component\Routing\RequestContext;
+use Symfony\Component\Routing\Route;
+use Symfony\Component\Routing\RouteCollection;
 
 
 class RouteurURL {
@@ -69,6 +68,11 @@ class RouteurURL {
         // recupererListeCommunes
         $route = new Route("/communes/{text}", ["_controller" => "\Navigator\Controleur\ControleurNoeudCommune::recupererListeCommunes"]);
         $routes->add("recupererListeCommunes", $route);
+        $route->setMethods(["GET"]);
+
+        // recupererCoordCommune
+        $route = new Route("/communes/coord/{commune}", ["_controller" => "\Navigator\Controleur\ControleurNoeudCommune::recupererCoordonneesCommunes"]);
+        $routes->add("recupererCoordonneesCommunes", $route);
         $route->setMethods(["GET"]);
 
         // Start calcul

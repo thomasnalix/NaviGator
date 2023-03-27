@@ -72,6 +72,12 @@ class ControleurNoeudCommune extends ControleurGenerique
         echo json_encode($noeudsCommunes);
     }
 
+    public static function recupererCoordonneesCommunes($commune): void
+    {
+        $noeudsCommunes = (new NoeudCommuneRepository())->getCoordNoeudVille($commune);
+        echo json_encode($noeudsCommunes);
+    }
+
     public static function plusCourtChemin(): void
     {
         $parameters = [
