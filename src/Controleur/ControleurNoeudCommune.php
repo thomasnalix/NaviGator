@@ -105,7 +105,6 @@ class ControleurNoeudCommune extends ControleurGenerique {
             if ($distance[1] != -1)
                 $parameters["chemin"] = $noeudRoutierRepository->calculerItineraire($distance[1]);
 
-
             //echo "Temps chemin : " . (microtime(true) - $now) . "s<br>";
 
             $parameters["temps"] = $distance[2];
