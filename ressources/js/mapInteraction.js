@@ -66,9 +66,18 @@ function removePointOnMap(name) {
  * @param path
  */
 function printItinary(path) {
+    // Supprimer la couche vectorielle si elle existe
+    let layer = map.getLayers().getArray();
+    for (let i = 0; i < layer.length; i++) {
+        if (layer[i].get('name') === 'itinary') {
+            map.removeLayer(layer[i]);
+        }
+    }
 
     let geometries = [];
-    // the wkb array must be foreached and converted to geojson
+    if (path.length === 0) {
+        return;
+    }
     path.forEach(function(coord) {
         geometries.push(new ol.format.WKB().readGeometry(coord, {
             dataProjection: 'EPSG:4326',  // Projection de la coordonnée d'entrée
@@ -89,7 +98,8 @@ function printItinary(path) {
         source: new ol.source.Vector({
             features: geometries.map(geometry => new ol.Feature({geometry}))
         }),
-        style: lineStyle
+        style: lineStyle,
+        name: 'itinary'
     });
 
     // add to the map the vector layer in background position
