@@ -65,7 +65,7 @@ class NoeudCommuneRepository extends AbstractRepository
         $sql = <<<SQL
             SELECT nr.lat, nr.long
             FROM nalixt.noeud_routier nr
-            JOIN nalixt.noeud_commune nc ON nr.insee_comm = nc.insee_comm
+            JOIN nalixt.noeud_commune nc ON nr.id_rte500 = nc.id_nd_rte
             WHERE nom_comm = :nomVille
             LIMIT 1;
         SQL;
