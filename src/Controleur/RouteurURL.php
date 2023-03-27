@@ -71,6 +71,11 @@ class RouteurURL {
         $routes->add("recupererListeCommunes", $route);
         $route->setMethods(["GET"]);
 
+        // Start calcul
+        $route = new Route("/calculChemin", ["_controller" => "\Navigator\Controleur\ControleurNoeudCommune::calculChemin"]);
+        $routes->add("calculChemin", $route);
+        $route->setMethods(["POST"]);
+
 
 
 

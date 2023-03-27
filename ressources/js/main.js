@@ -15,10 +15,23 @@ formDestination.addEventListener('input', e => {
 });
 
 calculButton.addEventListener("click", e => {
-    const url = './noeudProche/';
-    //
-    // const response = await fetch(url);
-    // const data = await response.json();
+    const url = './calculChemin';
+        const formData = new FormData();
+    const nbChild = formDestination.childElementCount;
+    for (let i = 0; i < nbChild; i++) {
+        formData.append(`commune${i}`, formDestination.children[i].children[0].value);
+        formData.append(`gid${i}`, formDestination.children[i].children[2].value);
+    }
+    formData.append('nbField', nbField.value);
+
+    fetch(url, {
+        method: 'POST',
+        body: formData,
+    })
+        .then(response => response.json())
+        .then(data => {
+            console.log(data);
+        })
 })
 
 initLocateButtons();

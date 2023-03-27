@@ -29,7 +29,6 @@ class PlusCourtChemin {
      */
     private int $index = 0;
     private const EARTH_RADIUS = 6371;
-    private $test= 0;
     private ?string $numDepartementCourant;
     private PriorityQueue $openSet;
 
@@ -62,7 +61,6 @@ class PlusCourtChemin {
                 $distance += $cheminReconstruit[0];
                 $temps += $cheminReconstruit[2];
                 if ($this->index == count($this->noeudsRoutier) - 2) {
-                    echo "Temps d'execution : " . $this->test . "s<br>";
                     return [$distance, $chemin, $temps];
                 } else {
                     echo count($cost) . " " . count($coordTrocon) . " " . count($vitesse) . "<br>";
@@ -79,9 +77,7 @@ class PlusCourtChemin {
 
             $this->numDepartementCourant = $this->getNumDepartement($noeudRoutierGidCourant);
             if (!isset($this->numDepartementCourant)) {
-                $now = microtime(true);
                 $this->noeudsRoutierCache += $noeudRoutierRepository->getNoeudsRoutierDepartementTime($noeudRoutierGidCourant);
-                $this->test += microtime(true) - $now;
                 $this->numDepartementCourant = $this->getNumDepartement($noeudRoutierGidCourant);
             }
 
