@@ -1,6 +1,7 @@
 <script defer src="../ressources/js/main.js"></script>
 <script defer src="../ressources/js/autocompletion.js"></script>
 <script defer src="../ressources/js/mapInteraction.js"></script>
+<script defer src="../ressources/js/car.js"></script>
 <div class="flex flex-col absolute z-100">
     <div class="itinerary-box box-blur">
         <form id="form">
