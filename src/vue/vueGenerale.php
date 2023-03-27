@@ -25,7 +25,7 @@ $assistantUrl = Navigator\Lib\Conteneur::recupererService("assistantUrl");
 <body>
 <header>
     <nav>
-        <a class="gator" href="<?= $generateurUrl->generate("navigator"); ?>"><img class="logo" src="../ressources/img/logo.png" alt="logo"></a>
+        <a class="gator" href="<?= $generateurUrl->generate("navigator"); ?>"><img class="logo" src="../ressources/img/logo_void.png" alt="logo"></a>
         <a href="<?= $generateurUrl->generate("map"); ?>">Calcul</a>
 
         <?php

@@ -7,6 +7,9 @@ const nbField = document.getElementById('nbField');
 const flagBox = document.getElementById('flag-box');
 const result = document.getElementById('result');
 
+initLocateButtons();
+verifyChild();
+
 
 // If all field input of the fox formDestination are filled, addDestination is affiched
 formDestination.addEventListener('input', e => {
@@ -20,7 +23,6 @@ calculButton.addEventListener("click", async e => {
     const formData = new FormData();
     const nbChild = formDestination.childElementCount;
     for (let i = 0; i < nbChild; i++) {
-        console.log(formDestination.children[i].children[0].value);
         formData.append(`commune${i}`, formDestination.children[i].children[0].value);
         formData.append(`gid${i}`, formDestination.children[i].children[2].value);
     }
@@ -31,8 +33,6 @@ calculButton.addEventListener("click", async e => {
     printReult(data);
     printItinary(data.chemin);
 });
-
-initLocateButtons();
 
 /**
  * set variables in the resume box
@@ -50,53 +50,6 @@ function printReult(data) {
 
     // crop the distance to 2 decimals
     distanceField.textContent = data.distance.toFixed(2) + ' km';
-}
-
-/**
- * Print on the map the itinary
- * @param path
- */
-function printItinary(path) {
-    // remove itinary if it already exist
-    if (map.getLayers().getArray()[1]) {
-        map.removeLayer(map.getLayers().getArray()[1]);
-    }
-
-    let geometries = [];
-    // the wkb array must be foreached and converted to geojson
-    path.forEach(function(coord) {
-        geometries.push(new ol.format.WKB().readGeometry(coord, {
-            dataProjection: 'EPSG:4326',  // Projection de la coordonnée d'entrée
-            featureProjection: 'EPSG:3857'  // Projection de la carte (Web Mercator)
-        }));
-    })
-
-    // Définir un style de ligne rouge avec une épaisseur de 4 pixels
-    let lineStyle = new ol.style.Style({
-        stroke: new ol.style.Stroke({
-            color: '#0c7847',
-            width: 5
-        })
-    });
-
-    // Créer une couche vectorielle à partir du tableau de géométries
-    let vectorLayer = new ol.layer.Vector({
-        source: new ol.source.Vector({
-            features: geometries.map(geometry => new ol.Feature({geometry}))
-        }),
-        style: lineStyle
-    });
-
-    // add to the map the vector layer
-    map.addLayer(vectorLayer)
-    setTimeout(zoomToLine, 1);
-
-    function zoomToLine() {
-        let view = map.getView();
-        let source = map.getLayers().getArray()[1].getSource();
-        let extent = source.getExtent();
-        view.fit(extent, {maxZoom: 20, duration: 2000, padding: [150, 150, 150, 150]});
-    }
 }
 
 
@@ -288,55 +241,6 @@ function initLocateButtons() {
 
 
 /**
- * add point on map according to lon and lat and remove old point if exist
- * @param target
- * @param lon
- * @param lat
- */
-function addPointOnMap(target, lon, lat) {
-    let layer = map.getLayers().getArray();
-    for (let i = 0; i < layer.length; i++) {
-        if (layer[i].get('name') === target) {
-            map.removeLayer(layer[i]);
-        }
-    }
-
-    let point = new ol.geom.Point(ol.proj.fromLonLat([lon, lat]));
-    let feature = new ol.Feature({
-        geometry: point,
-        name: target
-    });
-    let vectorSource = new ol.source.Vector({
-        features: [feature]
-    });
-    let vectorLayer = new ol.layer.Vector({
-        source: vectorSource,
-        name: target,
-        style: new ol.style.Style({
-            image: new ol.style.Icon({
-                anchor: [0.5, 1],
-                src: '../ressources/img/map_point.png'
-            }),
-        })
-    });
-    map.addLayer(vectorLayer);
-}
-
-/**
- * Remove point on map according to name
- * @param name
- */
-function removePointOnMap(name) {
-    let layer = map.getLayers().getArray();
-    for (let i = 0; i < layer.length; i++) {
-        if (layer[i].get('name') === name) {
-            map.removeLayer(layer[i]);
-        }
-    }
-}
-
-
-/**
  * If there is more than 2 field, display the close icon
  */
 function verifyChild() {
@@ -382,7 +286,7 @@ async function send(long, lat, target) {
 
     target.children[0].value = data.nom_comm + ' - ' + data.departement + ' (Périphérie)';
     target.children[2].value = data.gid;
-    addPointOnMap(target.children[0].name, data.long, data.lat);
+    addPointOnMap(target.children[0].name, data.long, data.lat, data.nom_comm);
     verifyFilledField();
 }
 

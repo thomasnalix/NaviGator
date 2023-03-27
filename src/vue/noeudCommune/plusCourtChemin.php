@@ -1,5 +1,6 @@
 <script defer src="../ressources/js/main.js"></script>
 <script defer src="../ressources/js/autocompletion.js"></script>
+<script defer src="../ressources/js/mapInteraction.js"></script>
 <div class="flex flex-col absolute z-100">
     <div class="itinerary-box box-blur">
         <form action="" method="post" autocomplete="off">
@@ -33,7 +34,7 @@
             </div>
             <input type="hidden" name="nbField" id="nbField" value="2">
             <input type="hidden" name="XDEBUG_TRIGGER">
-            <input class="button-box" id="calcul" disabled value="Calculer"/>
+            <input class="button-box text-center" id="calcul" disabled value="Calculer"/>
         </form>
     </div>
     <div class="box-blur flex-col flex" id="result">
@@ -48,7 +49,8 @@
         </div>
     </div>
 </div>
-<div id="map"></div>
+<div id="map" class="absolute"></div>
+<div id="popup" class="absolute"></div>
 <script defer>
     let center = ol.proj.fromLonLat([0.3522, 45.8566]);
 
