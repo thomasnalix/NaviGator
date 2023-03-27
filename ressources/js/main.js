@@ -187,8 +187,7 @@ function updateWhenDelete(nomCommune) {
     let layer = map.getLayers().getArray();
     let numCommune = Number(nomCommune);
     let nbChild = formDestination.childElementCount;
-    for (let i = nbChild; i < numCommune; i--) {
-
+    for (let i = numCommune; i < nbChild-1; i++) {
         if (layer.find(layer => layer.get('name') === `commune${i}`)) {
             layer[i].set('name', `commune${i}`);
         }
@@ -208,7 +207,6 @@ function updateWhenAdd(nomCommune) {
             layer.find(layer => layer.get('name') === `commune${i}`).set('name', `commune${i + 1}`);
         }
     }
-
 }
 
 
@@ -229,7 +227,7 @@ function initLocateButtons() {
                 let lon = coord[0];
                 let lat = coord[1];
                 let target = e.target.parentElement;
-                send(lon, lat, target);
+                getNearestNode(lon, lat, target);
 
                 // if there is already a point according to e.target.parentElement.children[0].value, remove it and add new point
                 addPointOnMap(target.children[0].name, lon, lat);
@@ -279,7 +277,7 @@ function verifyFilledField() {
  * @param lat
  * @param target of the clicked box
  */
-async function send(long, lat, target) {
+async function getNearestNode(long, lat, target) {
     const url = './noeudProche/lon/' + long + '/lat/' + lat;
     const response = await fetch(url);
     const data = await response.json();
