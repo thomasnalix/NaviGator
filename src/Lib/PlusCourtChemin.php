@@ -52,11 +52,9 @@ class PlusCourtChemin {
         $gScore[$gid] = 0;
         $fScore[$gid] = 0;
         $this->openSet->insert($gid, 0);
-        $visited[$gid] = true;;
 
         while ($this->openSet->valid()) {
             $noeudRoutierGidCourant = $this->openSet->extract();
-            unset($visited[$noeudRoutierGidCourant]);
             // Path found
             if ($noeudRoutierGidCourant == $this->noeudsRoutier[$this->index+1]->getGid()) {
                 $cheminReconstruit = $this->reconstruireChemin($cameFrom, $noeudRoutierGidCourant, $cost, $coordTrocon, $vitesse);
@@ -67,8 +65,9 @@ class PlusCourtChemin {
                     echo "Temps d'execution : " . $this->test . "s<br>";
                     return [$distance, $chemin, $temps];
                 } else {
+                    echo count($cost) . " " . count($coordTrocon) . " " . count($vitesse) . "<br>";
                     $this->index++;
-                    $cameFrom = $cost = $coordTrocon = $gScore = $fScore = $visited = []; // reset des variables
+                    $cameFrom = $cost = $coordTrocon = $gScore = $fScore; // reset des variables
                     $this->openSet = new PriorityQueue();
                     $this->openSet->setExtractFlags(SplPriorityQueue::EXTR_DATA);
                     $gid = $this->noeudsRoutier[$this->index]->getGid();
@@ -86,7 +85,6 @@ class PlusCourtChemin {
                 $this->numDepartementCourant = $this->getNumDepartement($noeudRoutierGidCourant);
             }
 
-
             $neighbors = $this->noeudsRoutierCache[$this->numDepartementCourant][$noeudRoutierGidCourant];
 
             foreach ($neighbors as $neighbor) {
@@ -102,7 +100,7 @@ class PlusCourtChemin {
                     $now = microtime(true);
                     $fScore[$neighbor['noeud_gid']] = $tentativeGScore + $this->getHeuristiqueEuclidienne($neighbor['noeud_coord_lat'],$neighbor['noeud_coord_long']);
                     $this->test += microtime(true) - $now;
-                    if (!isset($visited[$neighbor['noeud_gid']]))
+                    if (!$this->openSet->contains($neighbor['noeud_gid']))
                         $this->openSet->insert($neighbor['noeud_gid'], $fScore[$neighbor['noeud_gid']]);
                 }
             }
