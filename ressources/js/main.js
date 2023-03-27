@@ -5,6 +5,7 @@ const close = document.getElementsByClassName('close');
 const locateButton = document.getElementsByClassName('locate-button');
 const nbField = document.getElementById('nbField');
 const flagBox = document.getElementById('flag-box');
+const result = document.getElementById('result');
 
 
 // If all field input of the fox formDestination are filled, addDestination is affiched
@@ -14,28 +15,89 @@ formDestination.addEventListener('input', e => {
     verifyFilledField();
 });
 
-calculButton.addEventListener("click", e => {
+calculButton.addEventListener("click", async e => {
     const url = './calculChemin';
-        const formData = new FormData();
+    const formData = new FormData();
     const nbChild = formDestination.childElementCount;
     for (let i = 0; i < nbChild; i++) {
+        console.log(formDestination.children[i].children[0].value);
         formData.append(`commune${i}`, formDestination.children[i].children[0].value);
         formData.append(`gid${i}`, formDestination.children[i].children[2].value);
     }
     formData.append('nbField', nbField.value);
 
-    fetch(url, {
-        method: 'POST',
-        body: formData,
-    })
-        .then(response => response.json())
-        .then(data => {
-            console.log(data);
-        })
-})
+    const response = await fetch(url, {method: 'POST', body: formData});
+    const data = await response.json();
+    printReult(data);
+    printItinary(data.chemin);
+});
 
 initLocateButtons();
 
+/**
+ * set variables in the resume box
+ * @param data
+ */
+function printReult(data) {
+    result.style.display = 'initial';
+    let resumeField = document.getElementById('resume-field');
+    let timeField = document.getElementById('time-field');
+    let distanceField = document.getElementById('distance-field');
+    let nbStep = ((data.communes).length - 2);
+    let etapesString = nbStep !== 0 ? ' (via ' + nbStep + ' étape' + (nbStep !== 1 ? 's)' :')') : '';
+    resumeField.textContent = data.nomCommuneDepart + ' vers ' + data.nomCommuneArrivee + etapesString;
+    timeField.textContent = Math.floor(data.temps) + 'h' + Math.round((data.temps - Math.floor(data.temps)) * 60);
+
+    // crop the distance to 2 decimals
+    distanceField.textContent = data.distance.toFixed(2) + ' km';
+}
+
+/**
+ * Print on the map the itinary
+ * @param path
+ */
+function printItinary(path) {
+    // remove itinary if it already exist
+    if (map.getLayers().getArray()[1]) {
+        map.removeLayer(map.getLayers().getArray()[1]);
+    }
+
+    let geometries = [];
+    // the wkb array must be foreached and converted to geojson
+    path.forEach(function(coord) {
+        geometries.push(new ol.format.WKB().readGeometry(coord, {
+            dataProjection: 'EPSG:4326',  // Projection de la coordonnée d'entrée
+            featureProjection: 'EPSG:3857'  // Projection de la carte (Web Mercator)
+        }));
+    })
+
+    // Définir un style de ligne rouge avec une épaisseur de 4 pixels
+    let lineStyle = new ol.style.Style({
+        stroke: new ol.style.Stroke({
+            color: '#0c7847',
+            width: 5
+        })
+    });
+
+    // Créer une couche vectorielle à partir du tableau de géométries
+    let vectorLayer = new ol.layer.Vector({
+        source: new ol.source.Vector({
+            features: geometries.map(geometry => new ol.Feature({geometry}))
+        }),
+        style: lineStyle
+    });
+
+    // add to the map the vector layer
+    map.addLayer(vectorLayer)
+    setTimeout(zoomToLine, 1);
+
+    function zoomToLine() {
+        let view = map.getView();
+        let source = map.getLayers().getArray()[1].getSource();
+        let extent = source.getExtent();
+        view.fit(extent, {maxZoom: 20, duration: 2000, padding: [150, 150, 150, 150]});
+    }
+}
 
 
 /**
@@ -242,7 +304,7 @@ function addPointOnMap(target, lon, lat) {
     let point = new ol.geom.Point(ol.proj.fromLonLat([lon, lat]));
     let feature = new ol.Feature({
         geometry: point,
-        name:target
+        name: target
     });
     let vectorSource = new ol.source.Vector({
         features: [feature]
@@ -323,3 +385,4 @@ async function send(long, lat, target) {
     addPointOnMap(target.children[0].name, data.long, data.lat);
     verifyFilledField();
 }
+

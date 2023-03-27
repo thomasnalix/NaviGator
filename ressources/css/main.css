@@ -272,7 +272,9 @@ input[type="text"] {
     font-size: 15px!important;
 }
 
-
+#result {
+    display: none;
+}
 
 
 /* =========================
