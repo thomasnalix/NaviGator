@@ -4,7 +4,7 @@
 <script defer src="../ressources/js/car.js"></script>
 <div class="flex flex-col absolute z-100">
     <div class="itinerary-box box-blur">
-        <form action="" method="post" autocomplete="off">
+        <form id="form">
             <div class="flex mb-6">
                 <div class="flex-col items-center flex space-between p-4" id="flag-box">
                     <span class="material-symbols-outlined">pin_drop</span>
@@ -35,7 +35,7 @@
             </div>
             <input type="hidden" name="nbField" id="nbField" value="2">
             <input type="hidden" name="XDEBUG_TRIGGER">
-            <input class="button-box text-center" id="calcul" disabled value="Calculer"/>
+            <input class="button-box text-center" id="calcul" value="Calculer" type="submit" disabled/>
         </form>
     </div>
     <div class="box-blur flex-col flex" id="result">
@@ -48,9 +48,13 @@
             <span class="material-symbols-outlined">directions_car</span>
             <p id="distance-field">Erreur</p>
         </div>
+        <div class="flex gap-4">
+            <span class="material-symbols-outlined">local_gas_station</span>
+            <p id="gas-field">Erreur</p>
+        </div>
     </div>
 </div>
-<div id="map" class="absolute"></div>
+<div id="map"></div>
 <div id="popup" class="absolute"></div>
 <script defer>
     let center = ol.proj.fromLonLat([0.3522, 45.8566]);

@@ -39,7 +39,9 @@ function addPointOnMap(target, lon, lat, nomCommune = "") {
         style: new ol.style.Style({
             image: new ol.style.Icon({
                 anchor: [0.5, 1],
-                src: '../ressources/img/map_point.png'
+                src: '../ressources/img/map_point.png',
+                // set the size of the icon
+                scale: 0.1
             }),
             text: text
         })

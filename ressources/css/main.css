@@ -19,11 +19,14 @@ nav {
     backdrop-filter: blur(15px) saturate(140%);
     background: #ffffff96;
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
-    width: 100%;
+    width: fit-content;
     height: 50px;
     display: flex;
     gap: 50px;
     align-items: center;
+    padding: 10px 40px 10px 10px;
+    border-radius: 10px;
+    margin: 12px;
 }
 
 nav a {
@@ -36,7 +39,7 @@ nav a {
 }
 
 .logo {
-    width: 50px;
+    width: 40px;
 }
 
 /* =========================
@@ -173,6 +176,7 @@ button a {
   ======================= */
 
 #map {
+    position: absolute!important;
     height: 100vh;
     width: 100vw;
     top: 0;
