@@ -1,3 +1,11 @@
+<?php
+
+use Navigator\Lib\ConnexionUtilisateur;
+$generateurUrl = Navigator\Lib\Conteneur::recupererService("generateurUrl");
+$assistantUrl = Navigator\Lib\Conteneur::recupererService("assistantUrl");
+
+?>
+
 <!DOCTYPE html>
 <html>
 <head>
@@ -17,33 +25,22 @@
 <body>
 <header>
     <nav>
-        <a class="gator" href="controleurFrontal.php?"><img class="logo" src="../ressources/img/logo.png" alt="logo"></a>
-        <a href="controleurFrontal.php?action=afficherListe&controleur=utilisateur">Utilisateurs</a>
-        <a href="controleurFrontal.php?action=plusCourtChemin&controleur=noeudCommune">Calcul</a>
-            <?php
+        <a class="gator" href="<?= $generateurUrl->generate("navigator"); ?>"><img class="logo" src="../ressources/img/logo.png" alt="logo"></a>
+        <a href="<?= $generateurUrl->generate("map"); ?>">Calcul</a>
 
-            use App\PlusCourtChemin\Lib\ConnexionUtilisateur;
-
-            if (!ConnexionUtilisateur::estConnecte()) {
-                echo <<<HTML
-                        <a href="controleurFrontal.php?action=afficherFormulaireConnexion&controleur=utilisateur">
-                            <img alt="login" src="../ressources/img/enter.png" width="18">
-                        </a>
-                    HTML;
-            } else {
-                $loginHTML = htmlspecialchars(ConnexionUtilisateur::getLoginUtilisateurConnecte());
-                $loginURL = rawurlencode(ConnexionUtilisateur::getLoginUtilisateurConnecte());
-                echo <<<HTML
-                        <a href="controleurFrontal.php?action=afficherDetail&controleur=utilisateur&login=$loginURL">
-                            <img alt="user" src="../ressources/img/user.png" width="18">
-                            $loginHTML
-                        </a>
-                        <a href="controleurFrontal.php?action=deconnecter&controleur=utilisateur">
-                            <img alt="logout" src="../ressources/img/logout.png" width="18">
-                        </a>
-                    HTML;
-            }
+        <?php
+        if (!ConnexionUtilisateur::estConnecte()) {
             ?>
+            <a href="<?= $generateurUrl->generate("creerDepuisFormulaire"); ?>">Inscription</a>
+            <a href="<?= $generateurUrl->generate("connecter"); ?>">Connexion</a>
+            <?php
+        } else {
+            $loginHTML = htmlspecialchars(ConnexionUtilisateur::getLoginUtilisateurConnecte());
+            $loginURL = rawurlencode(ConnexionUtilisateur::getLoginUtilisateurConnecte());
+            ?>
+            <a href="<?= $generateurUrl->generate("pagePerso", ["idUser" => $loginURL]); ?>">Mon compte</a>
+            <a href="<?= $generateurUrl->generate("deconnecter"); ?>">Déconnexion</a>
+        <?php } ?>
     </nav>
     <div>
         <?php

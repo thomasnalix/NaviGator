@@ -1,6 +1,6 @@
 <?php
 
-namespace App\PlusCourtChemin\Service\Exception;
+namespace Navigator\Service\Exception;
 
 use Exception;
 

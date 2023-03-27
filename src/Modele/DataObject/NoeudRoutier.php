@@ -1,8 +1,8 @@
 <?php
 
-namespace App\PlusCourtChemin\Modele\DataObject;
+namespace Navigator\Modele\DataObject;
 
-use App\PlusCourtChemin\Modele\Repository\NoeudRoutierRepository;
+use Navigator\Modele\Repository\NoeudRoutierRepository;
 use Exception;
 
 class NoeudRoutier extends AbstractDataObject {

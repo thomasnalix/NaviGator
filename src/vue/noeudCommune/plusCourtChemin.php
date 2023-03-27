@@ -64,7 +64,7 @@
             </div>
             <input type="hidden" name="nbField" id="nbField" value="2">
             <input type="hidden" name="XDEBUG_TRIGGER">
-            <input class="button-box"  id="calcul" type="submit" disabled value="Calculer"/>
+            <input class="button-box" id="calcul" disabled value="Calculer"/>
         </form>
     </div>
     <?php

@@ -1,6 +1,6 @@
 <?php
 
-namespace App\PlusCourtChemin\Configuration;
+namespace Navigator\Configuration;
 
 use Exception;
 use PDO;

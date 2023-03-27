@@ -1,7 +1,7 @@
 <?php
 /** @var \App\PlusCourtChemin\Modele\DataObject\Utilisateur $utilisateur */
 
-use App\PlusCourtChemin\Lib\ConnexionUtilisateur;
+use Navigator\Lib\ConnexionUtilisateur;
 
 $login = $utilisateur->getLogin();
 $loginHTML = htmlspecialchars($login);

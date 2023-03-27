@@ -1,8 +1,9 @@
 <?php
 
-namespace App\PlusCourtChemin\Controleur;
+namespace Navigator\Controleur;
 
-use App\PlusCourtChemin\Lib\MessageFlash;
+use Navigator\Lib\Conteneur;
+use Navigator\Lib\MessageFlash;
 
 class ControleurGenerique {
 
@@ -13,20 +14,28 @@ class ControleurGenerique {
     }
 
     // https://stackoverflow.com/questions/768431/how-do-i-make-a-redirect-in-php
-    protected static function rediriger(string $controleur = "", string $action = "", array $query = []) : void {
-        $queryString = [];
-        if ($action != "") {
-            $queryString[] = "action=" . rawurlencode($action);
-        }
-        if ($controleur != "") {
-            $queryString[] = "controleur=" . rawurlencode($controleur);
-        }
-        foreach ($query as $name => $value) {
-            $name = rawurldecode($name);
-            $value = rawurldecode($value);
-            $queryString[] = "$name=$value";
-        }
-        $url = "Location: ./controleurFrontal.php?" . join("&", $queryString);
+//    protected static function rediriger(string $controleur = "", string $action = "", array $query = []) : void {
+//        $queryString = [];
+//        if ($action != "") {
+//            $queryString[] = "action=" . rawurlencode($action);
+//        }
+//        if ($controleur != "") {
+//            $queryString[] = "controleur=" . rawurlencode($controleur);
+//        }
+//        foreach ($query as $name => $value) {
+//            $name = rawurldecode($name);
+//            $value = rawurldecode($value);
+//            $queryString[] = "$name=$value";
+//        }
+//        $url = "Location: ./controleurFrontal.php?" . join("&", $queryString);
+//        header($url);
+//        exit();
+//    }
+
+
+    protected static function rediriger(string $nomRoute, array $params = []) : void {
+        $generateurUrl = Conteneur::recupererService("generateurUrl");
+        $url = "Location: " .$generateurUrl->generate($nomRoute, $params);
         header($url);
         exit();
     }

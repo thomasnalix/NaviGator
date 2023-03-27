@@ -1,8 +1,8 @@
 <?php
 
-namespace App\PlusCourtChemin\Service;
+namespace Navigator\Service;
 
-use App\PlusCourtChemin\Modele\Repository\HistoriqueRepository;
+use Navigator\Modele\Repository\HistoriqueRepository;
 
 class HistoriqueService
 {

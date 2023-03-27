@@ -1,6 +1,6 @@
 <?php
 
-namespace App\PlusCourtChemin\Controleur;
+namespace Navigator\Controleur;
 
 class ControleurHistorique extends ControleurGenerique
 {

@@ -1,14 +1,14 @@
 <?php
 
-namespace App\PlusCourtChemin\Service;
+namespace Navigator\Service;
 
-use App\PlusCourtChemin\Controleur\ControleurUtilisateur;
-use App\PlusCourtChemin\Lib\ConnexionUtilisateur;
-use App\PlusCourtChemin\Lib\MotDePasse;
-use App\PlusCourtChemin\Modele\DataObject\AbstractDataObject;
-use App\PlusCourtChemin\Modele\DataObject\Utilisateur;
-use App\PlusCourtChemin\Modele\Repository\UtilisateurRepository;
-use App\PlusCourtChemin\Service\Exception\ServiceException;
+use Navigator\Controleur\ControleurUtilisateur;
+use Navigator\Lib\ConnexionUtilisateur;
+use Navigator\Lib\MotDePasse;
+use Navigator\Modele\DataObject\AbstractDataObject;
+use Navigator\Modele\DataObject\Utilisateur;
+use Navigator\Modele\Repository\UtilisateurRepository;
+use Navigator\Service\Exception\ServiceException;
 
 class UtilisateurService
 {

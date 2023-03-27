@@ -1,8 +1,8 @@
 <?php
 
-namespace App\PlusCourtChemin\Lib;
+namespace Navigator\Lib;
 
-use App\PlusCourtChemin\Modele\DataObject\DataContainer;
+use Navigator\Modele\DataObject\DataContainer;
 use Exception;
 
 class FibonacciHeap implements DataStructure {

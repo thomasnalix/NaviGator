@@ -1,6 +1,6 @@
 <?php
 
-namespace App\PlusCourtChemin\Configuration;
+namespace Navigator\Configuration;
 
 interface ConfigurationBDDInterface {
     public function getLogin() : string;

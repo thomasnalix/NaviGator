@@ -1,15 +1,15 @@
 <?php
 
-namespace App\PlusCourtChemin\Controleur;
+namespace Navigator\Controleur;
 
-use App\PlusCourtChemin\Configuration\Configuration;
-use App\PlusCourtChemin\Lib\ConnexionUtilisateur;
-use App\PlusCourtChemin\Lib\MessageFlash;
-use App\PlusCourtChemin\Lib\MotDePasse;
-use App\PlusCourtChemin\Modele\DataObject\Utilisateur;
-use App\PlusCourtChemin\Modele\Repository\UtilisateurRepository;
-use App\PlusCourtChemin\Service\Exception\ServiceException;
-use App\PlusCourtChemin\Service\UtilisateurService;
+use Navigator\Configuration\Configuration;
+use Navigator\Lib\ConnexionUtilisateur;
+use Navigator\Lib\MessageFlash;
+use Navigator\Lib\MotDePasse;
+use Navigator\Modele\DataObject\Utilisateur;
+use Navigator\Modele\Repository\UtilisateurRepository;
+use Navigator\Service\Exception\ServiceException;
+use Navigator\Service\UtilisateurService;
 
 class ControleurUtilisateur extends ControleurGenerique {
 

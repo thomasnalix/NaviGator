@@ -1,8 +1,8 @@
 <?php
 
-namespace App\PlusCourtChemin\Controleur;
+namespace Navigator\Controleur;
 
-use App\PlusCourtChemin\Service\FavorisService;
+use Navigator\Service\FavorisService;
 
 class ControleurFavoris extends ControleurGenerique
 {

@@ -1,6 +1,6 @@
 <?php
 
-namespace App\PlusCourtChemin\Modele\DataObject;
+namespace Navigator\Modele\DataObject;
 
 class Favoris extends AbstractDataObject
 {

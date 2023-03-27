@@ -1,8 +1,8 @@
 <?php
 
-namespace App\PlusCourtChemin\Lib;
+namespace Navigator\Lib;
 
-use App\PlusCourtChemin\Modele\Repository\NoeudRoutierRepository;
+use Navigator\Modele\Repository\NoeudRoutierRepository;
 use SplPriorityQueue;
 
 class PlusCourtChemin {

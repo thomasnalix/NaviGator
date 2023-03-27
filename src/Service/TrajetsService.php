@@ -1,8 +1,8 @@
 <?php
 
-namespace App\PlusCourtChemin\Service;
+namespace Navigator\Service;
 
-use App\PlusCourtChemin\Modele\Repository\TrajetsRepository;
+use Navigator\Modele\Repository\TrajetsRepository;
 
 class TrajetsService
 {

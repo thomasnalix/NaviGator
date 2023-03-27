@@ -1,11 +1,11 @@
 <?php
 
-namespace App\PlusCourtChemin\Controleur;
+namespace Navigator\Controleur;
 
-use App\PlusCourtChemin\Lib\MessageFlash;
-use App\PlusCourtChemin\Lib\PlusCourtChemin;
-use App\PlusCourtChemin\Modele\Repository\NoeudCommuneRepository;
-use App\PlusCourtChemin\Modele\Repository\NoeudRoutierRepository;
+use Navigator\Lib\MessageFlash;
+use Navigator\Lib\PlusCourtChemin;
+use Navigator\Modele\Repository\NoeudCommuneRepository;
+use Navigator\Modele\Repository\NoeudRoutierRepository;
 
 class ControleurNoeudCommune extends ControleurGenerique {
 
@@ -24,8 +24,9 @@ class ControleurNoeudCommune extends ControleurGenerique {
 
     public static function afficherDetail(): void {
         if (!isset($_REQUEST['gid'])) {
-            MessageFlash::ajouter("danger", "Immatriculation manquante.");
-            ControleurNoeudCommune::rediriger("noeudCommune", "afficherListe");
+            MessageFlash::ajouter("danger", "gid manquant.");
+            //ControleurNoeudCommune::rediriger("noeudCommune", "afficherListe");
+            ControleurNoeudCommune::rediriger("map");
         }
 
         $gid = $_REQUEST['gid'];
@@ -33,7 +34,8 @@ class ControleurNoeudCommune extends ControleurGenerique {
 
         if ($noeudCommune === null) {
             MessageFlash::ajouter("warning", "gid inconnue.");;
-            ControleurNoeudCommune::rediriger("noeudCommune", "afficherListe");
+            //ControleurNoeudCommune::rediriger("noeudCommune", "afficherListe");
+            ControleurNoeudCommune::rediriger("map");
         }
 
         ControleurNoeudCommune::afficherVue('vueGenerale.php', [
@@ -43,14 +45,13 @@ class ControleurNoeudCommune extends ControleurGenerique {
         ]);
     }
 
-    public static function getNoeudProche():void {
+    public static function getNoeudProche($long, $lat):void {
         $noeudCommuneRepository = new NoeudCommuneRepository();
-        $information = $noeudCommuneRepository->getNoeudProche($_GET['lat'], $_GET['long']);
+        $information = $noeudCommuneRepository->getNoeudProche($lat, $long);
         echo json_encode($information);
     }
 
-    public static function recupererListeCommunes(): void {
-        $text = $_GET['text'];
+    public static function recupererListeCommunes($text): void {
         $noeudsCommunes = (new NoeudRoutierRepository())->getNomCommunes($text);
         // trie par ordre alphabétique
         usort($noeudsCommunes, function($a, $b) use ($text) {
@@ -98,15 +99,11 @@ class ControleurNoeudCommune extends ControleurGenerique {
 
             $now = microtime(true);
             $distance = $pcc->aStarDistance();
-            //echo "Temps d'A* : " . (microtime(true) - $now) . "s<br>";
+            echo "Temps d'A* : " . (microtime(true) - $now) . "s<br>";
             $parameters["distance"] = $distance[0];
 
-            $now = microtime(true);
             if ($distance[1] != -1)
                 $parameters["chemin"] = $noeudRoutierRepository->calculerItineraire($distance[1]);
-
-
-            //echo "Temps chemin : " . (microtime(true) - $now) . "s<br>";
 
             $parameters["temps"] = $distance[2];
             $parameters["communes"] = $communes;

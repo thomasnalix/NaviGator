@@ -1,8 +1,8 @@
 <?php
 
-namespace App\PlusCourtChemin\Modele\Repository;
+namespace Navigator\Modele\Repository;
 
-use App\PlusCourtChemin\Modele\DataObject\AbstractDataObject;
+use Navigator\Modele\DataObject\AbstractDataObject;
 use PDOException;
 
 abstract class AbstractRepository {

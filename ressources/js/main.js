@@ -14,6 +14,13 @@ formDestination.addEventListener('input', e => {
     verifyFilledField();
 });
 
+calculButton.addEventListener("click", e => {
+    const url = './noeudProche/';
+    //
+    // const response = await fetch(url);
+    // const data = await response.json();
+})
+
 initLocateButtons();
 
 
@@ -294,7 +301,7 @@ function verifyFilledField() {
  * @param target of the clicked box
  */
 async function send(long, lat, target) {
-    const url = 'controleurFrontal.php?controleur=noeudCommune&action=getNoeudProche&long=' + long + '&lat=' + lat;
+    const url = './noeudProche/lon/' + long + '/lat/' + lat;
     const response = await fetch(url);
     const data = await response.json();
 

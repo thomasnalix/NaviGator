@@ -1,8 +1,8 @@
 <?php
 
-namespace App\PlusCourtChemin\Service;
+namespace Navigator\Service;
 
-use App\PlusCourtChemin\Modele\Repository\FavorisRepository;
+use Navigator\Modele\Repository\FavorisRepository;
 
 class FavorisService
 {

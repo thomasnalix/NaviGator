@@ -1,8 +1,8 @@
 <?php
 
-namespace App\PlusCourtChemin\Controleur;
+namespace Navigator\Controleur;
 
-use App\PlusCourtChemin\Service\TrajetsService;
+use Navigator\Service\TrajetsService;
 
 class ControleurTrajets extends ControleurGenerique
 {

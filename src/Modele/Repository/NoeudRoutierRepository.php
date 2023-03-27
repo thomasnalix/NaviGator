@@ -1,10 +1,10 @@
 <?php
 
-namespace App\PlusCourtChemin\Modele\Repository;
+namespace Navigator\Modele\Repository;
 
-use App\PlusCourtChemin\Lib\PlusCourtChemin;
-use App\PlusCourtChemin\Modele\DataObject\AbstractDataObject;
-use App\PlusCourtChemin\Modele\DataObject\NoeudRoutier;
+use Navigator\Lib\PlusCourtChemin;
+use Navigator\Modele\DataObject\AbstractDataObject;
+use Navigator\Modele\DataObject\NoeudRoutier;
 use PDO;
 
 class NoeudRoutierRepository extends AbstractRepository

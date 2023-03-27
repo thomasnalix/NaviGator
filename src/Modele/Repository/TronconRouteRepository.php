@@ -1,9 +1,9 @@
 <?php
 
-namespace App\PlusCourtChemin\Modele\Repository;
+namespace Navigator\Modele\Repository;
 
-use App\PlusCourtChemin\Modele\DataObject\AbstractDataObject;
-use App\PlusCourtChemin\Modele\DataObject\TronconRoute;
+use Navigator\Modele\DataObject\AbstractDataObject;
+use Navigator\Modele\DataObject\TronconRoute;
 
 class TronconRouteRepository extends AbstractRepository {
 

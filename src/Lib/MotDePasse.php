@@ -1,6 +1,6 @@
 <?php
 
-namespace App\PlusCourtChemin\Lib;
+namespace Navigator\Lib;
 
 class MotDePasse {
 

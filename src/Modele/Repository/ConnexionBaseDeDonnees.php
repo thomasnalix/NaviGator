@@ -1,9 +1,9 @@
 <?php
 
-namespace App\PlusCourtChemin\Modele\Repository;
+namespace Navigator\Modele\Repository;
 
-use App\PlusCourtChemin\Configuration\Configuration;
-use App\PlusCourtChemin\Configuration\ConfigurationBDDPostgreSQL;
+use Navigator\Configuration\Configuration;
+use Navigator\Configuration\ConfigurationBDDPostgreSQL;
 use PDO;
 
 class ConnexionBaseDeDonnees {

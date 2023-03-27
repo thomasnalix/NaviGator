@@ -1,8 +1,8 @@
 <?php
 
-namespace App\PlusCourtChemin\Modele\DataObject;
+namespace Navigator\Modele\DataObject;
 
-use App\PlusCourtChemin\Lib\MotDePasse;
+use Navigator\Lib\MotDePasse;
 
 class Utilisateur extends AbstractDataObject {
 

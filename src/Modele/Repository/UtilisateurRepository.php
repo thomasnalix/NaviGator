@@ -1,8 +1,8 @@
 <?php
 
-namespace App\PlusCourtChemin\Modele\Repository;
+namespace Navigator\Modele\Repository;
 
-use App\PlusCourtChemin\Modele\DataObject\Utilisateur;
+use Navigator\Modele\DataObject\Utilisateur;
 use Exception;
 
 class UtilisateurRepository extends AbstractRepository {

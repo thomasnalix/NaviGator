@@ -1,10 +1,10 @@
 <?php
 
-namespace App\PlusCourtChemin\Lib;
+namespace Navigator\Lib;
 
-use App\PlusCourtChemin\Modele\DataObject\Utilisateur;
-use App\PlusCourtChemin\Modele\HTTP\Session;
-use App\PlusCourtChemin\Modele\Repository\UtilisateurRepository;
+use Navigator\Modele\DataObject\Utilisateur;
+use Navigator\Modele\HTTP\Session;
+use Navigator\Modele\Repository\UtilisateurRepository;
 
 class ConnexionUtilisateur
 {
