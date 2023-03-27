@@ -10,6 +10,15 @@ const result = document.getElementById('result');
 initLocateButtons();
 verifyChild();
 
+function debounce(callback, wait) {
+    let timerId;
+    return (...args) => {
+        clearTimeout(timerId);
+        timerId = setTimeout(() => {
+            callback(...args);
+        }, wait);
+    };
+}
 
 // If all field input of the fox formDestination are filled, addDestination is affiched
 formDestination.addEventListener('input', e => {
@@ -73,9 +82,7 @@ addDestination.addEventListener('click', function () {
         input.id = `commune${nbChild - 1}`;
         input.setAttribute('list', dataList.id);
         input.required = true;
-        input.addEventListener('input', e => {
-            autocomplete(dataList, e.target.value);
-        });
+        input.addEventListener('input', debounce(e => autocomplete(destionationInput.nextSibling.nextSibling, e.target.value), 200));
 
         div.appendChild(input);
         div.appendChild(dataList);

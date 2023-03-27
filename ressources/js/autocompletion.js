@@ -1,16 +1,9 @@
 const destionationInputs = document.getElementsByClassName('commune');
 
-function debounce(func, wait) {
-    let timeout;
-    return function (...args) {
-        const context = this;
-        clearTimeout(timeout);
-        timeout = setTimeout(() => func.apply(context, args), wait);
-    }
-}
+// use debounce function
 
 for (let destionationInput of destionationInputs)
-    destionationInput.addEventListener('input', e => autocomplete(destionationInput.nextSibling.nextSibling, e.target.value));
+    destionationInput.addEventListener('input', debounce(e => autocomplete(destionationInput.nextSibling.nextSibling, e.target.value), 200));
 
 function autocomplete(citiesList, text) {
     // should send a request to the server to get the list of cities and display them in the datalist
