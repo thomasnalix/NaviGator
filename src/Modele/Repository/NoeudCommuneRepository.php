@@ -61,4 +61,19 @@ class NoeudCommuneRepository extends AbstractRepository
         return $noeudCommune;
     }
 
+    public function getCoordNoeudVille(string $nomVille) : array {
+        $sql = <<<SQL
+            SELECT nr.lat, nr.long
+            FROM nalixt.noeud_routier nr
+            JOIN nalixt.noeud_commune nc ON nr.insee_comm = nc.insee_comm
+            WHERE nom_comm = :nomVille
+            LIMIT 1;
+        SQL;
+        $pdoStatement = ConnexionBaseDeDonnees::getPdo()->prepare($sql);
+        $pdoStatement->execute([
+            "nomVille" => $nomVille
+        ]);
+        return $pdoStatement->fetch(PDO::FETCH_ASSOC);
+    }
+
 }
