@@ -114,6 +114,7 @@ class ControleurNoeudCommune extends ControleurGenerique
         $parameters["communes"] = $communes;
         $parameters["nomCommuneDepart"] = $communes[0];
         $parameters["nomCommuneArrivee"] = $communes[count($communes) - 1];
+        $parameters["gas"] = $distance[3];
 
 
         echo json_encode($parameters);

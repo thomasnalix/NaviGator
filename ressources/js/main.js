@@ -6,6 +6,7 @@ const locateButton = document.getElementsByClassName('locate-button');
 const nbField = document.getElementById('nbField');
 const flagBox = document.getElementById('flag-box');
 const result = document.getElementById('result');
+const form = document.getElementById('form');
 
 initLocateButtons();
 verifyChild();
@@ -18,7 +19,8 @@ formDestination.addEventListener('input', e => {
     verifyFilledField();
 });
 
-calculButton.addEventListener("click", async e => {
+form.addEventListener("submit", async e => {
+    e.preventDefault();
     const url = './calculChemin';
     const formData = new FormData();
     const nbChild = formDestination.childElementCount;
@@ -43,10 +45,12 @@ function printReult(data) {
     let resumeField = document.getElementById('resume-field');
     let timeField = document.getElementById('time-field');
     let distanceField = document.getElementById('distance-field');
+    let gasField = document.getElementById('gas-field');
     let nbStep = ((data.communes).length - 2);
     let etapesString = nbStep !== 0 ? ' (via ' + nbStep + ' étape' + (nbStep !== 1 ? 's)' :')') : '';
     resumeField.textContent = data.nomCommuneDepart + ' vers ' + data.nomCommuneArrivee + etapesString;
     timeField.textContent = Math.floor(data.temps) + 'h' + Math.round((data.temps - Math.floor(data.temps)) * 60);
+    gasField.textContent = data.gas.toFixed(2) + ' L';
 
     // crop the distance to 2 decimals
     distanceField.textContent = data.distance.toFixed(2) + ' km';
