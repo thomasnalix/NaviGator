@@ -53,9 +53,11 @@ class PlusCourtChemin {
         $fScore[$gid] = 0;
         $gasPath[$gid] = 0;
         $this->openSet->insert($gid, 0);
+        $visited[$gid] = true;
 
         while ($this->openSet->valid()) {
             $noeudRoutierGidCourant = $this->openSet->extract();
+            unset($visited[$noeudRoutierGidCourant]);
             // Path found
             if ($noeudRoutierGidCourant == $this->noeudsRoutier[$this->index+1]->getGid()) {
                 $cheminReconstruit = $this->reconstruireChemin($cameFrom, $noeudRoutierGidCourant, $cost, $coordTrocon, $vitesse, $gasPath);
@@ -67,7 +69,7 @@ class PlusCourtChemin {
                     return [$distance, $chemin, $temps, $gas];
                 } else {
                     $this->index++;
-                    $cameFrom = $cost = $coordTrocon = $gScore = $fScore = $gasPath = []; // reset des variables
+                    $cameFrom = $cost = $coordTrocon = $gScore = $fScore = $visited = $gasPath = []; // reset des variables
                     $this->openSet = new PriorityQueue();
                     $this->openSet->setExtractFlags(SplPriorityQueue::EXTR_DATA);
                     $gid = $this->noeudsRoutier[$this->index]->getGid();
@@ -102,7 +104,7 @@ class PlusCourtChemin {
                     $now = microtime(true);
                     $fScore[$neighbor['noeud_gid']] = $tentativeGScore + $this->getHeuristiqueEuclidienne($neighbor['noeud_coord_lat'],$neighbor['noeud_coord_long']);
                     $this->test += microtime(true) - $now;
-                    if (!$this->openSet->contains($neighbor['noeud_gid']))
+                    if (!isset($visited[$neighbor['noeud_gid']]))
                         $this->openSet->insert($neighbor['noeud_gid'], $fScore[$neighbor['noeud_gid']]);
                 }
             }
