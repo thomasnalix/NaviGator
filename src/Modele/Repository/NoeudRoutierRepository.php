@@ -7,8 +7,13 @@ use Navigator\Modele\DataObject\AbstractDataObject;
 use Navigator\Modele\DataObject\NoeudRoutier;
 use PDO;
 
-class NoeudRoutierRepository extends AbstractRepository
-{
+class NoeudRoutierRepository extends AbstractRepository implements NoeudRoutierRepositoryInterface {
+
+    private ConnexionBaseDeDonneesInterface $connexionBaseDeDonnees;
+
+    public function __construct(ConnexionBaseDeDonneesInterface $connexionBaseDeDonnees) {
+        $this->connexionBaseDeDonnees = $connexionBaseDeDonnees;
+    }
 
 
     public function construireDepuisTableau(array $noeudRoutierTableau): NoeudRoutier {
@@ -19,11 +24,17 @@ class NoeudRoutierRepository extends AbstractRepository
         );
     }
 
+    protected function getNomTable(): string { return 'nalixt.noeud_routier'; }
+
+    protected function getNomClePrimaire(): string { return 'gid'; }
+
+    protected function getNomsColonnes(): array { return ["gid"]; }
+
     public function calculerItineraire(array $var) {
         $variables = $var;
         // With array, explose all data and put it in a string separated by a comma
         $placeholders = implode(',', array_fill(0, count($variables), '?'));
-        $pdoStatement = ConnexionBaseDeDonnees::getPdo()->prepare("SELECT geom FROM nalixt.troncon_route WHERE gid IN($placeholders)");
+        $pdoStatement = $this->connexionBaseDeDonnees->getPdo()->prepare("SELECT geom FROM nalixt.troncon_route WHERE gid IN($placeholders)");
         $pdoStatement->execute($variables);
         $noeudsRoutierRegion = $pdoStatement->fetchAll(PDO::FETCH_ASSOC);
         $noeudsRoutier = [];
@@ -34,32 +45,6 @@ class NoeudRoutierRepository extends AbstractRepository
     }
 
 
-    protected function getNomTable(): string {
-        return 'nalixt.noeud_routier';
-    }
-
-    protected function getNomClePrimaire(): string {
-        return 'gid';
-    }
-
-    protected function getNomsColonnes(): array {
-        return ["gid"]; // "id_rte500"
-    }
-
-    // On bloque l'ajout, la màj et la suppression pour ne pas modifier la table
-    // Normalement, j'ai restreint l'accès à SELECT au niveau de la BD
-    public function supprimer(string $valeurClePrimaire): bool {
-        return false;
-    }
-
-    public function mettreAJour(AbstractDataObject $object): void {
-        return;
-    }
-
-    public function ajouter(AbstractDataObject $object): bool {
-        return false;
-    }
-
     public function getNoeudsRoutierDepartementTime(int $noeudRoutierGid): array {
         $numDepartementNoeudRoutier = $this->getDepartementGid($noeudRoutierGid);
         $requeteSQL = <<<SQL
@@ -69,7 +54,7 @@ class NoeudRoutierRepository extends AbstractRepository
             OR
             num_departement_arrivee = :departement;
         SQL;
-        $pdoStatement = ConnexionBaseDeDonnees::getPdo()->prepare($requeteSQL);
+        $pdoStatement = $this->connexionBaseDeDonnees->getPdo()->prepare($requeteSQL);
         $pdoStatement->execute(array(
             "departement" => $numDepartementNoeudRoutier
         ));
@@ -129,7 +114,7 @@ class NoeudRoutierRepository extends AbstractRepository
             FROM nalixt.noeud_routier
             WHERE id_rte500 = :idRteTag;
         SQL;
-        $pdoStatement = ConnexionBaseDeDonnees::getPdo()->prepare($requeteSQL);
+        $pdoStatement = $this->connexionBaseDeDonnees->getPdo()->prepare($requeteSQL);
         $pdoStatement->execute(array(
             "idRteTag" => $idRte
         ));
@@ -148,7 +133,7 @@ class NoeudRoutierRepository extends AbstractRepository
             FROM nalixt.noeud_routier
             WHERE gid = :gid;
         SQL;
-        $pdoStatement = ConnexionBaseDeDonnees::getPdo()->prepare($requeteSQL);
+        $pdoStatement = $this->connexionBaseDeDonnees->getPdo()->prepare($requeteSQL);
         $pdoStatement->execute(array(
             "gid" => $gid
         ));
@@ -165,7 +150,7 @@ class NoeudRoutierRepository extends AbstractRepository
             FROM nalixt.noeud_gid_dep
             WHERE gid = :gid
         SQL;
-        $pdoStatement = ConnexionBaseDeDonnees::getPdo()->prepare($requeteSQL);
+        $pdoStatement = $this->connexionBaseDeDonnees->getPdo()->prepare($requeteSQL);
         $pdoStatement->execute(array(
             "gid" => $noeudRoutierGid
         ));
@@ -173,20 +158,22 @@ class NoeudRoutierRepository extends AbstractRepository
         return $objetFormatTableau["num_departement"];
     }
 
-    public function getNomCommunes($substring) {
-        $requeteSQL = <<<SQL
-            SELECT insee_comm, nom_comm
-            FROM nalixt.noeud_commune
-            WHERE LOWER(nom_comm) LIKE LOWER(:substring)
+    public function getNoeudProche(float $lat, float $long) {
+        $sql = <<<SQL
+            SELECT nr.gid, "left"(nr.insee_comm::text, 2) as departement, nom_comm, nr.lat, nr.long
+            FROM nalixt.noeud_routier nr
+            JOIN nalixt.noeud_commune nc ON nr.insee_comm = nc.insee_comm
+            ORDER BY ST_DistanceSphere(ST_SetSRID(ST_MakePoint(:long, :lat), 4326), nr.geom)
+            LIMIT 1;
         SQL;
-        $pdoStatement = ConnexionBaseDeDonnees::getPdo()->prepare($requeteSQL);
-        $pdoStatement->execute(array(
-            "substring" => "%$substring%"
-        ));
-        $objetFormatTableau = $pdoStatement->fetchAll();
-        $communes = [];
-        foreach ($objetFormatTableau as $commune)
-            $communes[] = $commune["nom_comm"] . " (" . $commune["insee_comm"] . ")";
-        return $communes;
+        $pdoStatement = $this->connexionBaseDeDonnees->getPdo()->prepare($sql);
+        $pdoStatement->execute([
+            "lat" => $lat,
+            "long" => $long
+        ]);
+        $noeudCommune = $pdoStatement->fetch(PDO::FETCH_ASSOC);
+        return $noeudCommune;
     }
+
+
 }

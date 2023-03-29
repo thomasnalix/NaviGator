@@ -10,8 +10,7 @@ use Navigator\Modele\DataObject\Utilisateur;
 use Navigator\Modele\Repository\UtilisateurRepository;
 use Navigator\Service\Exception\ServiceException;
 
-class UtilisateurService
-{
+class UtilisateurService {
 
     public static function creerUtilisateur($login, $nom, $prenom, $motDePasse, $motDePasse2, $email, $imageProfil) {
         if($login == null || $motDePasse == null || $email == null || $imageProfil == null) throw new ServiceException("Les champs login, mot de passe et email sont obligatoires");

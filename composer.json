@@ -8,6 +8,8 @@
     "ext-pdo": "*",
     "symfony/http-foundation": "^6.0",
     "symfony/routing": "^6.0",
-    "symfony/http-kernel": "^6.0"
+    "symfony/http-kernel": "^6.0",
+    "symfony/dependency-injection": "^6.2",
+    "twig/twig": "^3.5"
   }
 }

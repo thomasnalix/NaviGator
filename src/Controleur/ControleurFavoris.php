@@ -3,18 +3,17 @@
 namespace Navigator\Controleur;
 
 use Navigator\Service\FavorisService;
+use Symfony\Component\HttpFoundation\Response;
 
-class ControleurFavoris extends ControleurGenerique
-{
+class ControleurFavoris extends ControleurGenerique {
 
-    public static function afficherErreur($errorMessage = "", $controleur = ""): void {
-        parent::afficherErreur($errorMessage, "favoris");
+    public static function afficherErreur($errorMessage = "", $controleur = ""): Response {
+        return parent::afficherErreur($errorMessage, "favoris");
     }
 
-    public static function afficherListe(): void
-    {
+    public static function afficherListe(): Response {
         $favoris = (new FavorisService())->recupererFavoris();
-        ControleurFavoris::afficherVue('vueGenerale.php', [
+        return ControleurFavoris::afficherVue('vueGenerale.php', [
             "favoris" => $favoris,
             "pagetitle" => "Liste des favoris",
             "cheminVueBody" => "favoris/liste.php"
@@ -22,5 +21,4 @@ class ControleurFavoris extends ControleurGenerique
     }
 
     public static function creerDepuisFormulaire() : void {}
-
 }

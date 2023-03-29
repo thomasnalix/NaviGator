@@ -55,7 +55,7 @@ function printReult(data) {
     let timeField = document.getElementById('time-field');
     let distanceField = document.getElementById('distance-field');
     let gasField = document.getElementById('gas-field');
-    let nbStep = ((data.communes).length - 2);
+    let nbStep = ((data.nbCommunes) - 2);
     let etapesString = nbStep !== 0 ? ' (via ' + nbStep + ' étape' + (nbStep !== 1 ? 's)' :')') : '';
     resumeField.textContent = data.nomCommuneDepart + ' vers ' + data.nomCommuneArrivee + etapesString;
     timeField.textContent = Math.floor(data.temps) + 'h' + Math.round((data.temps - Math.floor(data.temps)) * 60);

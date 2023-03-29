@@ -2,129 +2,66 @@
 
 namespace Navigator\Controleur;
 
-use Navigator\Lib\MessageFlash;
-use Navigator\Lib\PlusCourtChemin;
-use Navigator\Modele\Repository\NoeudCommuneRepository;
-use Navigator\Modele\Repository\NoeudRoutierRepository;
+use Navigator\Service\Exception\ServiceException;
+use Navigator\Service\NoeudCommuneServiceInterface;
+use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\HttpFoundation\Response;
 
-class ControleurNoeudCommune extends ControleurGenerique
-{
+class ControleurNoeudCommune extends ControleurGenerique {
 
-    public static function afficherErreur($errorMessage = "", $controleur = ""): void
-    {
-        parent::afficherErreur($errorMessage, "noeudCommune");
+    private NoeudCommuneServiceInterface $noeudCommuneService;
+
+    public function __construct(NoeudCommuneServiceInterface $noeudCommuneService) {
+        $this->noeudCommuneService = $noeudCommuneService;
     }
 
-    public static function afficherListe(): void
-    {
-        $noeudsCommunes = (new NoeudCommuneRepository())->recuperer();     //appel au modèle pour gerer la BD
-        ControleurNoeudCommune::afficherVue('vueGenerale.php', [
-            "noeudsCommunes" => $noeudsCommunes,
-            "pagetitle" => "Liste des Noeuds Routiers",
-            "cheminVueBody" => "noeudCommune/liste.php"
-        ]);
+    public static function afficherErreur($errorMessage = "", $controleur = ""): Response {
+        return parent::afficherErreur($errorMessage, "noeudCommune");
     }
 
-    public static function afficherDetail(): void
-    {
-        if (!isset($_REQUEST['gid'])) {
-            MessageFlash::ajouter("danger", "gid manquant.");
-            //ControleurNoeudCommune::rediriger("noeudCommune", "afficherListe");
-            ControleurNoeudCommune::rediriger("map");
-        }
 
-        $gid = $_REQUEST['gid'];
-        $noeudCommune = (new NoeudCommuneRepository())->recupererParClePrimaire($gid);
-
-        if ($noeudCommune === null) {
-            MessageFlash::ajouter("warning", "gid inconnue.");;
-            //ControleurNoeudCommune::rediriger("noeudCommune", "afficherListe");
-            ControleurNoeudCommune::rediriger("map");
-        }
-
-        ControleurNoeudCommune::afficherVue('vueGenerale.php', [
-            "noeudCommune" => $noeudCommune,
-            "pagetitle" => "Détail de la noeudCommune",
-            "cheminVueBody" => "noeudCommune/detail.php"
-        ]);
-    }
-
-    public static function getNoeudProche($long, $lat): void
-    {
-        $noeudCommuneRepository = new NoeudCommuneRepository();
-        $information = $noeudCommuneRepository->getNoeudProche($lat, $long);
-        echo json_encode($information);
-    }
-
-    public static function recupererListeCommunes($text): void
-    {
-        $noeudsCommunes = (new NoeudRoutierRepository())->getNomCommunes($text);
-        // trie par ordre alphabétique
-        usort($noeudsCommunes, function ($a, $b) use ($text) {
-            if (str_starts_with($a, $text) && str_starts_with($b, $text))
+    /**
+     * Call the database to get the list of cities that start with the text entered by the user
+     * @param $text
+     * @return void
+     */
+    public function recupererListeCommunes($text): Response {
+        try {
+            $noeudsCommunes = $this->noeudCommuneService->getNomCommunes($text);
+            // trie par ordre alphabétique
+            usort($noeudsCommunes, function ($a, $b) use ($text) {
+                if (str_starts_with($a, $text) && str_starts_with($b, $text))
+                    return 0;
+                if (str_starts_with($a, $text))
+                    return -1;
+                if (str_starts_with($b, $text))
+                    return 1;
                 return 0;
-            if (str_starts_with($a, $text))
-                return -1;
-            if (str_starts_with($b, $text))
-                return 1;
-            return 0;
-        });
-        echo json_encode($noeudsCommunes);
+            });
+            return new JsonResponse(json_encode($noeudsCommunes),Response::HTTP_OK, [], true);
+        } catch (ServiceException $exception) {
+            return new JsonResponse(["error" => $exception->getMessage()], $exception->getCode());
+        }
     }
 
-    public static function recupererCoordonneesCommunes($commune): void
-    {
-        $noeudsCommunes = (new NoeudCommuneRepository())->getCoordNoeudVille($commune);
-        echo json_encode($noeudsCommunes);
+    public function recupererCoordonneesCommunes($commune): Response {
+        try {
+            $noeudsCommunes = $this->noeudCommuneService->getCoordNoeudCommune($commune);
+            return new JsonResponse(json_encode($noeudsCommunes),Response::HTTP_OK, [], true);
+        } catch (ServiceException $exception) {
+            return new JsonResponse(["error" => $exception->getMessage()], $exception->getCode());
+        }
     }
 
-    public static function plusCourtChemin(): void
-    {
+    /**
+     * Load the page to find the shortest path between cities
+     * @return Response
+     */
+    public static function plusCourtChemin(): Response {
         $parameters = [
             "pagetitle" => "Plus court chemin",
             "cheminVueBody" => "noeudCommune/plusCourtChemin.php",
         ];
-        ControleurNoeudCommune::afficherVue('vueGenerale.php', $parameters);
-    }
-
-    public static function calculChemin(): void {
-        $noeudCommuneRepository = new NoeudCommuneRepository();
-        $noeudRoutierRepository = new NoeudRoutierRepository();
-
-        $communes = [];
-        $noeudRoutier = [];
-        for ($i = 0; $i < $_POST['nbField']; $i++) {
-            if ($_POST["gid" . $i] != "") {
-                $noeudRoutier[] = $noeudRoutierRepository->recupererParGid($_POST["gid" . $i]);
-                $communes[] = $_POST["gid" . $i];
-            } else {
-                if (preg_match('/\((\d{5})\)/', $_POST["commune" . $i]))
-                    $nomCommune = substr($_POST["commune" . $i], 0, strlen($_POST["commune" . $i]) - 8);
-                else
-                    $nomCommune = $_POST["commune" . $i];
-
-                $noeudCommune = $noeudCommuneRepository->recupererPar(["nom_comm" => $nomCommune])[0];
-                $noeudRoutier[] = $noeudRoutierRepository->recupererNoeudRoutier($noeudCommune->getId_nd_rte());
-                $communes[] = $_POST["commune" . $i];
-            }
-        }
-
-        $pcc = new PlusCourtChemin($noeudRoutier);
-        $distance = $pcc->aStarDistance();
-        $parameters["distance"] = $distance[0];
-
-        if ($distance[1] != -1)
-            $parameters["chemin"] = $noeudRoutierRepository->calculerItineraire($distance[1]);
-
-        $parameters["temps"] = $distance[2];
-        $parameters["communes"] = $communes;
-        $parameters["nomCommuneDepart"] = $communes[0];
-        $parameters["nomCommuneArrivee"] = $communes[count($communes) - 1];
-        $parameters["gas"] = $distance[3];
-
-
-        echo json_encode($parameters);
-        //ControleurNoeudCommune::afficherVue('vueGenerale.php', $parameters);
-
+        return ControleurNoeudCommune::afficherVue('vueGenerale.php', $parameters);
     }
 }

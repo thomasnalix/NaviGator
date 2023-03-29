@@ -2,24 +2,21 @@
 
 namespace Navigator\Controleur;
 
+use Symfony\Component\HttpFoundation\RedirectResponse;
+use Symfony\Component\HttpFoundation\Response;
 use Navigator\Configuration\Configuration;
-use Navigator\Lib\ConnexionUtilisateur;
 use Navigator\Lib\MessageFlash;
-use Navigator\Lib\MotDePasse;
-use Navigator\Modele\DataObject\Utilisateur;
-use Navigator\Modele\Repository\UtilisateurRepository;
 use Navigator\Service\Exception\ServiceException;
 use Navigator\Service\UtilisateurService;
 
 class ControleurUtilisateur extends ControleurGenerique {
 
-    public static function afficherErreur($errorMessage = "", $controleur = ""): void {
-        parent::afficherErreur($errorMessage, "utilisateur");
+    public static function afficherErreur($errorMessage = "", $controleur = ""): Response {
+        return parent::afficherErreur($errorMessage, "utilisateur");
     }
 
 
-    public static function afficherListe(): void
-    {
+    public static function afficherListe(): void {
         $utilisateurs = (new UtilisateurService())->recupererUtilisateurs();
         ControleurUtilisateur::afficherVue('vueGenerale.php', [
             "utilisateurs" => $utilisateurs,
@@ -28,36 +25,35 @@ class ControleurUtilisateur extends ControleurGenerique {
         ]);
     }
 
-    public static function afficherDetail(): void {
+    public static function afficherDetail(): Response {
         $login = $_REQUEST['login'];
         $utilisateur = null;
-
         try {
             $utilisateur = (new UtilisateurService())->afficherDetailUtilisateur($login);
         } catch(ServiceException $e) {
             MessageFlash::ajouter("danger", $e->getMessage());
-            ControleurUtilisateur::rediriger("utilisateur", "afficherListe");
+            return ControleurUtilisateur::rediriger("utilisateur", "afficherListe");
         }
 
-        ControleurUtilisateur::afficherVue('vueGenerale.php', [
+        return ControleurUtilisateur::afficherVue('vueGenerale.php', [
             "utilisateur" => $utilisateur,
             "pagetitle" => "Détail de l'utilisateur",
             "cheminVueBody" => "utilisateur/detail.php"
         ]);
     }
 
-    public static function supprimer() {
+    public static function supprimer(): RedirectResponse {
         $login = $_REQUEST['login'];
 
         try {
             (new UtilisateurService())->supprimerUtilisateur($login);
         } catch(ServiceException $e) {
             MessageFlash::ajouter("danger", $e->getMessage());
-            ControleurUtilisateur::rediriger("utilisateur", "afficherListe");
+            return ControleurUtilisateur::rediriger("utilisateur", "afficherListe");
         }
 
         MessageFlash::ajouter("success", "L'utilisateur a bien été supprimé !");
-        ControleurUtilisateur::rediriger("utilisateur", "afficherListe");
+        return ControleurUtilisateur::rediriger("utilisateur", "afficherListe");
     }
 
     public static function afficherFormulaireCreation(): void {
@@ -68,7 +64,7 @@ class ControleurUtilisateur extends ControleurGenerique {
         ]);
     }
 
-    public static function creerDepuisFormulaire(): void {
+    public static function creerDepuisFormulaire(): RedirectResponse {
         $login = $_REQUEST['login'];
         $nom = $_REQUEST['nom'];
         $prenom = $_REQUEST['prenom'];
@@ -81,14 +77,14 @@ class ControleurUtilisateur extends ControleurGenerique {
             (new UtilisateurService())->creerUtilisateur($login, $nom, $prenom, $motDePasse, $motDePasse2, $email, $imageProfil);
         } catch(ServiceException $e) {
             MessageFlash::ajouter("danger", $e->getMessage());
-            ControleurUtilisateur::rediriger("utilisateur", "afficherFormulaireCreation");
+            return ControleurUtilisateur::rediriger("utilisateur", "afficherFormulaireCreation");
         }
 
         MessageFlash::ajouter("success", "L'utilisateur a bien été créé !");
-        ControleurUtilisateur::rediriger("utilisateur", "afficherListe");
+        return ControleurUtilisateur::rediriger("utilisateur", "afficherListe");
     }
 
-    public static function afficherFormulaireMiseAJour(): void {
+    public static function afficherFormulaireMiseAJour(): Response {
             $login = $_REQUEST['login'];
             $utilisateur = null;
 
@@ -96,14 +92,14 @@ class ControleurUtilisateur extends ControleurGenerique {
                 $utilisateur = (new UtilisateurService())->afficherFormulaireMAJUtilisateur($login);
             } catch(ServiceException $e) {
                 MessageFlash::ajouter("danger", $e->getMessage());
-                ControleurUtilisateur::rediriger("utilisateur", "afficherListe");
+                return ControleurUtilisateur::rediriger("utilisateur", "afficherListe");
             }
 
             $loginHTML = htmlspecialchars($login);
             $prenomHTML = htmlspecialchars($utilisateur->getPrenom());
             $nomHTML = htmlspecialchars($utilisateur->getNom());
             $emailHTML = htmlspecialchars($utilisateur->getEmail());
-            ControleurUtilisateur::afficherVue('vueGenerale.php', [
+            return ControleurUtilisateur::afficherVue('vueGenerale.php', [
                 "pagetitle" => "Mise à jour d'un utilisateur",
                 "cheminVueBody" => "utilisateur/formulaireMiseAJour.php",
                 "loginHTML" => $loginHTML,
@@ -114,7 +110,7 @@ class ControleurUtilisateur extends ControleurGenerique {
             ]);
     }
 
-    public static function mettreAJour(): void {
+    public static function mettreAJour(): RedirectResponse {
         $login = $_REQUEST['login'];
         $nom = $_REQUEST['nom'];
         $prenom = $_REQUEST['prenom'];
@@ -128,11 +124,11 @@ class ControleurUtilisateur extends ControleurGenerique {
             (new UtilisateurService())->mettreAJourUtilisateur($login, $nom, $prenom, $motDePasseAncien, $motDePasse, $motDePasse2, $email, $imageProfil);
         } catch(ServiceException $e) {
             MessageFlash::ajouter("danger", $e->getMessage());
-            ControleurUtilisateur::rediriger("utilisateur", "afficherFormulaireMiseAJour", ["login" => $login]);
+            return ControleurUtilisateur::rediriger("utilisateur", "afficherFormulaireMiseAJour", ["login" => $login]);
         }
 
         MessageFlash::ajouter("success", "L'utilisateur a bien été modifié !");
-        ControleurUtilisateur::rediriger("utilisateur", "afficherListe");
+        return ControleurUtilisateur::rediriger("utilisateur", "afficherListe");
     }
 
     public static function afficherFormulaireConnexion(): void {
@@ -143,7 +139,7 @@ class ControleurUtilisateur extends ControleurGenerique {
         ]);
     }
 
-    public static function connecter(): void {
+    public static function connecter(): RedirectResponse {
         $login = $_REQUEST['login'];
         $motDePasse = $_REQUEST['mdp'];
 
@@ -151,17 +147,17 @@ class ControleurUtilisateur extends ControleurGenerique {
             (new UtilisateurService())->connecterUtilisateur($login, $motDePasse);
         } catch(ServiceException $e) {
             MessageFlash::ajouter("danger", $e->getMessage());
-            ControleurUtilisateur::rediriger("utilisateur", "afficherFormulaireConnexion");
+            return ControleurUtilisateur::rediriger("utilisateur", ["afficherFormulaireConnexion"]);
         }
 
         MessageFlash::ajouter("success", "Connexion effectuée.");
-        ControleurUtilisateur::rediriger("utilisateur", "afficherDetail", ["login" => $_REQUEST["login"]]);
+        return ControleurUtilisateur::rediriger("utilisateur", "afficherDetail", ["login" => $_REQUEST["login"]]);
     }
 
-    public static function deconnecter(): void {
+    public static function deconnecter(): RedirectResponse {
         (new UtilisateurService())->deconnecterUtilisateur();
         MessageFlash::ajouter("success", "L'utilisateur a bien été déconnecté.");
-        ControleurUtilisateur::rediriger("utilisateur", "afficherListe");
+        return ControleurUtilisateur::rediriger("utilisateur", ["afficherListe"]);
     }
 
 //    public static function validerEmail() {

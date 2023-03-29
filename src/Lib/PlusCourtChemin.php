@@ -29,13 +29,15 @@ class PlusCourtChemin {
      */
     private int $index = 0;
     private const EARTH_RADIUS = 6371;
-    private $test= 0;
     private ?string $numDepartementCourant;
     private PriorityQueue $openSet;
 
-    public function __construct(private array $noeudsRoutier) {
+    private NoeudRoutierRepository $noeudRoutierRepository;
+
+    public function __construct(private array $noeudsRoutier, NoeudRoutierRepository $noeudRoutierRepository) {
         $this->openSet = new PriorityQueue();
         $this->openSet->setExtractFlags(SplPriorityQueue::EXTR_DATA);
+        $this->noeudRoutierRepository = $noeudRoutierRepository;
     }
 
     /**
@@ -43,7 +45,6 @@ class PlusCourtChemin {
      * @return array|int[]|null
      */
     function aStarDistance(): ?array {
-        $noeudRoutierRepository = new NoeudRoutierRepository();
         $cameFrom = $chemin = $coordTrocon = $numDepartement = [];
         $distance = $temps = $gas= 0;
         $gid = $this->noeudsRoutier[$this->index]->getGid();
@@ -81,9 +82,7 @@ class PlusCourtChemin {
 
             $this->numDepartementCourant = $this->getNumDepartement($noeudRoutierGidCourant);
             if (!isset($this->numDepartementCourant)) {
-                $now = microtime(true);
-                $this->noeudsRoutierCache += $noeudRoutierRepository->getNoeudsRoutierDepartementTime($noeudRoutierGidCourant);
-                $this->test += microtime(true) - $now;
+                $this->noeudsRoutierCache += $this->noeudRoutierRepository->getNoeudsRoutierDepartementTime($noeudRoutierGidCourant);
                 $this->numDepartementCourant = $this->getNumDepartement($noeudRoutierGidCourant);
             }
 
@@ -101,9 +100,7 @@ class PlusCourtChemin {
                     $vitesse[$neighbor['noeud_gid']] = $neighbor['vitesse'];
                     $coordTrocon[$neighbor['noeud_gid']] = $neighbor['troncon_gid'];
                     $gScore[$neighbor['noeud_gid']] = $tentativeGScore;
-                    $now = microtime(true);
                     $fScore[$neighbor['noeud_gid']] = $tentativeGScore + $this->getHeuristiqueEuclidienne($neighbor['noeud_coord_lat'],$neighbor['noeud_coord_long']);
-                    $this->test += microtime(true) - $now;
                     if (!isset($visited[$neighbor['noeud_gid']]))
                         $this->openSet->insert($neighbor['noeud_gid'], $fScore[$neighbor['noeud_gid']]);
                 }

@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <title>{% block page_title %}The Feed{% endblock %}</title>
+    <meta charset="utf-8">
+    <link rel="stylesheet" type="text/css" href="{# lien vers le CSS #}">
+</head>
+<body>
+<header>
+    <div id="titre" class="center">
+        <a href="{# lien #}"><span>The Feed</span></a>
+        <nav>
+            <a href="{# lien #}">Accueil</a>
+            {# si l'utilisateur est connecte #}
+            <a href="{# lien #}">Ma page</a>
+            <a href="{# lien #}">Déconnexion</a>
+            {# sinon #}
+            <a href="{# lien #}">Inscription</a>
+            <a href="{# lien #}">Connexion</a>
+            {# fin si #}
+        </nav>
+    </div>
+</header>
+<div id="flashes-container">
+    {# boucle sur les types de messages flash #}
+    {# boucle sur les messages flash de ce type #}
+    <span class="flashes flashes-{# type du message #}">{# message flash #}</span>
+    {# fin boucle #}
+    {# fin boucle #}
+</div>
+{% block page_content %}{% endblock %}
+</body>
+</html>

@@ -6,16 +6,14 @@ use Navigator\Configuration\Configuration;
 use Navigator\Configuration\ConfigurationBDDPostgreSQL;
 use PDO;
 
-class ConnexionBaseDeDonnees {
-    private static ?ConnexionBaseDeDonnees $instance = null;
-
+class ConnexionBaseDeDonnees implements ConnexionBaseDeDonneesInterface {
     private PDO $pdo;
 
-    public static function getPdo(): PDO {
-        return ConnexionBaseDeDonnees::getInstance()->pdo;
+    public function getPdo(): PDO {
+        return $this->pdo;
     }
 
-    private function __construct() {
+    public function __construct() {
         $configuration = new Configuration(new ConfigurationBDDPostgreSQL());
         $configurationBDD = $configuration->getConfigurationBDD();
 
@@ -31,9 +29,4 @@ class ConnexionBaseDeDonnees {
         $this->pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
     }
 
-    private static function getInstance(): ConnexionBaseDeDonnees {
-        if (is_null(ConnexionBaseDeDonnees::$instance))
-            ConnexionBaseDeDonnees::$instance = new ConnexionBaseDeDonnees();
-        return ConnexionBaseDeDonnees::$instance;
-    }
 }

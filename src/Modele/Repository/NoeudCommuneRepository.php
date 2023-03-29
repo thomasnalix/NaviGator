@@ -6,8 +6,13 @@ use Navigator\Modele\DataObject\AbstractDataObject;
 use Navigator\Modele\DataObject\NoeudCommune;
 use PDO;
 
-class NoeudCommuneRepository extends AbstractRepository
-{
+class NoeudCommuneRepository extends AbstractRepository implements NoeudCommuneRepositoryInterface {
+
+    private ConnexionBaseDeDonneesInterface $connexionBaseDeDonnees;
+
+    public function __construct(ConnexionBaseDeDonneesInterface $connexionBaseDeDonnees) {
+        $this->connexionBaseDeDonnees = $connexionBaseDeDonnees;
+    }
 
     public function construireDepuisTableau(array $noeudRoutierTableau): NoeudCommune {
         return new NoeudCommune(
@@ -18,50 +23,15 @@ class NoeudCommuneRepository extends AbstractRepository
         );
     }
 
-    protected function getNomTable(): string {
-        return 'nalixt.noeud_commune';
-    }
+    protected function getNomTable(): string { return 'nalixt.noeud_commune';}
 
-    protected function getNomClePrimaire(): string {
-        return 'gid';
-    }
+    protected function getNomClePrimaire(): string { return 'gid'; }
 
     protected function getNomsColonnes(): array {
         return ["gid", "id_rte500", "nom_comm", "id_nd_rte"];
     }
 
-    // On bloque l'ajout, la màj et la suppression pour ne pas modifier la table
-    // Normalement, j'ai restreint l'accès à SELECT au niveau de la BD
-    public function supprimer(string $valeurClePrimaire): bool {
-        return false;
-    }
-
-    public function mettreAJour(AbstractDataObject $object): void {
-        return;
-    }
-
-    public function ajouter(AbstractDataObject $object): bool {
-        return false;
-    }
-
-    public function getNoeudProche(float $lat, float $long) {
-        $sql = <<<SQL
-            SELECT nr.gid, "left"(nr.insee_comm::text, 2) as departement, nom_comm, nr.lat, nr.long
-            FROM nalixt.noeud_routier nr
-            JOIN nalixt.noeud_commune nc ON nr.insee_comm = nc.insee_comm
-            ORDER BY ST_DistanceSphere(ST_SetSRID(ST_MakePoint(:long, :lat), 4326), nr.geom)
-            LIMIT 1;
-        SQL;
-        $pdoStatement = ConnexionBaseDeDonnees::getPdo()->prepare($sql);
-        $pdoStatement->execute([
-            "lat" => $lat,
-            "long" => $long
-        ]);
-        $noeudCommune = $pdoStatement->fetch(PDO::FETCH_ASSOC);
-        return $noeudCommune;
-    }
-
-    public function getCoordNoeudVille(string $nomVille) : array {
+    public function getCoordNoeudCommune(string $nomVille) : array {
         $sql = <<<SQL
             SELECT nr.lat, nr.long
             FROM nalixt.noeud_routier nr
@@ -69,11 +39,41 @@ class NoeudCommuneRepository extends AbstractRepository
             WHERE nom_comm = :nomVille
             LIMIT 1;
         SQL;
-        $pdoStatement = ConnexionBaseDeDonnees::getPdo()->prepare($sql);
+        $pdoStatement = $this->connexionBaseDeDonnees->getPdo()->prepare($sql);
         $pdoStatement->execute([
             "nomVille" => $nomVille
         ]);
         return $pdoStatement->fetch(PDO::FETCH_ASSOC);
     }
 
+    public function getNomCommunes($substring): array {
+        $requeteSQL = <<<SQL
+            SELECT insee_comm, nom_comm
+            FROM nalixt.noeud_commune
+            WHERE LOWER(nom_comm) LIKE LOWER(:substring)
+        SQL;
+        $pdoStatement = $this->connexionBaseDeDonnees->getPdo()->prepare($requeteSQL);
+        $pdoStatement->execute(array(
+            "substring" => "%$substring%"
+        ));
+        $objetFormatTableau = $pdoStatement->fetchAll();
+        $communes = [];
+        foreach ($objetFormatTableau as $commune)
+            $communes[] = $commune["nom_comm"] . " (" . $commune["insee_comm"] . ")";
+        return $communes;
+    }
+
+    public function getCommune(string $nomCommune): NoeudCommune {
+        $request = <<<SQL
+            SELECT gid, id_rte500, nom_comm, id_nd_rte 
+            FROM nalixt.noeud_commune 
+            WHERE nom_comm = :nomCommune
+        SQL;
+        $pdoStatement = $this->connexionBaseDeDonnees->getPdo()->prepare($request);
+        $pdoStatement->execute([
+            "nomCommune" => $nomCommune
+        ]);
+        $objetFormatTableau = $pdoStatement->fetch();
+        return $this->construireDepuisTableau($objetFormatTableau);
+    }
 }
