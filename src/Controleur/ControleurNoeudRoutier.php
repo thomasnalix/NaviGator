@@ -3,6 +3,7 @@
 namespace Navigator\Controleur;
 
 use Navigator\Lib\MessageFlash;
+use Navigator\Lib\PlusCourtChemin;
 use Navigator\Service\Exception\ServiceException;
 use Navigator\Service\NoeudRoutierServiceInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -48,9 +49,25 @@ class ControleurNoeudRoutier extends ControleurGenerique {
             else
                 $noeudList['commune' . $i] = substr($_POST["commune" . $i], 0, strlen($_POST["commune" . $i]) - 8);
         }
+
         try {
-            $data = $this->noeudRoutierService->calculChemin($nbFields, $noeudList);
-            return new JsonResponse(json_encode($data), Response::HTTP_OK, [], true);
+            $villes = $this->noeudRoutierService->getVillesItinary($nbFields, $noeudList);
+
+            $pcc = new PlusCourtChemin($villes, $this->noeudRoutierService);
+            $datas = $pcc->aStarDistance();
+            $parameters["distance"] = $datas[0];
+            $parameters["temps"] = $datas[2];
+            $parameters["gas"] = $datas[3];
+
+            if (count($datas[1]) > 0)
+                $parameters["chemin"] = $this->noeudRoutierService->calculerItineraire($datas[1]);
+            else
+                $parameters["chemin"] = [];
+            $parameters["nbCommunes"] = count($noeudList);
+            $parameters["nomCommuneDepart"] = array_shift($noeudList);
+            $parameters["nomCommuneArrivee"] = end($noeudList);
+
+            return new JsonResponse(json_encode($parameters), Response::HTTP_OK, [], true);
         } catch (ServiceException $exception) {
             MessageFlash::ajouter("danger",$exception->getMessage());
             return new JsonResponse(["error" => $exception->getMessage()], $exception->getCode());

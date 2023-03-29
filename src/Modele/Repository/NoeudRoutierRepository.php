@@ -15,7 +15,6 @@ class NoeudRoutierRepository extends AbstractRepository implements NoeudRoutierR
         $this->connexionBaseDeDonnees = $connexionBaseDeDonnees;
     }
 
-
     public function construireDepuisTableau(array $noeudRoutierTableau): NoeudRoutier {
         return new NoeudRoutier(
             $noeudRoutierTableau["gid"],
@@ -30,12 +29,11 @@ class NoeudRoutierRepository extends AbstractRepository implements NoeudRoutierR
 
     protected function getNomsColonnes(): array { return ["gid"]; }
 
-    public function calculerItineraire(array $var) {
-        $variables = $var;
+    public function calculerItineraire(array $tronconsGid): array {
         // With array, explose all data and put it in a string separated by a comma
-        $placeholders = implode(',', array_fill(0, count($variables), '?'));
+        $placeholders = implode(',', array_fill(0, count($tronconsGid), '?'));
         $pdoStatement = $this->connexionBaseDeDonnees->getPdo()->prepare("SELECT geom FROM nalixt.troncon_route WHERE gid IN($placeholders)");
-        $pdoStatement->execute($variables);
+        $pdoStatement->execute($tronconsGid);
         $noeudsRoutierRegion = $pdoStatement->fetchAll(PDO::FETCH_ASSOC);
         $noeudsRoutier = [];
         foreach ($noeudsRoutierRegion as $noeudRoutier) {
@@ -44,7 +42,7 @@ class NoeudRoutierRepository extends AbstractRepository implements NoeudRoutierR
         return $noeudsRoutier;
     }
 
-    public function getNoeudsRoutierDepartementTime(int $noeudRoutierGid): array {
+    public function getNoeudsRoutierDepartement(int $noeudRoutierGid): array {
         $numDepartementNoeudRoutier = $this->getDepartementGid($noeudRoutierGid);
         $requeteSQL = <<<SQL
             SELECT *

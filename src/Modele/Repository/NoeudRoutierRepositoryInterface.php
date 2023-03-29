@@ -6,9 +6,9 @@ use Navigator\Modele\DataObject\NoeudRoutier;
 
 interface NoeudRoutierRepositoryInterface {
 
-    public function calculerItineraire(array $var);
+    public function calculerItineraire(array $tronconsGid): array;
 
-    public function getNoeudsRoutierDepartementTime(int $noeudRoutierGid): array;
+    public function getNoeudsRoutierDepartement(int $noeudRoutierGid): array;
 
     public function recupererNoeudRoutier($idRte): ?NoeudRoutier;
 
