@@ -122,7 +122,7 @@ class NoeudRoutierRepository extends AbstractRepository implements NoeudRoutierR
         return null;
     }
 
-    public function recupererParGid($gid): ?NoeudRoutier {
+    public function recupererParGid(int $gid): ?NoeudRoutier {
         $requeteSQL = <<<SQL
             SELECT gid,
                    ST_X(ST_AsText(geom)) as long,
@@ -141,7 +141,7 @@ class NoeudRoutierRepository extends AbstractRepository implements NoeudRoutierR
         return null;
     }
 
-    public function getDepartementGid($noeudRoutierGid) {
+    public function getDepartementGid(int $noeudRoutierGid) {
         $requeteSQL = <<<SQL
             SELECT num_departement
             FROM nalixt.noeud_gid_dep

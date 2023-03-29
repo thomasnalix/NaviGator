@@ -16,9 +16,9 @@ class ControleurUtilisateur extends ControleurGenerique {
     }
 
 
-    public static function afficherListe(): void {
+    public static function afficherListe(): Response {
         $utilisateurs = (new UtilisateurService())->recupererUtilisateurs();
-        ControleurUtilisateur::afficherVue('vueGenerale.php', [
+        return ControleurUtilisateur::afficherVue('vueGenerale.php', [
             "utilisateurs" => $utilisateurs,
             "pagetitle" => "Liste des utilisateurs",
             "cheminVueBody" => "utilisateur/liste.php"
@@ -56,8 +56,8 @@ class ControleurUtilisateur extends ControleurGenerique {
         return ControleurUtilisateur::rediriger("utilisateur", "afficherListe");
     }
 
-    public static function afficherFormulaireCreation(): void {
-        ControleurUtilisateur::afficherVue('vueGenerale.php', [
+    public static function afficherFormulaireCreation(): Response {
+        return ControleurUtilisateur::afficherVue('vueGenerale.php', [
             "pagetitle" => "Création d'un utilisateur",
             "cheminVueBody" => "utilisateur/formulaireCreation.php",
             "method" => Configuration::getDebug() ? "get" : "post",
@@ -131,8 +131,8 @@ class ControleurUtilisateur extends ControleurGenerique {
         return ControleurUtilisateur::rediriger("utilisateur", "afficherListe");
     }
 
-    public static function afficherFormulaireConnexion(): void {
-        ControleurUtilisateur::afficherVue('vueGenerale.php', [
+    public static function afficherFormulaireConnexion(): Response {
+        return ControleurUtilisateur::afficherVue('vueGenerale.php', [
             "pagetitle" => "Formulaire de connexion",
             "cheminVueBody" => "utilisateur/formulaireConnexion.php",
             "method" => Configuration::getDebug() ? "get" : "post",

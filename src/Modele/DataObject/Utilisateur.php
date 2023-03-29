@@ -36,10 +36,6 @@ class Utilisateur extends AbstractDataObject {
         );
     }
 
-    public static function creer ($login, $nom, $prenom, $motDePasse, $email, $imageProfil) : Utilisateur {
-        return new Utilisateur($login, $nom, $prenom, MotDePasse::hacher($motDePasse), $email, $imageProfil);
-    }
-
     public function getLogin(): string {
         return $this->login;
     }

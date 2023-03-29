@@ -7,8 +7,8 @@ use Symfony\Component\HttpFoundation\Response;
 
 class ControleurHistorique extends ControleurGenerique {
 
-    public static function afficherErreur($errorMessage = "", $controleur = ""): void {
-        parent::afficherErreur($errorMessage, "historique");
+    public static function afficherErreur($errorMessage = "", $controleur = ""): Response {
+        return parent::afficherErreur($errorMessage, "historique");
     }
 
     public static function afficherListe(): Response {

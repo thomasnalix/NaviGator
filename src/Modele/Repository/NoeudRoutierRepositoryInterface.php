@@ -12,9 +12,9 @@ interface NoeudRoutierRepositoryInterface {
 
     public function recupererNoeudRoutier($idRte): ?NoeudRoutier;
 
-    public function recupererParGid($gid): ?NoeudRoutier;
+    public function recupererParGid(int $gid): ?NoeudRoutier;
 
-    public function getDepartementGid($noeudRoutierGid);
+    public function getDepartementGid(int $noeudRoutierGid);
 
     public function getNoeudProche(float $lat, float $long);
 }

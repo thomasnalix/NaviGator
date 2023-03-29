@@ -12,6 +12,14 @@ BEGIN
 END; $$;
 
 
+CREATE OR REPLACE PROCEDURE SUPPRIMER_UTILISATEUR(p_login utilisateurs.login%TYPE) LANGUAGE plpgsql AS $$
+BEGIN
+    DELETE FROM nalixt.favoris WHERE login = p_login;
+    DELETE FROM nalixt.historique WHERE login = p_login;
+    DELETE FROM nalixt.utilisateurs WHERE login = p_login;
+END; $$;
+
+
 CREATE OR REPLACE PROCEDURE MODIFIER_UTILISATEUR(
 p_login utilisateurs.login%TYPE,
 p_nom utilisateurs.nom%TYPE,
