@@ -3,6 +3,7 @@
 namespace Navigator\Lib;
 
 use Navigator\Modele\Repository\NoeudRoutierRepository;
+use Navigator\Service\NoeudRoutierService;
 use SplPriorityQueue;
 
 class PlusCourtChemin {
@@ -32,12 +33,12 @@ class PlusCourtChemin {
     private ?string $numDepartementCourant;
     private PriorityQueue $openSet;
 
-    private NoeudRoutierRepository $noeudRoutierRepository;
+    private NoeudRoutierService $noeudRoutierService;
 
-    public function __construct(private array $noeudsRoutier, NoeudRoutierRepository $noeudRoutierRepository) {
+    public function __construct(private array $noeudsRoutier, NoeudRoutierService $noeudRoutierService) {
         $this->openSet = new PriorityQueue();
         $this->openSet->setExtractFlags(SplPriorityQueue::EXTR_DATA);
-        $this->noeudRoutierRepository = $noeudRoutierRepository;
+        $this->noeudRoutierService = $noeudRoutierService;
     }
 
     /**
@@ -82,7 +83,7 @@ class PlusCourtChemin {
 
             $this->numDepartementCourant = $this->getNumDepartement($noeudRoutierGidCourant);
             if (!isset($this->numDepartementCourant)) {
-                $this->noeudsRoutierCache += $this->noeudRoutierRepository->getNoeudsRoutierDepartementTime($noeudRoutierGidCourant);
+                $this->noeudsRoutierCache += $this->noeudRoutierService->getNoeudsRoutierDepartement($noeudRoutierGidCourant);
                 $this->numDepartementCourant = $this->getNumDepartement($noeudRoutierGidCourant);
             }
 
@@ -105,7 +106,7 @@ class PlusCourtChemin {
                 }
             }
         }
-        return [-1, -1, -1, -1];
+        return [-1, [], -1, -1];
     }
 
 

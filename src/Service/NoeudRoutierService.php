@@ -35,11 +35,9 @@ class NoeudRoutierService implements NoeudRoutierServiceInterface {
     /**
      * @throws ServiceException
      */
-    public function calculChemin(int $nbField, array $communesList): array {
-
+    public function getVillesItinary(int $nbField, array $communesList): array {
         $noeudRoutier = [];
         foreach ($communesList as $key => $value) {
-            // if $key starts with "gid"
             if (str_starts_with($key, 'gid')) {
                 $noeudRoutier[] = $this->noeudRoutierRepository->recupererParGid($value);
             } else {
@@ -47,22 +45,16 @@ class NoeudRoutierService implements NoeudRoutierServiceInterface {
                 $noeudRoutier[] = $this->noeudRoutierRepository->recupererNoeudRoutier($noeudCommune->getId_nd_rte());
             }
         }
-        $pcc = new PlusCourtChemin($noeudRoutier, $this->noeudRoutierRepository);
-        $datas = $pcc->aStarDistance();
-        $parameters["distance"] = $datas[0];
-        $parameters["temps"] = $datas[2];
-        $parameters["gas"] = $datas[3];
+        return $noeudRoutier;
+    }
 
-        if ($datas[1] != -1)
-            $parameters["chemin"] = $this->noeudRoutierRepository->calculerItineraire($datas[1]);
-
-        $parameters["nbCommunes"] = count($communesList);
-        $parameters["nomCommuneDepart"] = array_shift($communesList);
-        $parameters["nomCommuneArrivee"] = end($communesList);
-
-        if ($datas[0] == -1)
+    public function calculerItineraire(array $tronconsGid): array {
+        if (count($tronconsGid) == 0)
             throw new ServiceException("Error while calculating the path",Response::HTTP_BAD_REQUEST);
+        return $this->noeudRoutierRepository->calculerItineraire($tronconsGid);
+    }
 
-        return $parameters;
+    public function getNoeudsRoutierDepartement(int $noeudRoutierGid): array {
+        return $this->noeudRoutierRepository->getNoeudsRoutierDepartement($noeudRoutierGid);
     }
 }
