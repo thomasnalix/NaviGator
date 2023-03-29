@@ -287,7 +287,7 @@ input[type="text"] {
 
 
 #nav-box {
-    animation: fadeIn ease-in-out 0.5s;
+    animation: fadeIn ease-in-out 0.25s;
 }
 
 @keyframes fadeIn {
