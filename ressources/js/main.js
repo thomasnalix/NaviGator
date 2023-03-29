@@ -1,3 +1,4 @@
+const navBox = document.getElementById('nav-box');
 const calculButton = document.getElementById('calcul');
 const addDestination = document.getElementById('addDestination');
 const formDestination = document.getElementById('formDestination');
@@ -41,7 +42,7 @@ form.addEventListener("submit", async e => {
 
     const response = await fetch(url, {method: 'POST', body: formData});
     const data = await response.json();
-    printReult(data);
+    printResult(data);
     printItinary(data.chemin);
 });
 
@@ -49,7 +50,7 @@ form.addEventListener("submit", async e => {
  * set variables in the resume box
  * @param data
  */
-function printReult(data) {
+function printResult(data) {
     result.style.display = 'initial';
     let resumeField = document.getElementById('resume-field');
     let timeField = document.getElementById('time-field');
@@ -64,6 +65,15 @@ function printReult(data) {
     // crop the distance to 2 decimals
     distanceField.textContent = data.distance.toFixed(2) + ' km';
 }
+
+
+map.on('pointerdrag', function () {
+    navBox.style.display = 'none';
+});
+
+map.on('pointerup', function () {
+    navBox.style.display = 'flex';
+});
 
 
 /**

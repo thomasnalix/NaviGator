@@ -286,6 +286,20 @@ input[type="text"] {
 }
 
 
+#nav-box {
+    animation: fadeIn ease-in-out 0.5s;
+}
+
+@keyframes fadeIn {
+    0% {
+        opacity: 0;
+    }
+    100% {
+        opacity: 1;
+    }
+}
+
+
 /* =========================
            General
   ======================= */
