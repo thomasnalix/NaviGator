@@ -8,7 +8,6 @@ use Navigator\Modele\DataObject\Trajets;
 class TrajetsRepository extends AbstractRepository
 {
 
-
     protected function getNomTable(): string
     {
         return "nalixt.trajets";

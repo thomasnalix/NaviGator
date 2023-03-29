@@ -46,7 +46,7 @@ class NoeudRoutierRepository extends AbstractRepository implements NoeudRoutierR
         $numDepartementNoeudRoutier = $this->getDepartementGid($noeudRoutierGid);
         $requeteSQL = <<<SQL
             SELECT *
-            FROM nalixt.vitesses_route_test
+            FROM nalixt.vitesses_route
             WHERE num_departement_depart = :departement
             OR
             num_departement_arrivee = :departement;
