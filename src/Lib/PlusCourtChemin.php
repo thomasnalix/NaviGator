@@ -86,7 +86,6 @@ class PlusCourtChemin {
                 $this->numDepartementCourant = $this->getNumDepartement($noeudRoutierGidCourant);
             }
 
-
             $neighbors = $this->noeudsRoutierCache[$this->numDepartementCourant][$noeudRoutierGidCourant];
 
             foreach ($neighbors as $neighbor) {
