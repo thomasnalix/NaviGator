@@ -30,11 +30,7 @@ class NoeudCommuneService implements NoeudCommuneServiceInterface {
      * @throws ServiceException
      */
     public function getNomCommunes(string $nomCommune): array {
-        $result = $this->noeudCommuneRepository->getNomCommunes($nomCommune);
-        if ($result == null) {
-            throw new ServiceException("NomCommune not found",Response::HTTP_BAD_REQUEST);
-        }
-        return $result;
+        return $this->noeudCommuneRepository->getNomCommunes($nomCommune);
     }
 
 }

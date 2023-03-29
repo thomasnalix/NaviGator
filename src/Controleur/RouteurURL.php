@@ -112,11 +112,6 @@ class RouteurURL {
         $routes->add("getNoeudProche", $route);
         $route->setMethods(["GET"]);
 
-        // Route calcul
-//        $route = new Route("/calcul/{idNoeudDepart}/{idNoeudArrivee}", ["_controller" => "noeud_commune_controleur::calcul"]);
-//        $routes->add("calcul", $route);
-//        $route->setMethods(["GET"]);
-
         // recupererListeCommunes
         $route = new Route("/communes/{text}", ["_controller" => "noeud_commune_controleur::recupererListeCommunes"]);
         $routes->add("recupererListeCommunes", $route);

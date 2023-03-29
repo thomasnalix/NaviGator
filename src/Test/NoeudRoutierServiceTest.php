@@ -2,23 +2,41 @@
 
 namespace Navigator\Test;
 
-use Navigator\Modele\Repository\ConnexionBaseDeDonneesInterface;
-use Navigator\Service\NoeudRoutierServiceInterface;
+use Navigator\Modele\Repository\NoeudCommuneRepositoryInterface;
+use Navigator\Modele\Repository\NoeudRoutierRepositoryInterface;
+use Navigator\Service\NoeudRoutierService;
+use PHPUnit\Framework\TestCase;
 
-class NoeudRoutierServiceTest {
+class NoeudRoutierServiceTest extends TestCase {
 
-    private static NoeudRoutierServiceInterface $utilisateurRepository;
+    private $service;
+    private $noeudRoutierRepositoryMock;
+    private $noeudCommuneRepositoryMock;
 
-    private static ConnexionBaseDeDonneesInterface $connexionBaseDeDonnees;
 
-        public function testGetNoeudRoutierProche() {
-            // Generate fuzzing test wich call the method getNoeudRoutierProche
-            // tests
+    protected function setUp(): void {
+        parent::setUp();
+        $this->noeudRoutierRepositoryMock = $this->createMock(NoeudRoutierRepositoryInterface::class);
+        $this->noeudCommuneRepositoryMock = $this->createMock(NoeudCommuneRepositoryInterface::class);
+        $this->service = new NoeudRoutierService($this->noeudRoutierRepositoryMock, $this->noeudCommuneRepositoryMock);
+    }
 
-        }
-
-        public function testCalculChemin() {
-            // tests
-        }
+    public function testGetNoeudRoutierProche() {
+        $this->noeudRoutierRepositoryMock->method('getNoeudProche')->willReturn([
+            "gid" => 6,
+            "departement" => "2A",
+            "nom_comm" => "Bonifacio",
+            "lat" => "41.37078490043116",
+            "long" => "9.206668253947754"
+        ]);
+        $result = $this->service->getNoeudRoutierProche(1,1);
+        $this->assertEquals([
+            "gid" => 6,
+            "departement" => "2A",
+            "nom_comm" => "Bonifacio",
+            "lat" => "41.37078490043116",
+            "long" => "9.206668253947754"
+        ], $result);
+    }
 
 }

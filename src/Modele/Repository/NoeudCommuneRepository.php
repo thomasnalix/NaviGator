@@ -31,7 +31,7 @@ class NoeudCommuneRepository extends AbstractRepository implements NoeudCommuneR
         return ["gid", "id_rte500", "nom_comm", "id_nd_rte"];
     }
 
-    public function getCoordNoeudCommune(string $nomVille) : array {
+    public function getCoordNoeudCommune(string $nomVille) : ?array {
         $sql = <<<SQL
             SELECT nr.lat, nr.long
             FROM nalixt.noeud_routier nr
@@ -43,7 +43,7 @@ class NoeudCommuneRepository extends AbstractRepository implements NoeudCommuneR
         $pdoStatement->execute([
             "nomVille" => $nomVille
         ]);
-        return $pdoStatement->fetch(PDO::FETCH_ASSOC);
+        return $pdoStatement->fetch(PDO::FETCH_ASSOC) ?? null;
     }
 
     public function getNomCommunes($substring): array {
@@ -63,7 +63,7 @@ class NoeudCommuneRepository extends AbstractRepository implements NoeudCommuneR
         return $communes;
     }
 
-    public function getCommune(string $nomCommune): NoeudCommune {
+    public function getCommune(string $nomCommune): ?NoeudCommune {
         $request = <<<SQL
             SELECT gid, id_rte500, nom_comm, id_nd_rte 
             FROM nalixt.noeud_commune 
@@ -74,6 +74,6 @@ class NoeudCommuneRepository extends AbstractRepository implements NoeudCommuneR
             "nomCommune" => $nomCommune
         ]);
         $objetFormatTableau = $pdoStatement->fetch();
-        return $this->construireDepuisTableau($objetFormatTableau);
+        return $this->construireDepuisTableau($objetFormatTableau) ?? null;
     }
 }
