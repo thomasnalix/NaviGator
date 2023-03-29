@@ -2,6 +2,7 @@
 
 namespace Navigator\Controleur;
 
+use Navigator\Lib\MessageFlash;
 use Navigator\Service\Exception\ServiceException;
 use Navigator\Service\NoeudRoutierServiceInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -51,6 +52,7 @@ class ControleurNoeudRoutier extends ControleurGenerique {
             $data = $this->noeudRoutierService->calculChemin($nbFields, $noeudList);
             return new JsonResponse(json_encode($data), Response::HTTP_OK, [], true);
         } catch (ServiceException $exception) {
+            MessageFlash::ajouter("danger",$exception->getMessage());
             return new JsonResponse(["error" => $exception->getMessage()], $exception->getCode());
         }
     }

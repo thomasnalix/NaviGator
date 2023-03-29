@@ -3,6 +3,8 @@
 namespace Navigator\Service;
 
 use Navigator\Modele\Repository\NoeudCommuneRepositoryInterface;
+use Navigator\Service\Exception\ServiceException;
+use Symfony\Component\HttpFoundation\Response;
 
 class NoeudCommuneService implements NoeudCommuneServiceInterface {
 
@@ -12,16 +14,27 @@ class NoeudCommuneService implements NoeudCommuneServiceInterface {
         $this->noeudCommuneRepository = $noeudCommuneRepository;
     }
 
-    public function getNoeudCommuneProche(float $lat, float $long): array {
-        return $this->noeudCommuneRepository->getNoeudProche($lat, $long);
-    }
-
+    /**
+     * @throws ServiceException
+     */
     public function getCoordNoeudCommune(string $nomVille): array {
-        return $this->noeudCommuneRepository->getCoordNoeudCommune($nomVille);
+
+        $result = $this->noeudCommuneRepository->getCoordNoeudCommune($nomVille);
+        if ($result == null) {
+            throw new ServiceException("Coord noeudCommune not found",Response::HTTP_BAD_REQUEST);
+        }
+        return $result;
     }
 
+    /**
+     * @throws ServiceException
+     */
     public function getNomCommunes(string $nomCommune): array {
-        return $this->noeudCommuneRepository->getNomCommunes($nomCommune);
+        $result = $this->noeudCommuneRepository->getNomCommunes($nomCommune);
+        if ($result == null) {
+            throw new ServiceException("NomCommune not found",Response::HTTP_BAD_REQUEST);
+        }
+        return $result;
     }
 
 }

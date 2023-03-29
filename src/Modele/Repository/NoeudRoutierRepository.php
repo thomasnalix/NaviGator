@@ -44,7 +44,6 @@ class NoeudRoutierRepository extends AbstractRepository implements NoeudRoutierR
         return $noeudsRoutier;
     }
 
-
     public function getNoeudsRoutierDepartementTime(int $noeudRoutierGid): array {
         $numDepartementNoeudRoutier = $this->getDepartementGid($noeudRoutierGid);
         $requeteSQL = <<<SQL

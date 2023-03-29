@@ -2,6 +2,7 @@
 
 namespace Navigator\Controleur;
 
+use Navigator\Lib\MessageFlash;
 use Navigator\Service\Exception\ServiceException;
 use Navigator\Service\NoeudCommuneServiceInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -49,6 +50,7 @@ class ControleurNoeudCommune extends ControleurGenerique {
             $noeudsCommunes = $this->noeudCommuneService->getCoordNoeudCommune($commune);
             return new JsonResponse(json_encode($noeudsCommunes),Response::HTTP_OK, [], true);
         } catch (ServiceException $exception) {
+            MessageFlash::ajouter("danger",$exception->getMessage());
             return new JsonResponse(["error" => $exception->getMessage()], $exception->getCode());
         }
     }
