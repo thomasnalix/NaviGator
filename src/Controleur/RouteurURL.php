@@ -8,6 +8,7 @@ use Navigator\Lib\Conteneur;
 use Navigator\Modele\Repository\ConnexionBaseDeDonnees;
 use Navigator\Modele\Repository\NoeudCommuneRepository;
 use Navigator\Modele\Repository\NoeudRoutierRepository;
+use Navigator\Modele\Repository\UtilisateurRepository;
 use Navigator\Service\NoeudCommuneService;
 use Navigator\Service\NoeudRoutierService;
 use Navigator\Service\UtilisateurService;
@@ -180,6 +181,16 @@ class RouteurURL {
             ]
         );
 
+        /* =========================================================================== */
+        /* ================================= SERVICES ================================ */
+        /* =========================================================================== */
+
+        Conteneur::ajouterService("twig", $twig);
+        Conteneur::ajouterService("assistantUrl", $assistantUrl);
+        Conteneur::ajouterService("generateurUrl", $generateurUrl);
+        Conteneur::ajouterService("userSession", new ConnexionUtilisateurSession());
+        Conteneur::ajouterService("userJWT", new ConnexionUtilisateurJWT());
+
         // recupererService("generateurUrl");
         $callable = function ($nomRoute, $parametres = []) {
             return Conteneur::recupererService("generateurUrl")->generate($nomRoute, $parametres);
@@ -192,19 +203,10 @@ class RouteurURL {
         $twig->addFunction(new TwigFunction("assistantUrl", $callable));
 
         $callable = function () {
-            return ConnexionUtilisateur::estConnecte();
+            return Conteneur::recupererService("userSession")->estConnecte();
         };
         $twig->addFunction(new TwigFunction("estConnecte", $callable));
 
-        /* =========================================================================== */
-        /* ================================= SERVICES ================================ */
-        /* =========================================================================== */
-
-        Conteneur::ajouterService("twig", $twig);
-        Conteneur::ajouterService("assistantUrl", $assistantUrl);
-        Conteneur::ajouterService("generateurUrl", $generateurUrl);
-        Conteneur::ajouterService("userSession", new ConnexionUtilisateurSession());
-        Conteneur::ajouterService("userJWT", new ConnexionUtilisateurJWT());
 
         try {
             $associateurUrl = new UrlMatcher($routes, $contexteRequete);
