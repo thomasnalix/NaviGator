@@ -26,7 +26,7 @@ class NoeudRoutierService implements NoeudRoutierServiceInterface {
      */
     public function getNoeudRoutierProche(float $lat, float $long): array {
         $result = $this->noeudRoutierRepository->getNoeudProche($lat, $long);
-        if ($result == null) {
+        if ($result === null) {
             throw new ServiceException("Noeud routier not found",Response::HTTP_BAD_REQUEST);
         }
         return $result;

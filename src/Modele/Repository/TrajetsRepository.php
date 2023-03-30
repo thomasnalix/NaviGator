@@ -5,8 +5,7 @@ namespace Navigator\Modele\Repository;
 use Navigator\Modele\DataObject\AbstractDataObject;
 use Navigator\Modele\DataObject\Trajets;
 
-class TrajetsRepository extends AbstractRepository
-{
+class TrajetsRepository extends AbstractRepository implements TrajetsRepositoryInterface {
 
     protected function getNomTable(): string
     {

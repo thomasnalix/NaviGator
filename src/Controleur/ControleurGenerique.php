@@ -23,9 +23,9 @@ class ControleurGenerique {
         return new Response($twig->render($cheminVue, $parametres));
     }
 
-    protected static function rediriger(string $nomRoute, array $params = []) : RedirectResponse {
+    protected static function rediriger(string $nomRoute, array $params = []): RedirectResponse {
         $generateurUrl = Conteneur::recupererService("generateurUrl");
-        $url = "Location: " .$generateurUrl->generate($nomRoute, $params);
+        $url = "Location: " . $generateurUrl->generate($nomRoute, $params);
         //header($url);
         // exit;
         return new RedirectResponse($url);
@@ -42,7 +42,7 @@ class ControleurGenerique {
         return $reponse;
     }
 
-    public static function afficherAccueil() : Response {
+    public static function afficherAccueil(): Response {
         return ControleurGenerique::afficherVue('vueGenerale.php', [
             "pagetitle" => "Accueil",
             "cheminVueBody" => "accueil.php"

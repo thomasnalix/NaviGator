@@ -5,8 +5,7 @@ namespace Navigator\Modele\Repository;
 use Navigator\Modele\DataObject\AbstractDataObject;
 use Navigator\Modele\DataObject\Historique;
 
-class HistoriqueRepository extends AbstractRepository
-{
+class HistoriqueRepository extends AbstractRepository implements HistoriqueRepositoryInterface {
 
     protected function getNomTable(): string
     {

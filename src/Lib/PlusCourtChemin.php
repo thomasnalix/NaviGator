@@ -2,7 +2,6 @@
 
 namespace Navigator\Lib;
 
-use Navigator\Modele\Repository\NoeudRoutierRepository;
 use Navigator\Service\NoeudRoutierService;
 use SplPriorityQueue;
 
@@ -47,7 +46,7 @@ class PlusCourtChemin {
      */
     function aStarDistance(): ?array {
         $cameFrom = $chemin = $coordTrocon = $numDepartement = [];
-        $distance = $temps = $gas= 0;
+        $distance = $temps = $gas = 0;
         $gid = $this->noeudsRoutier[$this->index]->getGid();
         $cost[$gid] = 0;
         $vitesse[$gid] = 50;
@@ -61,7 +60,7 @@ class PlusCourtChemin {
             $noeudRoutierGidCourant = $this->openSet->extract();
             unset($visited[$noeudRoutierGidCourant]);
             // Path found
-            if ($noeudRoutierGidCourant == $this->noeudsRoutier[$this->index+1]->getGid()) {
+            if ($noeudRoutierGidCourant == $this->noeudsRoutier[$this->index + 1]->getGid()) {
                 $cheminReconstruit = $this->reconstruireChemin($cameFrom, $noeudRoutierGidCourant, $cost, $coordTrocon, $vitesse, $gasPath);
                 $chemin = array_merge($chemin, $cheminReconstruit[1]);
                 $distance += $cheminReconstruit[0];
@@ -76,7 +75,7 @@ class PlusCourtChemin {
                     $this->openSet->setExtractFlags(SplPriorityQueue::EXTR_DATA);
                     $gid = $this->noeudsRoutier[$this->index]->getGid();
                     $this->openSet->insert($gid, 0);
-                    $cost[$this->noeudsRoutier[$this->index]->getGid()] = $gScore[$gid] = $fScore[$gid] = $gasPath[$gid]= 0;
+                    $cost[$this->noeudsRoutier[$this->index]->getGid()] = $gScore[$gid] = $fScore[$gid] = $gasPath[$gid] = 0;
                     $noeudRoutierGidCourant = $this->openSet->top();
                 }
             }
@@ -100,7 +99,7 @@ class PlusCourtChemin {
                     $vitesse[$neighbor['noeud_gid']] = $neighbor['vitesse'];
                     $coordTrocon[$neighbor['noeud_gid']] = $neighbor['troncon_gid'];
                     $gScore[$neighbor['noeud_gid']] = $tentativeGScore;
-                    $fScore[$neighbor['noeud_gid']] = $tentativeGScore + $this->getHeuristiqueEuclidienne($neighbor['noeud_coord_lat'],$neighbor['noeud_coord_long']);
+                    $fScore[$neighbor['noeud_gid']] = $tentativeGScore + $this->getHeuristiqueEuclidienne($neighbor['noeud_coord_lat'], $neighbor['noeud_coord_long']);
                     if (!isset($visited[$neighbor['noeud_gid']]))
                         $this->openSet->insert($neighbor['noeud_gid'], $fScore[$neighbor['noeud_gid']]);
                 }
@@ -118,8 +117,8 @@ class PlusCourtChemin {
      * @return float distance entre le noeud courant et le noeud d'arrivee
      */
     private function getHeuristiqueEuclidienne(float $lat, float $long): float {
-        $latArrivee = $this->noeudsRoutier[$this->index+1]->getLat();
-        $longArrivee = $this->noeudsRoutier[$this->index+1]->getLong();
+        $latArrivee = $this->noeudsRoutier[$this->index + 1]->getLat();
+        $longArrivee = $this->noeudsRoutier[$this->index + 1]->getLong();
 
         $dLat = deg2rad($latArrivee - $lat);
         $dLon = deg2rad($longArrivee - $long);
@@ -155,7 +154,7 @@ class PlusCourtChemin {
         return [$distance, $trocons, $tempsTotal, $gasTotal];
     }
 
-    private function getNumDepartement($noeudRoutierGidCourant) : ?string {
+    private function getNumDepartement($noeudRoutierGidCourant): ?string {
         if (isset($this->numDepartementCourant) && isset($this->noeudsRoutierCache[$this->numDepartementCourant][$noeudRoutierGidCourant]))
             return $this->numDepartementCourant;
         foreach (array_keys($this->noeudsRoutierCache) as $numDepartement)
