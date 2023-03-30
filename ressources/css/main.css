@@ -27,6 +27,9 @@ nav {
     padding: 10px 40px 10px 10px;
     border-radius: 10px;
     margin: 12px;
+    position: absolute;
+    top : 0;
+    z-index: 100;
 }
 
 nav a {
@@ -36,6 +39,7 @@ nav a {
     text-decoration: none;
     color: black;
     height: 100%;
+    font-weight: 500;
 }
 
 .logo {
@@ -176,7 +180,6 @@ button a {
   ======================= */
 
 #map {
-    position: absolute!important;
     height: 100vh;
     width: 100vw;
     top: 0;
@@ -189,7 +192,7 @@ button a {
 
 .ol-zoom {
     right: 0.5em!important;
-    transform: translate(-50%, 100%)!important;
+    transform: translate(-50%)!important;
     left: inherit!important;
 }
 
@@ -288,6 +291,7 @@ input[type="text"] {
 
 #nav-box {
     animation: fadeIn ease-in-out 0.25s;
+    margin: 70px 12px 0 0;
 }
 
 @keyframes fadeIn {
@@ -306,7 +310,7 @@ input[type="text"] {
 
 .box-blur {
     background: #ffffff96;
-    margin : 10px 10px 0 10px;
+    margin : 12px 12px 0 12px;
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
     padding: 10px;
     border-radius: 10px;

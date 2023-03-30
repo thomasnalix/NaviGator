@@ -47,9 +47,8 @@ class ControleurNoeudRoutier extends ControleurGenerique {
             if ($_POST["gid$i"] != "")
                 $noeudList['gid' . $i] = $_POST["gid$i"];
             else
-                $noeudList['commune' . $i] = substr($_POST["commune" . $i], 0, strlen($_POST["commune" . $i]) - 8);
+                $noeudList['commune' . $i] = preg_replace('/\s.*/', '', $_POST["commune$i"]);
         }
-
         try {
             $villes = $this->noeudRoutierService->getVillesItinary($nbFields, $noeudList);
 
