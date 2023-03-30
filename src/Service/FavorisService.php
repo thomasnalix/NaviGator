@@ -2,14 +2,18 @@
 
 namespace Navigator\Service;
 
-use Navigator\Modele\Repository\FavorisRepository;
+use Navigator\Modele\Repository\FavorisRepositoryInterface;
 
-class FavorisService
-{
+class FavorisService implements FavorisServiceInterface {
 
-    public function recupererFavoris(): array
-    {
-        return (new FavorisRepository())->recuperer();
+    private FavorisRepositoryInterface $favorisRepository;
+
+    public function __construct(FavorisRepositoryInterface $favorisRepository) {
+        $this->favorisRepository = $favorisRepository;
+    }
+
+    public function recupererFavoris(): array {
+        return $this->favorisRepository->recuperer();
     }
 
 }

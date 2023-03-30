@@ -5,8 +5,7 @@ namespace Navigator\Modele\Repository;
 use Navigator\Modele\DataObject\AbstractDataObject;
 use Navigator\Modele\DataObject\Favoris;
 
-class FavorisRepository extends AbstractRepository
-{
+class FavorisRepository extends AbstractRepository implements FavorisRepositoryInterface {
 
     protected function getNomTable(): string
     {

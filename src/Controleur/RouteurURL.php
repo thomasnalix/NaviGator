@@ -1,6 +1,8 @@
 <?php
 namespace Navigator\Controleur;
 use Navigator\Configuration\ConfigurationBDDPostgreSQL;
+use Navigator\Lib\ConnexionUtilisateurJWT;
+use Navigator\Lib\ConnexionUtilisateurSession;
 use Navigator\Lib\Conteneur;
 use Navigator\Modele\Repository\ConnexionBaseDeDonnees;
 use Navigator\Modele\Repository\NoeudCommuneRepository;
@@ -8,6 +10,7 @@ use Navigator\Modele\Repository\NoeudRoutierRepository;
 use Navigator\Modele\Repository\UtilisateurRepository;
 use Navigator\Service\NoeudCommuneService;
 use Navigator\Service\NoeudRoutierService;
+use Navigator\Service\UtilisateurService;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\HttpFoundation\Response;
@@ -56,7 +59,19 @@ class RouteurURL {
         $noeudRoutierControleurService = $conteneur->register('noeud_routier_controleur',ControleurNoeudRoutier::class);
         $noeudRoutierControleurService->setArguments([new Reference('noeud_routier_service')]);
 
+        /* -------------------------------  UTILISATEUR  ------------------------------ */
+        // TODO: louche cette histoire
+        $utilisateurSessionService = $conteneur->register('utilisateur_session',ConnexionUtilisateurSession::class);
+        $utilisateurJWTService = $conteneur->register('utilisateur_jwt',ConnexionUtilisateurJWT::class);
 
+        $utilisateurRepositoryService = $conteneur->register('utilisateur_repository',UtilisateurRepository::class);
+        $utilisateurRepositoryService->setArguments([new Reference('connexion_base')]);
+
+        $utilisateurServiceService = $conteneur->register('utilisateur_service',UtilisateurService::class);
+        $utilisateurServiceService->setArguments([new Reference('utilisateur_repository'), new Reference('utilisateur_session')]);
+
+        $utilisateurControleurService = $conteneur->register('utilisateur_controleur',ControleurUtilisateurAPI::class);
+        $utilisateurControleurService->setArguments([new Reference('utilisateur_service'), new Reference('utilisateur_session')]);
 
         /* =========================================================================== */
         /* ================================ ROUTES =================================== */
@@ -83,7 +98,7 @@ class RouteurURL {
         $routes->add("deconnecter", $route);
         $route->setMethods(["GET"]);
 
-        // ROUTE map
+        // ROUTE MAP
         $route = new Route("/map", ["_controller" => "noeud_commune_controleur::plusCourtChemin"]);
         $routes->add("map", $route);
         $route->setMethods(["GET"]);
@@ -98,8 +113,8 @@ class RouteurURL {
         $routes->add("creerDepuisFormulaire", $route);
         $route->setMethods(["POST"]);
 
-        // ROUTE pagePerso
-        $route = new Route("/utilisateur/{idUser}", ["_controller" => "\Navigator\Controleur\ControleurUtilisateur::pagePerso"]);
+        // ROUTE PAGE PERSO
+        $route = new Route("/utilisateur/{idUser}", ["_controller" => "\Navigator\Controleur\ControleurUtilisateur::afficherDetail"]);
         $routes->add("pagePerso", $route);
         $route->setMethods(["GET"]);
 
@@ -127,6 +142,13 @@ class RouteurURL {
         $routes->add("calculChemin", $route);
         $route->setMethods(["POST"]);
 
+        // info utilisateur
+        $route = new Route("/utilisateurs/{idUser}", ["_controller" => "utilisateur_controleur::afficherDetail"]);
+        $routes->add("afficherDetail", $route);
+        $route->setMethods(["GET"]);
+
+
+
         $requete = new Request($_GET,$_POST,[],$_COOKIE,$_FILES,$_SERVER);
         $contexteRequete = (new RequestContext())->fromRequest($requete);
 
@@ -147,9 +169,16 @@ class RouteurURL {
                 'strict_variables' => true
             ]
         );
+
+        /* =========================================================================== */
+        /* ================================= SERVICES ================================ */
+        /* =========================================================================== */
+
         Conteneur::ajouterService("twig", $twig);
         Conteneur::ajouterService("assistantUrl", $assistantUrl);
         Conteneur::ajouterService("generateurUrl", $generateurUrl);
+        Conteneur::ajouterService("userSession", new ConnexionUtilisateurSession());
+        Conteneur::ajouterService("userJWT", new ConnexionUtilisateurJWT());
 
         try {
             $associateurUrl = new UrlMatcher($routes, $contexteRequete);

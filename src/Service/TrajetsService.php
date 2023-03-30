@@ -2,10 +2,17 @@
 
 namespace Navigator\Service;
 
-use Navigator\Modele\Repository\TrajetsRepository;
+use Navigator\Modele\Repository\TrajetsRepositoryInterface;
 
-class TrajetsService {
+class TrajetsService implements TrajetsServiceInterface {
+
+    private TrajetsRepositoryInterface $trajetsRepository;
+
+    public function __construct(TrajetsRepositoryInterface $trajetsRepository) {
+        $this->trajetsRepository = $trajetsRepository;
+    }
+
     public function recupererTrajets(): array {
-        return (new TrajetsRepository())->recuperer();
+        return $this->trajetsRepository->recuperer();
     }
 }

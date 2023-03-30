@@ -10,7 +10,8 @@
     "symfony/routing": "^6.0",
     "symfony/http-kernel": "^6.0",
     "symfony/dependency-injection": "^6.2",
-    "twig/twig": "^3.5"
+    "twig/twig": "^3.5",
+    "firebase/php-jwt": "^6.4"
   },
   "require-dev": {
     "phpunit/phpunit": "9.6.5"

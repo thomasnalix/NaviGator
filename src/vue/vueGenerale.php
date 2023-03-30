@@ -1,6 +1,6 @@
 <?php
 
-use Navigator\Lib\ConnexionUtilisateur;
+use Navigator\Lib\ConnexionUtilisateurSession;
 $generateurUrl = Navigator\Lib\Conteneur::recupererService("generateurUrl");
 $assistantUrl = Navigator\Lib\Conteneur::recupererService("assistantUrl");
 
@@ -29,14 +29,14 @@ $assistantUrl = Navigator\Lib\Conteneur::recupererService("assistantUrl");
         <a href="<?= $generateurUrl->generate("map"); ?>">Calcul</a>
 
         <?php
-        if (!ConnexionUtilisateur::estConnecte()) {
+        if (!ConnexionUtilisateurSession::estConnecte()) {
             ?>
             <a href="<?= $generateurUrl->generate("creerDepuisFormulaire"); ?>">Inscription</a>
             <a href="<?= $generateurUrl->generate("connecter"); ?>">Connexion</a>
             <?php
         } else {
-            $loginHTML = htmlspecialchars(ConnexionUtilisateur::getLoginUtilisateurConnecte());
-            $loginURL = rawurlencode(ConnexionUtilisateur::getLoginUtilisateurConnecte());
+            $loginHTML = htmlspecialchars(ConnexionUtilisateurSession::getLoginUtilisateurConnecte());
+            $loginURL = rawurlencode(ConnexionUtilisateurSession::getLoginUtilisateurConnecte());
             ?>
             <a href="<?= $generateurUrl->generate("pagePerso", ["idUser" => $loginURL]); ?>">Mon compte</a>
             <a href="<?= $generateurUrl->generate("deconnecter"); ?>">Déconnexion</a>

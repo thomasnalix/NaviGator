@@ -4,7 +4,7 @@ namespace Navigator\Modele\DataObject;
 
 use Navigator\Lib\MotDePasse;
 
-class Utilisateur extends AbstractDataObject {
+class Utilisateur extends AbstractDataObject implements \JsonSerializable {
 
     private string $login;
     private string $nom;
@@ -34,6 +34,16 @@ class Utilisateur extends AbstractDataObject {
             $tableauFormulaire["email"],
             $tableauFormulaire["imageProfil"]
         );
+    }
+
+    public function jsonSerialize(): array {
+        return [
+            "login" => $this->login,
+            "nom" => $this->nom,
+            "prenom" => $this->prenom,
+            "email" => $this->email,
+            "imageProfil" => $this->imageProfil
+        ];
     }
 
     public function getLogin(): string {
