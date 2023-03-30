@@ -1,5 +1,6 @@
 <?php
 namespace Navigator\Controleur;
+
 use Navigator\Configuration\ConfigurationBDDPostgreSQL;
 use Navigator\Lib\ConnexionUtilisateurJWT;
 use Navigator\Lib\ConnexionUtilisateurSession;
@@ -7,7 +8,6 @@ use Navigator\Lib\Conteneur;
 use Navigator\Modele\Repository\ConnexionBaseDeDonnees;
 use Navigator\Modele\Repository\NoeudCommuneRepository;
 use Navigator\Modele\Repository\NoeudRoutierRepository;
-use Navigator\Modele\Repository\UtilisateurRepository;
 use Navigator\Service\NoeudCommuneService;
 use Navigator\Service\NoeudRoutierService;
 use Navigator\Service\UtilisateurService;
@@ -28,9 +28,19 @@ use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Reference;
 use Twig\Environment;
 use Twig\Loader\FilesystemLoader;
+use Twig\TwigFunction;
 
 class RouteurURL {
-    public static function traiterRequete(Request $request): Response {
+
+
+
+    public static function traiterRequete(Request $requete): Response {
+
+
+
+        /* =========================================================================== */
+        /* =============================== DEPENDANCES =============================== */
+        /* =========================================================================== */
 
         $conteneur = new ContainerBuilder();
         $conteneur->register('config_bdd', ConfigurationBDDPostgreSQL::class);
@@ -149,7 +159,7 @@ class RouteurURL {
 
 
 
-        $requete = new Request($_GET,$_POST,[],$_COOKIE,$_FILES,$_SERVER);
+        //$requete = new Request($_GET,$_POST,[],$_COOKIE,$_FILES,$_SERVER);
         $contexteRequete = (new RequestContext())->fromRequest($requete);
 
 
@@ -169,6 +179,22 @@ class RouteurURL {
                 'strict_variables' => true
             ]
         );
+
+        // recupererService("generateurUrl");
+        $callable = function ($nomRoute, $parametres = []) {
+            return Conteneur::recupererService("generateurUrl")->generate($nomRoute, $parametres);
+        };
+        $twig->addFunction(new TwigFunction("generateurUrl", $callable));
+
+        $callable = function ($nomRoute, $parametres = []) {
+            return Conteneur::recupererService("assistantUrl")->getAbsoluteUrl($nomRoute, $parametres);
+        };
+        $twig->addFunction(new TwigFunction("assistantUrl", $callable));
+
+        $callable = function () {
+            return ConnexionUtilisateur::estConnecte();
+        };
+        $twig->addFunction(new TwigFunction("estConnecte", $callable));
 
         /* =========================================================================== */
         /* ================================= SERVICES ================================ */
