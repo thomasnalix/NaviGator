@@ -18,7 +18,7 @@ class ControleurUtilisateur extends ControleurGenerique {
 
     public static function afficherListe(): Response {
         $utilisateurs = (new UtilisateurService())->recupererUtilisateurs();
-        return ControleurUtilisateur::afficherVue('vueGenerale.php', [
+        return ControleurUtilisateur::afficherVue('base.html.twig', [
             "utilisateurs" => $utilisateurs,
             "pagetitle" => "Liste des utilisateurs",
             "cheminVueBody" => "utilisateur/liste.php"
@@ -35,7 +35,7 @@ class ControleurUtilisateur extends ControleurGenerique {
             return ControleurUtilisateur::rediriger("utilisateur", "afficherListe");
         }
 
-        return ControleurUtilisateur::afficherVue('vueGenerale.php', [
+        return ControleurUtilisateur::afficherVue('base.html.twig', [
             "utilisateur" => $utilisateur,
             "pagetitle" => "Détail de l'utilisateur",
             "cheminVueBody" => "utilisateur/detail.php"

@@ -13,7 +13,7 @@ class ControleurTrajets extends ControleurGenerique {
 
     public static function afficherListe(): Response {
         $trajets = (new TrajetsService())->recupererTrajets();
-        return ControleurTrajets::afficherVue('vueGenerale.php', [
+        return ControleurTrajets::afficherVue('base.html.twig', [
             "trajets" => $trajets,
             "pagetitle" => "Liste des trajets",
             "cheminVueBody" => "trajets/liste.php"

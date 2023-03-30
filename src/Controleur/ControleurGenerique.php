@@ -26,8 +26,6 @@ class ControleurGenerique {
     protected static function rediriger(string $nomRoute, array $params = []) : RedirectResponse {
         $generateurUrl = Conteneur::recupererService("generateurUrl");
         $url = "Location: " .$generateurUrl->generate($nomRoute, $params);
-        //header($url);
-        // exit;
         return new RedirectResponse($url);
     }
 
@@ -43,9 +41,8 @@ class ControleurGenerique {
     }
 
     public static function afficherAccueil() : Response {
-        return ControleurGenerique::afficherVue('vueGenerale.php', [
+        return ControleurGenerique::afficherTwig('accueil.html.twig', [
             "pagetitle" => "Accueil",
-            "cheminVueBody" => "accueil.php"
         ]);
     }
 

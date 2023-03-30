@@ -13,7 +13,7 @@ class ControleurHistorique extends ControleurGenerique {
 
     public static function afficherListe(): Response {
         $historique = (new HistoriqueService())->recupererHistorique();
-        return ControleurHistorique::afficherVue('vueGenerale.php', [
+        return ControleurHistorique::afficherVue('base.html.twig', [
             "historique" => $historique,
             "pagetitle" => "Liste des trajets",
             "cheminVueBody" => "historique/liste.php"

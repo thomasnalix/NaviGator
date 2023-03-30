@@ -52,8 +52,7 @@ class ControleurNoeudCommune extends ControleurGenerique {
     public static function plusCourtChemin(): Response {
         $parameters = [
             "pagetitle" => "Plus court chemin",
-            "cheminVueBody" => "noeudCommune/plusCourtChemin.php",
         ];
-        return ControleurNoeudCommune::afficherVue('vueGenerale.php', $parameters);
+        return ControleurNoeudCommune::afficherTwig('noeudCommune/plusCourtChemin.html.twig', $parameters);
     }
 }

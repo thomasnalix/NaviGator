@@ -13,7 +13,7 @@ class ControleurFavoris extends ControleurGenerique {
 
     public static function afficherListe(): Response {
         $favoris = (new FavorisService())->recupererFavoris();
-        return ControleurFavoris::afficherVue('vueGenerale.php', [
+        return ControleurFavoris::afficherVue('base.html.twig', [
             "favoris" => $favoris,
             "pagetitle" => "Liste des favoris",
             "cheminVueBody" => "favoris/liste.php"
