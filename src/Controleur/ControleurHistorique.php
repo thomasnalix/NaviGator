@@ -19,12 +19,13 @@ class ControleurHistorique extends ControleurGenerique {
 
     public function afficherListe(): Response {
         $historique = $this->historiqueService->recupererHistorique();
-        return parent::afficherVue('vueGenerale.php', [
+        return ControleurHistorique::afficherVue('base.html.twig', [
             "historique" => $historique,
             "pagetitle" => "Liste des trajets",
             "cheminVueBody" => "historique/liste.php"
         ]);
     }
 
-    public static function creerDepuisFormulaire() : void {}
+    public static function creerDepuisFormulaire(): void {
+    }
 }

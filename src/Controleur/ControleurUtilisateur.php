@@ -14,7 +14,7 @@ use Symfony\Component\HttpFoundation\Response;
 class ControleurUtilisateur extends ControleurGenerique {
 
     public function __construct(
-        private readonly UtilisateurServiceInterface $utilisateurService,
+        private readonly UtilisateurServiceInterface   $utilisateurService,
         private readonly ConnexionUtilisateurInterface $connexionUtilisateurSession,
         private readonly ConnexionUtilisateurInterface $connexionUtilisateurJWT
     ) {
@@ -27,7 +27,7 @@ class ControleurUtilisateur extends ControleurGenerique {
 
     public function afficherListe(): Response {
         $utilisateurs = $this->utilisateurService->recupererUtilisateurs();
-        return ControleurUtilisateur::afficherVue('vueGenerale.php', [
+        return ControleurUtilisateur::afficherVue('base.html.twig', [
             "utilisateurs" => $utilisateurs,
             "pagetitle" => "Liste des utilisateurs",
             "cheminVueBody" => "utilisateur/liste.php"
@@ -44,7 +44,7 @@ class ControleurUtilisateur extends ControleurGenerique {
             return ControleurUtilisateur::rediriger("utilisateur", "afficherListe");
         }
 
-        return ControleurUtilisateur::afficherVue('vueGenerale.php', [
+        return parent::afficherVue('base.html.twig', [
             "utilisateur" => $utilisateur,
             "pagetitle" => "Détail de l'utilisateur",
             "cheminVueBody" => "utilisateur/detail.php"
