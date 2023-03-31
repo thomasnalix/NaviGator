@@ -22,7 +22,7 @@ $assistantUrl = Navigator\Lib\Conteneur::recupererService("assistantUrl");
     <link href="https://fonts.googleapis.com/css2?family=Source+Sans+Pro&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
 </head>
-<body>
+<body data-theme="dark">
 <header>
     <nav>
         <a class="gator" href="<?= $generateurUrl->generate("navigator"); ?>"><img class="logo" src="../ressources/img/logo_void.png" alt="logo"></a>

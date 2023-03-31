@@ -88,10 +88,11 @@ function printItinary(path) {
     })
 
     let lineStyle = new ol.style.Style({
+        // crate line with 6ce3a3 and 7px width AND 2px width with 000000
         stroke: new ol.style.Stroke({
-            color: '#0c7847',
-            width: 5
-        }),
+            color: '#0ac876',
+            width: 7,
+        })
     });
 
     // Créer une couche vectorielle à partir du tableau de géométries

@@ -1,5 +1,19 @@
 @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@100;200;300;400;500;600;700;800;900&display=swap');
 
+
+
+[data-theme="light"] {
+    --blur-color: rgba(255, 255, 255, 0.59);
+    --text-color: #171717;
+    --input-color: rgba(255, 255, 255, 0.66);
+}
+
+[data-theme="dark"] {
+    --blur-color: rgba(0, 0, 0, 0.72);
+    --text-color: #f6f6f6;
+    --input-color: rgba(0, 0, 0, 0.48);
+}
+
 * {
     margin: 0;
     padding: 0;
@@ -16,8 +30,8 @@ body {
   ======================= */
 
 nav {
-    backdrop-filter: blur(15px) saturate(140%);
-    background: #ffffff96;
+    backdrop-filter: blur(15px) saturate(250%);
+    background: var(--blur-color);
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
     width: fit-content;
     height: 50px;
@@ -37,7 +51,7 @@ nav a {
     display: flex;
     align-items: center;
     text-decoration: none;
-    color: black;
+    color: var(--text-color);
     height: 100%;
     font-weight: 500;
 }
@@ -214,28 +228,33 @@ form {
 .input-box {
     display: flex;
     align-items: center;
+    gap: 2px;
 }
 
 .material-symbols-outlined { user-select: none; }
 
 .button-box {
-    background: #0ac876;
+    background: rgba(10, 200, 118, 0.71);
     border: none;
     padding: 5px 10px;
-    border-radius: 5px;
+    border-radius: 10px;
     cursor: pointer;
     font-weight: 600;
-    color: #171717;
+    color: var(--text-color);
 }
 
 input[type="text"] {
-    background: rgb(255 255 255 / 49%);
-    border: 1px solid #d0d0d0;
-    border-right: none;
-    border-radius: 5px 0 0 5px;
+    background: var(--input-color);
+    border: none;
+    color: var(--text-color);
+    border-radius: 12px 0 0 12px;
     padding: 10px 15px;
     width: 100%;
     height: 40px;
+}
+
+input[type="text"]:focus {
+    outline: none;
 }
 
 .box-flex {
@@ -247,6 +266,7 @@ input[type="text"] {
 #addDestination {
     display: none;
     padding-left: 10px;
+    cursor: pointer;
 }
 
 .point {
@@ -268,16 +288,14 @@ input[type="text"] {
 }
 
 .locate-button {
-    background: rgb(255 255 255 / 49%);
-    border: 1px solid #d0d0d0;
-    border-radius: 0 5px 5px 0;
+    background: var(--input-color);
+    border-radius: 0 12px 12px 0;
     padding: 9px 10px;
     cursor: pointer;
     height: 40px;
-    border-left: 2px solid #e1e1e1;
 }
 .locate-button:hover {
-    background: rgba(232, 232, 232, 0.27);
+    backdrop-filter: opacity(0.4);
 }
 
 .etape {
@@ -309,13 +327,14 @@ input[type="text"] {
   ======================= */
 
 .box-blur {
-    background: #ffffff96;
+    background: var(--blur-color);
+    color: var(--text-color);
     margin : 12px 12px 0 12px;
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
     padding: 10px;
     border-radius: 10px;
     width: 370px;
-    backdrop-filter: blur(15px) saturate(140%);
+    backdrop-filter: blur(15px) saturate(250%);
 }
 
 
