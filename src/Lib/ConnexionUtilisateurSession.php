@@ -23,15 +23,14 @@ class ConnexionUtilisateurSession implements ConnexionUtilisateurInterface {
         $session->supprimer(ConnexionUtilisateurSession::$cleConnexion);
     }
 
-// A PRIORI PLUS BESOIN
-//    public function getLoginUtilisateurConnecte(): ?string {
-//        $session = Session::getInstance();
-//        if ($session->existeCle(ConnexionUtilisateurSession::$cleConnexion)) {
-//            return $session->lire(ConnexionUtilisateurSession::$cleConnexion);
-//        } else
-//            return null;
-//    }
-//
+    public function getLoginUtilisateurConnecte(): ?string {
+        $session = Session::getInstance();
+        if ($session->existeCle(ConnexionUtilisateurSession::$cleConnexion)) {
+            return $session->lire(ConnexionUtilisateurSession::$cleConnexion);
+        } else
+            return null;
+    }
+
 //    public function estUtilisateur($login): bool{
 //        return ($this->estConnecte() &&
 //            $this->getLoginUtilisateurConnecte() == $login

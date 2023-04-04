@@ -22,11 +22,17 @@ class NoeudRoutierRepository extends AbstractRepository implements NoeudRoutierR
         );
     }
 
-    protected function getNomTable(): string { return 'nalixt.noeud_routier'; }
+    protected function getNomTable(): string {
+        return 'nalixt.noeud_routier';
+    }
 
-    protected function getNomClePrimaire(): string { return 'gid'; }
+    protected function getNomClePrimaire(): string {
+        return 'gid';
+    }
 
-    protected function getNomsColonnes(): array { return ["gid"]; }
+    protected function getNomsColonnes(): array {
+        return ["gid"];
+    }
 
     public function calculerItineraire(array $tronconsGid): array {
         // With array, explose all data and put it in a string separated by a comma
@@ -81,7 +87,7 @@ class NoeudRoutierRepository extends AbstractRepository implements NoeudRoutierR
                     "vitesse" => $noeudRoutierRegion["vitesse"],
                 ];
             }
-            if ($numDepartementNoeudRoutier ===  $noeudRoutierRegion["num_departement_arrivee"]) {
+            if ($numDepartementNoeudRoutier === $noeudRoutierRegion["num_departement_arrivee"]) {
                 $noeudsRoutierRegionAvecVoisins[$numDepartementNoeudRoutier][$noeudRoutierRegion["noeud_arrivee_gid"]][] = [
                     "noeud_gid" => $noeudRoutierRegion["noeud_depart_gid"],
                     "noeud_courant_lat" => $noeudRoutierRegion["noeud_arrivee_lat"],

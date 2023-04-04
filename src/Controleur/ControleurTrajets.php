@@ -13,7 +13,7 @@ class ControleurTrajets extends ControleurGenerique {
         $this->trajetsService = $trajetsService;
     }
 
-    public static function afficherErreur($errorMessage = "", $controleur = ""): Response {
+    public static function afficherErreur($errorMessage = "", $statusCode = ""): Response {
         return parent::afficherErreur($errorMessage, "trajets");
     }
 

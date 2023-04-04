@@ -14,7 +14,7 @@ class ControleurNoeudRoutierAPI extends ControleurGenerique {
 
     public function __construct(private NoeudRoutierServiceInterface $noeudRoutierService) { }
 
-    public static function afficherErreur($errorMessage = "", $controleur = ""): Response {
+    public static function afficherErreur($errorMessage = "", $statusCode = ""): Response {
         return parent::afficherErreur($errorMessage, "noeudCommune");
     }
 
@@ -55,6 +55,7 @@ class ControleurNoeudRoutierAPI extends ControleurGenerique {
             $parameters["temps"] = $datas[2];
             $parameters["gas"] = $datas[3];
 
+            $parameters["noeudsList"] = array_values($noeudList);
             $parameters["chemin"] = count($datas[1]) > 0 ? $this->noeudRoutierService->calculerItineraire($datas[1]) : [];
             $parameters["nbCommunes"] = count($noeudList);
             $parameters["nomCommuneDepart"] = array_shift($noeudList);

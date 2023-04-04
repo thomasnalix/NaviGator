@@ -20,7 +20,7 @@ class ControleurUtilisateur extends ControleurGenerique {
     ) {
     }
 
-    public static function afficherErreur($errorMessage = "", $controleur = ""): Response {
+    public static function afficherErreur($errorMessage = "", $statusCode = ""): Response {
         return parent::afficherErreur($errorMessage, "utilisateur");
     }
 
@@ -34,9 +34,9 @@ class ControleurUtilisateur extends ControleurGenerique {
     }
 
     public function afficherDetail(): Response {
-        $login = $_REQUEST['login'];
         $utilisateur = null;
         try {
+            $login = $this->connexionUtilisateurSession->getLoginUtilisateurConnecte();
             $utilisateur = $this->utilisateurService->afficherDetailUtilisateur($login);
         } catch (ServiceException $e) {
             MessageFlash::ajouter("danger", $e->getMessage());

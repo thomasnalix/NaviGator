@@ -29,6 +29,7 @@ formDestination.addEventListener('input', e => {
     verifyFilledField();
 });
 
+
 form.addEventListener("submit", async e => {
     e.preventDefault();
     const url = './calculChemin';
@@ -42,10 +43,29 @@ form.addEventListener("submit", async e => {
 
     const response = await fetch(url, {method: 'POST', body: formData});
     const data = await response.json();
-    console.log(data);
+
+
     printResult(data);
     printItinary(data.chemin);
+    await addToHistory(data);
 });
+
+/**
+ * Send data to the server to add it to the history of the user
+ * @param data
+ */
+async function addToHistory(data) {
+
+    const url = './historique';
+    const formData = new FormData();
+
+    formData.append('datas', JSON.stringify(data));
+    formData.append('noeudsList',data.noeudsList.toString());
+
+
+    const response = await fetch(url, {method: 'POST', body: formData});
+    console.log(response);
+}
 
 /**
  * set variables in the resume box

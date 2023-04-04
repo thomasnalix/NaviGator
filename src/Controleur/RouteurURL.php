@@ -7,9 +7,11 @@ use Navigator\Lib\ConnexionUtilisateurSession;
 use Navigator\Lib\Conteneur;
 use Navigator\Lib\MessageFlash;
 use Navigator\Modele\Repository\ConnexionBaseDeDonnees;
+use Navigator\Modele\Repository\HistoriqueRepository;
 use Navigator\Modele\Repository\NoeudCommuneRepository;
 use Navigator\Modele\Repository\NoeudRoutierRepository;
 use Navigator\Modele\Repository\UtilisateurRepository;
+use Navigator\Service\HistoriqueService;
 use Navigator\Service\NoeudCommuneService;
 use Navigator\Service\NoeudRoutierService;
 use Navigator\Service\UtilisateurService;
@@ -64,28 +66,38 @@ class RouteurURL {
         $noeudRoutierRepositoryService = $conteneur->register('noeud_routier_repository',NoeudRoutierRepository::class);
         $noeudRoutierRepositoryService->setArguments([new Reference('connexion_base')]);
 
-        $noeudRoutierServiceService = $conteneur->register('noeud_routier_service',NoeudRoutierService::class);
-        $noeudRoutierServiceService->setArguments([new Reference('noeud_routier_repository'), new Reference('noeud_commune_repository')]);
+        $noeudRoutierService = $conteneur->register('noeud_routier_service',NoeudRoutierService::class);
+        $noeudRoutierService->setArguments([new Reference('noeud_routier_repository'), new Reference('noeud_commune_repository')]);
 
         $noeudRoutierControleurService = $conteneur->register('noeud_routier_controleur',ControleurNoeudRoutierAPI::class);
         $noeudRoutierControleurService->setArguments([new Reference('noeud_routier_service')]);
 
         /* -------------------------------  UTILISATEUR  ------------------------------ */
-        // TODO: louche cette histoire
+
         $utilisateurSessionService = $conteneur->register('utilisateur_session',ConnexionUtilisateurSession::class);
         $utilisateurJWTService = $conteneur->register('utilisateur_jwt',ConnexionUtilisateurJWT::class);
 
         $utilisateurRepositoryService = $conteneur->register('utilisateur_repository',UtilisateurRepository::class);
         $utilisateurRepositoryService->setArguments([new Reference('connexion_base')]);
 
-        $utilisateurServiceService = $conteneur->register('utilisateur_service',UtilisateurService::class);
-        $utilisateurServiceService->setArguments([new Reference('utilisateur_session'), new Reference('utilisateur_repository')]);
+        $utilisateurService = $conteneur->register('utilisateur_service',UtilisateurService::class);
+        $utilisateurService->setArguments([new Reference('utilisateur_session'), new Reference('utilisateur_repository')]);
 
         $utilisateurControleurService = $conteneur->register('utilisateur_controleur',ControleurUtilisateur::class);
         $utilisateurControleurService->setArguments([new Reference('utilisateur_service'), new Reference('utilisateur_session'), new Reference('utilisateur_jwt')]);
 
         $utilisateurControleurService = $conteneur->register('utilisateur_controleur_api',ControleurUtilisateurAPI::class);
         $utilisateurControleurService->setArguments([new Reference('utilisateur_service'), new Reference('utilisateur_jwt')]);
+
+        /* -------------------------------  HISTORIQUE  ------------------------------ */
+        $historiqueRepositoryService = $conteneur->register('historique_repository',HistoriqueRepository::class);
+        $historiqueRepositoryService->setArguments([new Reference('connexion_base')]);
+
+        $historiqueService = $conteneur->register('historique_service',HistoriqueService::class);
+        $historiqueService->setArguments([new Reference('historique_repository')]);
+
+        $historiqueControleurService = $conteneur->register('historique_controleur',ControleurHistorique::class);
+        $historiqueControleurService->setArguments([new Reference('historique_service')]);
 
         /* =========================================================================== */
         /* ================================ ROUTES =================================== */
@@ -128,7 +140,7 @@ class RouteurURL {
         $route->setMethods(["POST"]);
 
         // ROUTE PAGE PERSO
-        $route = new Route("/utilisateur/{idUser}", ["_controller" => "utilisateur_controleur::afficherDetail"]);
+        $route = new Route("/utilisateur", ["_controller" => "utilisateur_controleur::afficherDetail"]);
         $routes->add("pagePerso", $route);
         $route->setMethods(["GET"]);
 
@@ -161,9 +173,14 @@ class RouteurURL {
         $routes->add("afficherDetail", $route);
         $route->setMethods(["GET"]);
 
+        // addToHistory
+        $route = new Route("/historique", ["_controller" => "historique_controleur::addToHistory"]);
+        $routes->add("addToHistory", $route);
+        $route->setMethods(["POST"]);
+
         // login et password en POST
         $route = new Route("/utilisateur/{idUser}", ["_controller" => "utilisateur_controleur_api::connecter"]);
-        $routes->add("connecter", $route);
+        $routes->add("connecter_api", $route);
         $route->setMethods(["POST"]);
 
         //$requete = new Request($_GET,$_POST,[],$_COOKIE,$_FILES,$_SERVER);
