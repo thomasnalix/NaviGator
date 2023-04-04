@@ -386,8 +386,10 @@ input[type="text"]:focus {
 .alert {
     padding: 15px;
     margin-bottom: 20px;
-    border: 1px solid transparent;
-    border-radius: 4px;
+    backdrop-filter: blur(15px) saturate(250%);
+    -webkit-backdrop-filter: blur(15px) saturate(250%);
+    -moz-backdrop-filter: blur(15px) saturate(250%);
+    border-radius: 10px;
     position: fixed;
     bottom: 3px;
     right: 10px;
@@ -395,26 +397,26 @@ input[type="text"]:focus {
 }
 
 .alert-success {
-    color: #3c763d;
-    background-color: #dff0d8;
+    color: white;
+    background-color: rgba(93, 182, 49, 0.73);
     border-color: #d6e9c6;
 }
 
 .alert-info {
-    color: #31708f;
-    background-color: #d9edf7;
+    color: white;
+    background-color: rgba(50, 186, 255, 0.73);
     border-color: #bce8f1;
 }
 
 .alert-warning {
-    color: #8a6d3b;
-    background-color: #fcf8e3;
+    color: white;
+    background-color: rgba(245, 211, 38, 0.68);
     border-color: #faebcc;
 }
 
 .alert-danger {
-    color: #a94442;
-    background-color: #f2dede;
+    color: white;
+    background-color: rgba(255, 71, 71, 0.75);
     border-color: #ebccd1;
 }
 
