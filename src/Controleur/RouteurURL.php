@@ -140,7 +140,7 @@ class RouteurURL {
         $route->setMethods(["POST"]);
 
         // ROUTE PAGE PERSO
-        $route = new Route("/utilisateur/{idUser}", ["_controller" => "utilisateur_controleur::afficherDetail"]);
+        $route = new Route("/utilisateur", ["_controller" => "utilisateur_controleur::afficherDetail"]);
         $routes->add("pagePerso", $route);
         $route->setMethods(["GET"]);
 

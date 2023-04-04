@@ -34,9 +34,9 @@ class ControleurUtilisateur extends ControleurGenerique {
     }
 
     public function afficherDetail(): Response {
-        $login = $_REQUEST['login'];
         $utilisateur = null;
         try {
+            $login = $this->connexionUtilisateurSession->getLoginUtilisateurConnecte();
             $utilisateur = $this->utilisateurService->afficherDetailUtilisateur($login);
         } catch (ServiceException $e) {
             MessageFlash::ajouter("danger", $e->getMessage());
