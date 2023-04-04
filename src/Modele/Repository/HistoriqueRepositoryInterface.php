@@ -4,5 +4,5 @@ namespace Navigator\Modele\Repository;
 
 interface HistoriqueRepositoryInterface {
 
-    public function ajouterHistorique(string $login, array $trajet, array $json): bool;
+    public function ajouterHistorique(string $login, string $trajet, string $json): bool;
 }

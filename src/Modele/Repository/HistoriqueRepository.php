@@ -29,11 +29,19 @@ class HistoriqueRepository extends AbstractRepository implements HistoriqueRepos
             $objetFormatTableau["historique"]);
     }
 
-    public function ajouterHistorique(string $login, array $trajet, array $json): bool {
+    public function ajouterHistorique(string $login, string $trajet, string $json): bool {
+
+        // trad string $trajet to postgree array type
+        $trajet = "{" . implode(",", explode(",", $trajet)) . "}";
+        echo $trajet;
+//        $trajet = "ARRAY['Paris', 'Montpellier']";
+//        $json="'[\"client\"]'";
+
+
         $requeteSQL = <<<SQL
             CALL AJOUTER_HISTORIQUE(
                 :login,
-                :trajetArray
+                :trajetArray,
                 :json
             );
         SQL;
@@ -47,6 +55,7 @@ class HistoriqueRepository extends AbstractRepository implements HistoriqueRepos
             $pdoStatement->execute($values);
             return true;
         } catch (PDOException) {
+            var_dump($pdoStatement->errorInfo());
             return false;
         }
     }

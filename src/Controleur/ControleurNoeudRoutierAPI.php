@@ -55,11 +55,11 @@ class ControleurNoeudRoutierAPI extends ControleurGenerique {
             $parameters["temps"] = $datas[2];
             $parameters["gas"] = $datas[3];
 
+            $parameters["noeudsList"] = array_values($noeudList);
             $parameters["chemin"] = count($datas[1]) > 0 ? $this->noeudRoutierService->calculerItineraire($datas[1]) : [];
             $parameters["nbCommunes"] = count($noeudList);
             $parameters["nomCommuneDepart"] = array_shift($noeudList);
             $parameters["nomCommuneArrivee"] = end($noeudList);
-            $parameters["noeudsRoutier"] = array_values($noeudList);
 
             return new JsonResponse(json_encode($parameters), Response::HTTP_OK, [], true);
         } catch (ServiceException $exception) {

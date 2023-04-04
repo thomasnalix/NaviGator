@@ -3,6 +3,7 @@
 namespace Navigator\Service;
 
 use Navigator\Modele\Repository\HistoriqueRepositoryInterface;
+use Navigator\Service\Exception\ServiceException;
 
 class HistoriqueService implements HistoriqueServiceInterface {
 
@@ -16,7 +17,14 @@ class HistoriqueService implements HistoriqueServiceInterface {
         return $this->historiqueRepository->recuperer();
     }
 
-    public function ajouterTrajet($login, $trajet, $json) {
-        $this->historiqueRepository->ajouterHistorique($login, $trajet, $json);
+    /**
+     * @throws ServiceException
+     */
+    public function ajouterTrajet($login, $trajet, $json): void {
+
+        $result = $this->historiqueRepository->ajouterHistorique($login, $trajet, $json);
+        if (!$result) {
+            throw new ServiceException("Erreur lors de l'ajout du trajet à l'historique");
+        }
     }
 }

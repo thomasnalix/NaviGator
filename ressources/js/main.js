@@ -47,22 +47,24 @@ form.addEventListener("submit", async e => {
 
     printResult(data);
     printItinary(data.chemin);
-    addToHistory(data);
+    await addToHistory(data);
 });
 
 /**
  * Send data to the server to add it to the history of the user
  * @param data
  */
-function addToHistory(data) {
+async function addToHistory(data) {
 
-    const url = './addHistory';
+    const url = './historique';
     const formData = new FormData();
-    // login of the user
-    formData.append('datas', data);
-    formData.append('noeudsRoutier', data.noeudsRoutier);
 
-    fetch(url, {method: 'POST', body: formData});
+    formData.append('datas', JSON.stringify(data));
+    formData.append('noeudsList',data.noeudsList.toString());
+
+
+    const response = await fetch(url, {method: 'POST', body: formData});
+    console.log(response);
 }
 
 /**

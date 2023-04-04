@@ -66,22 +66,22 @@ class RouteurURL {
         $noeudRoutierRepositoryService = $conteneur->register('noeud_routier_repository',NoeudRoutierRepository::class);
         $noeudRoutierRepositoryService->setArguments([new Reference('connexion_base')]);
 
-        $noeudRoutierServiceService = $conteneur->register('noeud_routier_service',NoeudRoutierService::class);
-        $noeudRoutierServiceService->setArguments([new Reference('noeud_routier_repository'), new Reference('noeud_commune_repository')]);
+        $noeudRoutierService = $conteneur->register('noeud_routier_service',NoeudRoutierService::class);
+        $noeudRoutierService->setArguments([new Reference('noeud_routier_repository'), new Reference('noeud_commune_repository')]);
 
         $noeudRoutierControleurService = $conteneur->register('noeud_routier_controleur',ControleurNoeudRoutierAPI::class);
         $noeudRoutierControleurService->setArguments([new Reference('noeud_routier_service')]);
 
         /* -------------------------------  UTILISATEUR  ------------------------------ */
-        // TODO: louche cette histoire
+
         $utilisateurSessionService = $conteneur->register('utilisateur_session',ConnexionUtilisateurSession::class);
         $utilisateurJWTService = $conteneur->register('utilisateur_jwt',ConnexionUtilisateurJWT::class);
 
         $utilisateurRepositoryService = $conteneur->register('utilisateur_repository',UtilisateurRepository::class);
         $utilisateurRepositoryService->setArguments([new Reference('connexion_base')]);
 
-        $utilisateurServiceService = $conteneur->register('utilisateur_service',UtilisateurService::class);
-        $utilisateurServiceService->setArguments([new Reference('utilisateur_session'), new Reference('utilisateur_repository')]);
+        $utilisateurService = $conteneur->register('utilisateur_service',UtilisateurService::class);
+        $utilisateurService->setArguments([new Reference('utilisateur_session'), new Reference('utilisateur_repository')]);
 
         $utilisateurControleurService = $conteneur->register('utilisateur_controleur',ControleurUtilisateur::class);
         $utilisateurControleurService->setArguments([new Reference('utilisateur_service'), new Reference('utilisateur_session'), new Reference('utilisateur_jwt')]);
@@ -93,8 +93,8 @@ class RouteurURL {
         $historiqueRepositoryService = $conteneur->register('historique_repository',HistoriqueRepository::class);
         $historiqueRepositoryService->setArguments([new Reference('connexion_base')]);
 
-        $historiqueServiceService = $conteneur->register('historique_service',HistoriqueService::class);
-        $historiqueServiceService->setArguments([new Reference('historique_repository')]);
+        $historiqueService = $conteneur->register('historique_service',HistoriqueService::class);
+        $historiqueService->setArguments([new Reference('historique_repository')]);
 
         $historiqueControleurService = $conteneur->register('historique_controleur',ControleurHistorique::class);
         $historiqueControleurService->setArguments([new Reference('historique_service')]);
