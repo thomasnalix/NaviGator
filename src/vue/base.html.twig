@@ -21,8 +21,8 @@
         <a href="{{ generateurUrl("map") }}">Maps</a>
 
         {% if not estConnecte() %}
-        <a href="{{ generateurUrl("creerDepuisFormulaire") }}">Inscription</a>
-        <a href="{{ generateurUrl("connecter") }}">Connexion</a>
+        <a href="{{ generateurUrl("afficherFormulaireCreation") }}">Inscription</a>
+        <a href="{{ generateurUrl("afficherFormulaireConnexion") }}">Connexion</a>
         {% else %}
         <a href="{{ generateurUrl("pagePerso", {'idUser': 'loginURL'}) }}">Mon compte</a>
         <a href="{{ generateurUrl("deconnecter") }}">Déconnexion</a>

@@ -79,10 +79,10 @@ class RouteurURL {
         $utilisateurRepositoryService->setArguments([new Reference('connexion_base')]);
 
         $utilisateurServiceService = $conteneur->register('utilisateur_service',UtilisateurService::class);
-        $utilisateurServiceService->setArguments([new Reference('utilisateur_repository'), new Reference('utilisateur_session')]);
+        $utilisateurServiceService->setArguments([new Reference('utilisateur_session'), new Reference('utilisateur_repository')]);
 
-        $utilisateurControleurService = $conteneur->register('utilisateur_controleur',ControleurUtilisateurAPI::class);
-        $utilisateurControleurService->setArguments([new Reference('utilisateur_service'), new Reference('utilisateur_session')]);
+        $utilisateurControleurService = $conteneur->register('utilisateur_controleur',ControleurUtilisateur::class);
+        $utilisateurControleurService->setArguments([new Reference('utilisateur_service'), new Reference('utilisateur_session'), new Reference('utilisateur_jwt')]);
 
         /* =========================================================================== */
         /* ================================ ROUTES =================================== */
@@ -95,17 +95,17 @@ class RouteurURL {
         $routes->add("navigator", $route);
 
         // ROUTE CONNEXION GET
-        $route = new Route("/connexion", ["_controller" => "\Navigator\Controleur\ControleurUtilisateur::afficherFormulaireConnexion",]);
+        $route = new Route("/connexion", ["_controller" => "utilisateur_controleur::afficherFormulaireConnexion"]);
         $routes->add("afficherFormulaireConnexion", $route);
         $route->setMethods(["GET"]);
 
         // ROUTE CONNEXION POST
-        $route = new Route("/connexion", ["_controller" => "\Navigator\Controleur\ControleurUtilisateur::connecter"]);
+        $route = new Route("/connexion", ["_controller" => "utilisateur_controleur::connecter"]);
         $routes->add("connecter", $route);
         $route->setMethods(["POST"]);
 
         // ROUTE DECONNEXION
-        $route = new Route("/deconnexion", ["_controller" => "\Navigator\Controleur\ControleurUtilisateur::deconnecter"]);
+        $route = new Route("/deconnexion", ["_controller" => "utilisateur_controleur::deconnecter"]);
         $routes->add("deconnecter", $route);
         $route->setMethods(["GET"]);
 
@@ -115,17 +115,17 @@ class RouteurURL {
         $route->setMethods(["GET"]);
 
         // ROUTE INSCRIPTION GET
-        $route = new Route("/inscription", ["_controller" => "\Navigator\Controleur\ControleurUtilisateur::afficherFormulaireCreation"]);
+        $route = new Route("/inscription", ["_controller" => "utilisateur_controleur::afficherFormulaireCreation"]);
         $routes->add("afficherFormulaireCreation", $route);
         $route->setMethods(["GET"]);
 
         // ROUTE INSCRIPTION POST
-        $route = new Route("/inscription", ["_controller" => "\Navigator\Controleur\ControleurUtilisateur::creerDepuisFormulaire"]);
+        $route = new Route("/inscription", ["_controller" => "utilisateur_controleur::creerDepuisFormulaire"]);
         $routes->add("creerDepuisFormulaire", $route);
         $route->setMethods(["POST"]);
 
         // ROUTE PAGE PERSO
-        $route = new Route("/utilisateur/{idUser}", ["_controller" => "\Navigator\Controleur\ControleurUtilisateur::afficherDetail"]);
+        $route = new Route("/utilisateur/{idUser}", ["_controller" => "utilisateur_controleur::afficherDetail"]);
         $routes->add("pagePerso", $route);
         $route->setMethods(["GET"]);
 

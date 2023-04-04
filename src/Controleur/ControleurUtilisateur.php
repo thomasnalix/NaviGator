@@ -27,10 +27,9 @@ class ControleurUtilisateur extends ControleurGenerique {
 
     public function afficherListe(): Response {
         $utilisateurs = $this->utilisateurService->recupererUtilisateurs();
-        return ControleurUtilisateur::afficherVue('base.html.twig', [
+        return ControleurUtilisateur::afficherTwig('utilisateur/liste.html.twig', [
             "utilisateurs" => $utilisateurs,
-            "pagetitle" => "Liste des utilisateurs",
-            "cheminVueBody" => "utilisateur/liste.php"
+            "pagetitle" => "Liste des utilisateurs"
         ]);
     }
 
@@ -41,13 +40,12 @@ class ControleurUtilisateur extends ControleurGenerique {
             $utilisateur = $this->utilisateurService->afficherDetailUtilisateur($login);
         } catch (ServiceException $e) {
             MessageFlash::ajouter("danger", $e->getMessage());
-            return ControleurUtilisateur::rediriger("utilisateur", "afficherListe");
+            return ControleurUtilisateur::rediriger("navigator");
         }
 
-        return parent::afficherVue('base.html.twig', [
+        return parent::afficherTwig('utilisateur/detail.html.twig', [
             "utilisateur" => $utilisateur,
             "pagetitle" => "Détail de l'utilisateur",
-            "cheminVueBody" => "utilisateur/detail.php"
         ]);
     }
 
@@ -58,18 +56,16 @@ class ControleurUtilisateur extends ControleurGenerique {
             $this->utilisateurService->supprimerUtilisateur($login);
         } catch (ServiceException $e) {
             MessageFlash::ajouter("danger", $e->getMessage());
-            return ControleurUtilisateur::rediriger("utilisateur", "afficherListe");
+            return ControleurUtilisateur::rediriger("navigator");
         }
 
         MessageFlash::ajouter("success", "L'utilisateur a bien été supprimé !");
-        return ControleurUtilisateur::rediriger("utilisateur", "afficherListe");
+        return ControleurUtilisateur::rediriger("navigator");
     }
 
     public function afficherFormulaireCreation(): Response {
-        return ControleurUtilisateur::afficherVue('vueGenerale.php', [
-            "pagetitle" => "Création d'un utilisateur",
-            "cheminVueBody" => "utilisateur/formulaireCreation.php",
-            "method" => Configuration::getDebug() ? "get" : "post",
+        return ControleurUtilisateur::afficherTwig('utilisateur/formulaireCreation.html.twig', [
+            "pagetitle" => "Création d'un utilisateur"
         ]);
     }
 
@@ -86,11 +82,11 @@ class ControleurUtilisateur extends ControleurGenerique {
             $this->utilisateurService->creerUtilisateur($login, $nom, $prenom, $motDePasse, $motDePasse2, $email, $imageProfil);
         } catch (ServiceException $e) {
             MessageFlash::ajouter("danger", $e->getMessage());
-            return ControleurUtilisateur::rediriger("utilisateur", "afficherFormulaireCreation");
+            return ControleurUtilisateur::rediriger("navigator");
         }
 
         MessageFlash::ajouter("success", "L'utilisateur a bien été créé !");
-        return ControleurUtilisateur::rediriger("utilisateur", "afficherListe");
+        return ControleurUtilisateur::rediriger("map");
     }
 
     public function afficherFormulaireMiseAJour(): Response {
@@ -101,16 +97,15 @@ class ControleurUtilisateur extends ControleurGenerique {
             $utilisateur = $this->utilisateurService->afficherFormulaireMAJUtilisateur($login);
         } catch (ServiceException $e) {
             MessageFlash::ajouter("danger", $e->getMessage());
-            return ControleurUtilisateur::rediriger("utilisateur", "afficherListe");
+            return ControleurUtilisateur::rediriger("navigator");
         }
 
         $loginHTML = htmlspecialchars($login);
         $prenomHTML = htmlspecialchars($utilisateur->getPrenom());
         $nomHTML = htmlspecialchars($utilisateur->getNom());
         $emailHTML = htmlspecialchars($utilisateur->getEmail());
-        return ControleurUtilisateur::afficherVue('vueGenerale.php', [
+        return ControleurUtilisateur::afficherTwig('utilisateur/formulaireMiseAJour.html.twig', [
             "pagetitle" => "Mise à jour d'un utilisateur",
-            "cheminVueBody" => "utilisateur/formulaireMiseAJour.php",
             "loginHTML" => $loginHTML,
             "prenomHTML" => $prenomHTML,
             "nomHTML" => $nomHTML,
@@ -133,17 +128,16 @@ class ControleurUtilisateur extends ControleurGenerique {
             $this->utilisateurService->mettreAJourUtilisateur($login, $nom, $prenom, $motDePasseAncien, $motDePasse, $motDePasse2, $email, $imageProfil);
         } catch (ServiceException $e) {
             MessageFlash::ajouter("danger", $e->getMessage());
-            return ControleurUtilisateur::rediriger("utilisateur", "afficherFormulaireMiseAJour", ["login" => $login]);
+            return ControleurUtilisateur::rediriger("navigator");
         }
 
         MessageFlash::ajouter("success", "L'utilisateur a bien été modifié !");
-        return ControleurUtilisateur::rediriger("utilisateur", "afficherListe");
+        return ControleurUtilisateur::rediriger("pagePerso");
     }
 
     public function afficherFormulaireConnexion(): Response {
-        return ControleurUtilisateur::afficherVue('vueGenerale.php', [
+        return ControleurUtilisateur::afficherTwig('utilisateur/formulaireConnexion.html.twig', [
             "pagetitle" => "Formulaire de connexion",
-            "cheminVueBody" => "utilisateur/formulaireConnexion.php",
             "method" => Configuration::getDebug() ? "get" : "post",
         ]);
     }
@@ -154,24 +148,24 @@ class ControleurUtilisateur extends ControleurGenerique {
 
         try {
             $login = $this->utilisateurService->verifierIdentifiantUtilisateur($login, $motDePasse);
-            ConnexionUtilisateurSession::connecter($login);
+            $this->connexionUtilisateurSession->connecter($login);
         } catch (ServiceException $e) {
             MessageFlash::ajouter("danger", $e->getMessage());
-            return ControleurUtilisateur::rediriger("utilisateur", ["afficherFormulaireConnexion"]);
+            return ControleurUtilisateur::rediriger("navigator");
         }
 
         MessageFlash::ajouter("success", "Connexion effectuée.");
-        return ControleurUtilisateur::rediriger("utilisateur", "afficherDetail", ["login" => $_REQUEST["login"]]);
+        return ControleurUtilisateur::rediriger("map");
     }
 
     public function deconnecter(): RedirectResponse {
-        if (!ConnexionUtilisateurSession::estConnecte()) {
+        if (!$this->connexionUtilisateurSession->estConnecte()) {
             MessageFlash::ajouter("error", "Utilisateur non connecté.");
-            return ControleurGenerique::rediriger('connecter');
+            return ControleurGenerique::rediriger('navigator');
         }
-        ConnexionUtilisateurSession::deconnecter();
+        $this->connexionUtilisateurSession->deconnecter();
         MessageFlash::ajouter("success", "L'utilisateur a bien été déconnecté.");
-        return ControleurUtilisateur::rediriger("utilisateur", ["afficherListe"]);
+        return ControleurUtilisateur::rediriger("navigator");
     }
 
 //    public static function validerEmail() {

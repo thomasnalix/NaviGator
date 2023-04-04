@@ -6,7 +6,8 @@ use Navigator\Lib\MotDePasse;
 use Navigator\Modele\DataObject\Utilisateur;
 use PDOException;
 
-class UtilisateurRepository extends AbstractRepository implements UtilisateurRepositoryInterface {
+class UtilisateurRepository extends AbstractRepository implements UtilisateurRepositoryInterface
+{
 
     private ConnexionBaseDeDonneesInterface $connexionBaseDeDonnees;
 
