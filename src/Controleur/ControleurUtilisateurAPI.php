@@ -2,6 +2,7 @@
 
 namespace Navigator\Controleur;
 
+use Navigator\Lib\ConnexionUtilisateurInterface;
 use Navigator\Service\Exception\ServiceException;
 use Navigator\Service\UtilisateurServiceInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -12,8 +13,11 @@ class ControleurUtilisateurAPI {
 
     private UtilisateurServiceInterface $utilisateurService;
 
-    public function __construct(UtilisateurServiceInterface $utilisateurService) {
+    private ConnexionUtilisateurInterface $connexionUtilisateur;
+
+    public function __construct(UtilisateurServiceInterface $utilisateurService, ConnexionUtilisateurInterface $connexionUtilisateur) {
         $this->utilisateurService = $utilisateurService;
+        $this->connexionUtilisateur = $connexionUtilisateur;
     }
 
     public function afficherDetail($idUser) : Response {
@@ -27,10 +31,8 @@ class ControleurUtilisateurAPI {
             $login = $request->get("login");
             $password = $request->get("password");
             $idUtilisateur = $this->utilisateurService->verifierIdentifiantUtilisateur($login, $password);
-            // Appel du service connexionUtilisateur
-
-            // pour connecter l'utilisateur avec son identifiant
-            // et retourner un token JWT
+            $this->connexionUtilisateur->connecter($idUtilisateur);
+            return new JsonResponse([], Response::HTTP_OK);
 
         } catch (ServiceException $exception) {
             return new JsonResponse(["error" => $exception->getMessage()], $exception->getCode());
