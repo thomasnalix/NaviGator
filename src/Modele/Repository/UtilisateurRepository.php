@@ -9,10 +9,8 @@ use PDOException;
 class UtilisateurRepository extends AbstractRepository implements UtilisateurRepositoryInterface
 {
 
-    private ConnexionBaseDeDonneesInterface $connexionBaseDeDonnees;
-
-    public function __construct(ConnexionBaseDeDonneesInterface $connexionBaseDeDonnees) {
-        parent::__construct($connexionBaseDeDonnees);
+    public function __construct(ConnexionBaseDeDonneesInterface $connexion) {
+        parent::__construct($connexion);
     }
 
 //    /**

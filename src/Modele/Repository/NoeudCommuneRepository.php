@@ -8,10 +8,8 @@ use PDO;
 
 class NoeudCommuneRepository extends AbstractRepository implements NoeudCommuneRepositoryInterface {
 
-    private ConnexionBaseDeDonneesInterface $connexionBaseDeDonnees;
-
-    public function __construct(ConnexionBaseDeDonneesInterface $connexionBaseDeDonnees) {
-        parent::__construct($connexionBaseDeDonnees);
+    public function __construct(ConnexionBaseDeDonneesInterface $connexion) {
+        parent::__construct($connexion);
     }
 
     public function construireDepuisTableau(array $noeudRoutierTableau): NoeudCommune {

@@ -28,6 +28,15 @@
         <a href="{{ generateurUrl("deconnecter") }}">Déconnexion</a>
         {% endif %}
     </nav>
+    <div>
+    {% for type in ["success", "info", "warning", "danger"] %}
+        {% for messageFlash in messagesFlash.lireMessages(type) %}
+            <div class="alert alert-{{ type }}">
+                {{ messageFlash }}
+            </div>
+        {% endfor %}
+    {% endfor %}
+    </div>
 </header>
 <main>
     {% block page_content %}{% endblock %}

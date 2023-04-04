@@ -5,6 +5,7 @@ use Navigator\Configuration\ConfigurationBDDPostgreSQL;
 use Navigator\Lib\ConnexionUtilisateurJWT;
 use Navigator\Lib\ConnexionUtilisateurSession;
 use Navigator\Lib\Conteneur;
+use Navigator\Lib\MessageFlash;
 use Navigator\Modele\Repository\ConnexionBaseDeDonnees;
 use Navigator\Modele\Repository\NoeudCommuneRepository;
 use Navigator\Modele\Repository\NoeudRoutierRepository;
@@ -206,6 +207,9 @@ class RouteurURL {
             return Conteneur::recupererService("userSession")->estConnecte();
         };
         $twig->addFunction(new TwigFunction("estConnecte", $callable));
+
+        $twig->addGlobal('messagesFlash', new MessageFlash());
+
 
 
         try {

@@ -7,7 +7,7 @@ use PDOException;
 
 abstract class AbstractRepository {
 
-    private ConnexionBaseDeDonneesInterface $connexion;
+    protected ConnexionBaseDeDonneesInterface $connexion;
 
     protected abstract function getNomTable(): string;
     protected abstract function getNomClePrimaire(): string;
