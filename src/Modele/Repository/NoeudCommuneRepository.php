@@ -21,15 +21,19 @@ class NoeudCommuneRepository extends AbstractRepository implements NoeudCommuneR
         );
     }
 
-    protected function getNomTable(): string { return 'nalixt.noeud_commune';}
+    protected function getNomTable(): string {
+        return 'nalixt.noeud_commune';
+    }
 
-    protected function getNomClePrimaire(): string { return 'gid'; }
+    protected function getNomClePrimaire(): string {
+        return 'gid';
+    }
 
     protected function getNomsColonnes(): array {
         return ["gid", "id_rte500", "nom_comm", "id_nd_rte"];
     }
 
-    public function getCoordNoeudCommune(string $nomVille) : ?array {
+    public function getCoordNoeudCommune(string $nomVille): ?array {
         $sql = <<<SQL
             SELECT nr.lat, nr.long
             FROM nalixt.noeud_routier nr

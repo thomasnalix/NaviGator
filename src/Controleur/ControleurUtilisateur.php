@@ -20,7 +20,7 @@ class ControleurUtilisateur extends ControleurGenerique {
     ) {
     }
 
-    public static function afficherErreur($errorMessage = "", $controleur = ""): Response {
+    public static function afficherErreur($errorMessage = "", $statusCode = ""): Response {
         return parent::afficherErreur($errorMessage, "utilisateur");
     }
 

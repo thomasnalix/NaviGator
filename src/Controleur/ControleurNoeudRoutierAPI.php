@@ -14,7 +14,7 @@ class ControleurNoeudRoutierAPI extends ControleurGenerique {
 
     public function __construct(private NoeudRoutierServiceInterface $noeudRoutierService) { }
 
-    public static function afficherErreur($errorMessage = "", $controleur = ""): Response {
+    public static function afficherErreur($errorMessage = "", $statusCode = ""): Response {
         return parent::afficherErreur($errorMessage, "noeudCommune");
     }
 
@@ -59,6 +59,7 @@ class ControleurNoeudRoutierAPI extends ControleurGenerique {
             $parameters["nbCommunes"] = count($noeudList);
             $parameters["nomCommuneDepart"] = array_shift($noeudList);
             $parameters["nomCommuneArrivee"] = end($noeudList);
+            $parameters["noeudsRoutier"] = array_values($noeudList);
 
             return new JsonResponse(json_encode($parameters), Response::HTTP_OK, [], true);
         } catch (ServiceException $exception) {

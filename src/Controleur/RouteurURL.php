@@ -7,9 +7,11 @@ use Navigator\Lib\ConnexionUtilisateurSession;
 use Navigator\Lib\Conteneur;
 use Navigator\Lib\MessageFlash;
 use Navigator\Modele\Repository\ConnexionBaseDeDonnees;
+use Navigator\Modele\Repository\HistoriqueRepository;
 use Navigator\Modele\Repository\NoeudCommuneRepository;
 use Navigator\Modele\Repository\NoeudRoutierRepository;
 use Navigator\Modele\Repository\UtilisateurRepository;
+use Navigator\Service\HistoriqueService;
 use Navigator\Service\NoeudCommuneService;
 use Navigator\Service\NoeudRoutierService;
 use Navigator\Service\UtilisateurService;
@@ -87,6 +89,16 @@ class RouteurURL {
         $utilisateurControleurService = $conteneur->register('utilisateur_controleur_api',ControleurUtilisateurAPI::class);
         $utilisateurControleurService->setArguments([new Reference('utilisateur_service'), new Reference('utilisateur_jwt')]);
 
+        /* -------------------------------  HISTORIQUE  ------------------------------ */
+        $historiqueRepositoryService = $conteneur->register('historique_repository',HistoriqueRepository::class);
+        $historiqueRepositoryService->setArguments([new Reference('connexion_base')]);
+
+        $historiqueServiceService = $conteneur->register('historique_service',HistoriqueService::class);
+        $historiqueServiceService->setArguments([new Reference('historique_repository')]);
+
+        $historiqueControleurService = $conteneur->register('historique_controleur',ControleurHistorique::class);
+        $historiqueControleurService->setArguments([new Reference('historique_service')]);
+
         /* =========================================================================== */
         /* ================================ ROUTES =================================== */
         /* =========================================================================== */
@@ -160,6 +172,11 @@ class RouteurURL {
         $route = new Route("/utilisateur/{idUser}", ["_controller" => "utilisateur_controleur_api::afficherDetail"]);
         $routes->add("afficherDetail", $route);
         $route->setMethods(["GET"]);
+
+        // addToHistory
+        $route = new Route("/historique", ["_controller" => "historique_controleur::addToHistory"]);
+        $routes->add("addToHistory", $route);
+        $route->setMethods(["POST"]);
 
         // login et password en POST
         $route = new Route("/utilisateur/{idUser}", ["_controller" => "utilisateur_controleur_api::connecter"]);

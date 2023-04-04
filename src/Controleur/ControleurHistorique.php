@@ -2,7 +2,9 @@
 
 namespace Navigator\Controleur;
 
+use Navigator\Lib\Conteneur;
 use Navigator\Service\HistoriqueServiceInterface;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
 
 class ControleurHistorique extends ControleurGenerique {
@@ -13,7 +15,7 @@ class ControleurHistorique extends ControleurGenerique {
         $this->historiqueService = $historiqueService;
     }
 
-    public static function afficherErreur($errorMessage = "", $controleur = ""): Response {
+    public static function afficherErreur($errorMessage = "", $statusCode = ""): Response {
         return parent::afficherErreur($errorMessage, "historique");
     }
 
@@ -24,6 +26,17 @@ class ControleurHistorique extends ControleurGenerique {
             "pagetitle" => "Liste des trajets",
             "cheminVueBody" => "historique/liste.php"
         ]);
+    }
+
+    public function addToHistory(): Response {
+        // get the user's login
+        $login = Conteneur::recupererService('UserSession').getLoginUtilisateurConnecte();
+        $this->historiqueService->ajouterTrajet($login, $_POST['noeudsRoutier'], $_POST['datas']);
+
+        return new Response(json_encode([
+            "success" => true,
+            "message" => "Trajet ajouté à l'historique"
+        ]));
     }
 
     public static function creerDepuisFormulaire(): void {
