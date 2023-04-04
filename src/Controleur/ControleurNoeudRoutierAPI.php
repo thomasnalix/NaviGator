@@ -9,13 +9,10 @@ use Navigator\Service\NoeudRoutierServiceInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
 
-class ControleurNoeudRoutier extends ControleurGenerique {
+class ControleurNoeudRoutierAPI extends ControleurGenerique {
 
-    private NoeudRoutierServiceInterface $noeudRoutierService;
 
-    public function __construct(NoeudRoutierServiceInterface $noeudRoutierService) {
-        $this->noeudRoutierService = $noeudRoutierService;
-    }
+    public function __construct(private NoeudRoutierServiceInterface $noeudRoutierService) { }
 
     public static function afficherErreur($errorMessage = "", $controleur = ""): Response {
         return parent::afficherErreur($errorMessage, "noeudCommune");
@@ -58,10 +55,7 @@ class ControleurNoeudRoutier extends ControleurGenerique {
             $parameters["temps"] = $datas[2];
             $parameters["gas"] = $datas[3];
 
-            if (count($datas[1]) > 0)
-                $parameters["chemin"] = $this->noeudRoutierService->calculerItineraire($datas[1]);
-            else
-                $parameters["chemin"] = [];
+            $parameters["chemin"] = count($datas[1]) > 0 ? $this->noeudRoutierService->calculerItineraire($datas[1]) : [];
             $parameters["nbCommunes"] = count($noeudList);
             $parameters["nomCommuneDepart"] = array_shift($noeudList);
             $parameters["nomCommuneArrivee"] = end($noeudList);
@@ -69,6 +63,31 @@ class ControleurNoeudRoutier extends ControleurGenerique {
             return new JsonResponse(json_encode($parameters), Response::HTTP_OK, [], true);
         } catch (ServiceException $exception) {
             MessageFlash::ajouter("danger",$exception->getMessage());
+            return new JsonResponse(["error" => $exception->getMessage()], $exception->getCode());
+        }
+    }
+
+    /**
+     * Call the database to get the list of cities that start with the text entered by the user
+     * @param $text
+     * @param ControleurNoeudCommune $controleurNoeudCommune
+     * @return Response
+     */
+    public function recupererListeCommunes($text): Response {
+        try {
+            $noeudsCommunes = $this->noeudRoutierService->getNomCommunes($text);
+            return new JsonResponse(json_encode($noeudsCommunes), Response::HTTP_OK, [], true);
+        } catch (ServiceException $exception) {
+            return new JsonResponse(["error" => $exception->getMessage()], $exception->getCode());
+        }
+    }
+
+    public function recupererCoordonneesCommunes($commune): Response {
+        try {
+            $noeudsCommunes = $this->noeudRoutierService->getCoordNoeudCommune($commune);
+            return new JsonResponse(json_encode($noeudsCommunes), Response::HTTP_OK, [], true);
+        } catch (ServiceException $exception) {
+            MessageFlash::ajouter("danger", $exception->getMessage());
             return new JsonResponse(["error" => $exception->getMessage()], $exception->getCode());
         }
     }

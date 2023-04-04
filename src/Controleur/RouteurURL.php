@@ -54,11 +54,10 @@ class RouteurURL {
         $noeudCommuneRepositoryService = $conteneur->register('noeud_commune_repository',NoeudCommuneRepository::class);
         $noeudCommuneRepositoryService->setArguments([new Reference('connexion_base')]);
 
-        $noeudCommuneService = $conteneur->register('noeud_commune_service', NoeudCommuneService::class);
+        $noeudCommuneService = $conteneur->register('noeud_commune_service');
         $noeudCommuneService->setArguments([new Reference('noeud_commune_repository')]);
 
         $noeudCommuneControleurService = $conteneur->register('noeud_commune_controleur',ControleurNoeudCommune::class);
-        $noeudCommuneControleurService->setArguments([new Reference('noeud_commune_service')]);
 
 
         /* ------------------------------- NOEUD ROUTIER ------------------------------- */
@@ -68,7 +67,7 @@ class RouteurURL {
         $noeudRoutierServiceService = $conteneur->register('noeud_routier_service',NoeudRoutierService::class);
         $noeudRoutierServiceService->setArguments([new Reference('noeud_routier_repository'), new Reference('noeud_commune_repository')]);
 
-        $noeudRoutierControleurService = $conteneur->register('noeud_routier_controleur',ControleurNoeudRoutier::class);
+        $noeudRoutierControleurService = $conteneur->register('noeud_routier_controleur',ControleurNoeudRoutierAPI::class);
         $noeudRoutierControleurService->setArguments([new Reference('noeud_routier_service')]);
 
         /* -------------------------------  UTILISATEUR  ------------------------------ */
@@ -140,12 +139,12 @@ class RouteurURL {
         $route->setMethods(["GET"]);
 
         // recupererListeCommunes
-        $route = new Route("/communes/{text}", ["_controller" => "noeud_commune_controleur::recupererListeCommunes"]);
+        $route = new Route("/communes/{text}", ["_controller" => "noeud_routier_controleur::recupererListeCommunes"]);
         $routes->add("recupererListeCommunes", $route);
         $route->setMethods(["GET"]);
 
         // recupererCoordCommune
-        $route = new Route("/communes/coord/{commune}", ["_controller" => "noeud_commune_controleur::recupererCoordonneesCommunes"]);
+        $route = new Route("/communes/coord/{commune}", ["_controller" => "noeud_routier_controleur::recupererCoordonneesCommunes"]);
         $routes->add("recupererCoordonneesCommunes", $route);
         $route->setMethods(["GET"]);
 

@@ -6,8 +6,7 @@ use Navigator\Lib\MotDePasse;
 use Navigator\Modele\DataObject\Utilisateur;
 use PDOException;
 
-class UtilisateurRepository extends AbstractRepository implements UtilisateurRepositoryInterface
-{
+class UtilisateurRepository extends AbstractRepository implements UtilisateurRepositoryInterface {
 
     public function __construct(ConnexionBaseDeDonneesInterface $connexion) {
         parent::__construct($connexion);
@@ -57,7 +56,7 @@ class UtilisateurRepository extends AbstractRepository implements UtilisateurRep
                 :imageProfil
             );
         SQL;
-        $pdoStatement = $this->connexionBaseDeDonnees->getPdo()->prepare($requeteSQL);
+        $pdoStatement = $this->connexion->getPdo()->prepare($requeteSQL);
         $values = array(
             ':login' => $utilisateur->getLogin(),
             ':nom' => $utilisateur->getNom(),
@@ -80,7 +79,7 @@ class UtilisateurRepository extends AbstractRepository implements UtilisateurRep
                 :login,
             );
         SQL;
-        $pdoStatement = $this->connexionBaseDeDonnees->getPdo()->prepare($requeteSQL);
+        $pdoStatement = $this->connexion->getPdo()->prepare($requeteSQL);
         $values = array(
             ':login' => $login,
         );
@@ -103,7 +102,7 @@ class UtilisateurRepository extends AbstractRepository implements UtilisateurRep
                 :imageProfil
             );
         SQL;
-        $pdoStatement = $this->connexionBaseDeDonnees->getPdo()->prepare($requeteSQL);
+        $pdoStatement = $this->connexion->getPdo()->prepare($requeteSQL);
         $values = array(
             ':login' => $utilisateur->getLogin(),
             ':nom' => $utilisateur->getNom(),

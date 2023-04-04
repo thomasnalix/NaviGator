@@ -37,7 +37,7 @@ class NoeudCommuneRepository extends AbstractRepository implements NoeudCommuneR
             WHERE nom_comm = :nomVille
             LIMIT 1;
         SQL;
-        $pdoStatement = $this->connexionBaseDeDonnees->getPdo()->prepare($sql);
+        $pdoStatement = $this->connexion->getPdo()->prepare($sql);
         $pdoStatement->execute([
             "nomVille" => $nomVille
         ]);
@@ -50,7 +50,7 @@ class NoeudCommuneRepository extends AbstractRepository implements NoeudCommuneR
             FROM nalixt.noeud_commune
             WHERE LOWER(nom_comm) LIKE LOWER(:substring)
         SQL;
-        $pdoStatement = $this->connexionBaseDeDonnees->getPdo()->prepare($requeteSQL);
+        $pdoStatement = $this->connexion->getPdo()->prepare($requeteSQL);
         $pdoStatement->execute(array(
             "substring" => "%$substring%"
         ));
@@ -67,7 +67,7 @@ class NoeudCommuneRepository extends AbstractRepository implements NoeudCommuneR
             FROM nalixt.noeud_commune 
             WHERE nom_comm = :nomCommune
         SQL;
-        $pdoStatement = $this->connexionBaseDeDonnees->getPdo()->prepare($request);
+        $pdoStatement = $this->connexion->getPdo()->prepare($request);
         $pdoStatement->execute([
             "nomCommune" => $nomCommune
         ]);
