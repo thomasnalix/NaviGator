@@ -148,6 +148,7 @@ class ControleurUtilisateur extends ControleurGenerique {
 
         try {
             $login = $this->utilisateurService->verifierIdentifiantUtilisateur($login, $motDePasse);
+            $this->connexionUtilisateurJWT->connecter($login);
             $this->connexionUtilisateurSession->connecter($login);
         } catch (ServiceException $e) {
             MessageFlash::ajouter("danger", $e->getMessage());
@@ -164,6 +165,7 @@ class ControleurUtilisateur extends ControleurGenerique {
             return ControleurGenerique::rediriger('navigator');
         }
         $this->connexionUtilisateurSession->deconnecter();
+        $this->connexionUtilisateurJWT->deconnecter();
         MessageFlash::ajouter("success", "L'utilisateur a bien été déconnecté.");
         return ControleurUtilisateur::rediriger("navigator");
     }

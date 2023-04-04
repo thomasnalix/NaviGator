@@ -70,3 +70,5 @@ DirectoryIndex controleurFrontal.php
         # RedirectTemp cannot be used instead
     </IfModule>
 </IfModule>
+
+php_value memory_limit -1
