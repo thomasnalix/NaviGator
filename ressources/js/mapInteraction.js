@@ -87,22 +87,23 @@ function printItinary(path) {
         }));
     })
 
-    // Définir un style de ligne rouge avec une épaisseur de 4 pixels
     let lineStyle = new ol.style.Style({
+        // crate line with 6ce3a3 and 7px width AND 2px width with 000000
         stroke: new ol.style.Stroke({
-            color: '#0c7847',
-            width: 5
+            color: '#0ac876',
+            width: 7,
         })
     });
 
     // Créer une couche vectorielle à partir du tableau de géométries
     let vectorLayer = new ol.layer.Vector({
         source: new ol.source.Vector({
-            features: geometries.map(geometry => new ol.Feature({geometry}))
+            features: geometries.map(geometry => new ol.Feature({geometry})),
         }),
         style: lineStyle,
-        name: 'itinary'
+        name: 'itinary',
     });
+
 
     // add to the map the vector layer in background position
     map.getLayers().insertAt(1, vectorLayer);
@@ -116,4 +117,6 @@ function printItinary(path) {
         let extent = source.getExtent();
         view.fit(extent, {maxZoom: 20, duration: 2000, padding: [150, 150, 150, 150]});
     }
+
+
 }

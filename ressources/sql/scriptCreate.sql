@@ -28,6 +28,7 @@ CREATE TABLE nalixt.favoris(
 CREATE TABLE nalixt.trajets(
     idTrajet SERIAL,
     trajets VARCHAR ARRAY,
+    json jsonb,
     PRIMARY KEY (idTrajet)
 );
 

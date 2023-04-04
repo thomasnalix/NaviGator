@@ -8,10 +8,8 @@ use PDOException;
 
 class UtilisateurRepository extends AbstractRepository implements UtilisateurRepositoryInterface {
 
-    private ConnexionBaseDeDonneesInterface $connexionBaseDeDonnees;
-
-    public function __construct(ConnexionBaseDeDonneesInterface $connexionBaseDeDonnees) {
-        $this->connexionBaseDeDonnees = $connexionBaseDeDonnees;
+    public function __construct(ConnexionBaseDeDonneesInterface $connexion) {
+        parent::__construct($connexion);
     }
 
 //    /**
@@ -58,7 +56,7 @@ class UtilisateurRepository extends AbstractRepository implements UtilisateurRep
                 :imageProfil
             );
         SQL;
-        $pdoStatement = $this->connexionBaseDeDonnees->getPdo()->prepare($requeteSQL);
+        $pdoStatement = $this->connexion->getPdo()->prepare($requeteSQL);
         $values = array(
             ':login' => $utilisateur->getLogin(),
             ':nom' => $utilisateur->getNom(),
@@ -81,7 +79,7 @@ class UtilisateurRepository extends AbstractRepository implements UtilisateurRep
                 :login,
             );
         SQL;
-        $pdoStatement = $this->connexionBaseDeDonnees->getPdo()->prepare($requeteSQL);
+        $pdoStatement = $this->connexion->getPdo()->prepare($requeteSQL);
         $values = array(
             ':login' => $login,
         );
@@ -104,7 +102,7 @@ class UtilisateurRepository extends AbstractRepository implements UtilisateurRep
                 :imageProfil
             );
         SQL;
-        $pdoStatement = $this->connexionBaseDeDonnees->getPdo()->prepare($requeteSQL);
+        $pdoStatement = $this->connexion->getPdo()->prepare($requeteSQL);
         $values = array(
             ':login' => $utilisateur->getLogin(),
             ':nom' => $utilisateur->getNom(),

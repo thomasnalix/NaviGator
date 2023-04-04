@@ -42,6 +42,7 @@ form.addEventListener("submit", async e => {
 
     const response = await fetch(url, {method: 'POST', body: formData});
     const data = await response.json();
+    console.log(data);
     printResult(data);
     printItinary(data.chemin);
 });

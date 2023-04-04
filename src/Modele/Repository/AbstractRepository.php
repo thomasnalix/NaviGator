@@ -7,12 +7,16 @@ use PDOException;
 
 abstract class AbstractRepository {
 
-    private static ?ConnexionBaseDeDonneesInterface $connexion = null;
+    protected ConnexionBaseDeDonneesInterface $connexion;
 
     protected abstract function getNomTable(): string;
     protected abstract function getNomClePrimaire(): string;
     protected abstract function getNomsColonnes(): array;
     protected abstract function construireDepuisTableau(array $objetFormatTableau): AbstractDataObject;
+
+    public function __construct(ConnexionBaseDeDonneesInterface $connexion) {
+        $this->connexion = $connexion;
+    }
 
     /**
      * @param int|string $limit Nombre de réponses ("ALL" pour toutes les réponses)
@@ -24,7 +28,7 @@ abstract class AbstractRepository {
         $requeteSQL = <<<SQL
         SELECT $champsSelect FROM $nomTable LIMIT $limit;
         SQL;
-        $pdoStatement = ConnexionBaseDeDonnees::getPdo()->query($requeteSQL);
+        $pdoStatement = $this->connexion->getPdo()->query($requeteSQL);
         $objets = [];
         foreach ($pdoStatement as $objetFormatTableau) {
             $objets[] = $this->construireDepuisTableau($objetFormatTableau);
@@ -40,7 +44,7 @@ abstract class AbstractRepository {
         $nomClePrimaire = $this->getNomClePrimaire();
         $sql = "SELECT * from $nomTable WHERE $nomClePrimaire=:clePrimaireTag";
         // Préparation de la requête
-        $pdoStatement = ConnexionBaseDeDonnees::getPdo()->prepare($sql);
+        $pdoStatement = $this->connexion->getPdo()->prepare($sql);
         $values = array(
             "clePrimaireTag" => $valeurClePrimaire,
         );
@@ -70,7 +74,7 @@ abstract class AbstractRepository {
         $requeteSQL = <<<SQL
             SELECT $champsSelect FROM $nomTable WHERE $whereClause LIMIT $limit;
         SQL;
-        $pdoStatement = ConnexionBaseDeDonnees::getPdo()->prepare($requeteSQL);
+        $pdoStatement = $this->connexion->getPdo()->prepare($requeteSQL);
         $pdoStatement->execute($critereSelection);
         $objets = [];
         foreach ($pdoStatement as $objetFormatTableau) {

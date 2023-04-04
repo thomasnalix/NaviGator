@@ -75,12 +75,12 @@ BEGIN
 END; $$;
 
 
-CREATE OR REPLACE PROCEDURE AJOUTER_TRAJET(p_trajets varchar) LANGUAGE plpgsql AS $$
+CREATE OR REPLACE PROCEDURE AJOUTER_TRAJET(p_trajets varchar array, p_json jsonb) LANGUAGE plpgsql AS $$
 DECLARE
     isAlreadyExisting integer;
 BEGIN
-    SELECT COUNT(*) INTO isAlreadyExisting FROM nalixt.trajets WHERE trajets @> ARRAY[p_trajets];
+    SELECT COUNT(*) INTO isAlreadyExisting FROM nalixt.trajets WHERE trajets @> p_trajets;
     IF isAlreadyExisting = 0 THEN
-        INSERT INTO nalixt.trajets(trajets) VALUES(ARRAY[p_trajets]);
+        INSERT INTO nalixt.trajets(trajets, json) VALUES(p_trajets, p_json);
     END IF;
 END; $$;

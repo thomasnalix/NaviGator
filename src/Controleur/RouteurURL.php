@@ -5,6 +5,7 @@ use Navigator\Configuration\ConfigurationBDDPostgreSQL;
 use Navigator\Lib\ConnexionUtilisateurJWT;
 use Navigator\Lib\ConnexionUtilisateurSession;
 use Navigator\Lib\Conteneur;
+use Navigator\Lib\MessageFlash;
 use Navigator\Modele\Repository\ConnexionBaseDeDonnees;
 use Navigator\Modele\Repository\NoeudCommuneRepository;
 use Navigator\Modele\Repository\NoeudRoutierRepository;
@@ -53,11 +54,10 @@ class RouteurURL {
         $noeudCommuneRepositoryService = $conteneur->register('noeud_commune_repository',NoeudCommuneRepository::class);
         $noeudCommuneRepositoryService->setArguments([new Reference('connexion_base')]);
 
-        $noeudCommuneService = $conteneur->register('noeud_commune_service', NoeudCommuneService::class);
+        $noeudCommuneService = $conteneur->register('noeud_commune_service');
         $noeudCommuneService->setArguments([new Reference('noeud_commune_repository')]);
 
         $noeudCommuneControleurService = $conteneur->register('noeud_commune_controleur',ControleurNoeudCommune::class);
-        $noeudCommuneControleurService->setArguments([new Reference('noeud_commune_service')]);
 
 
         /* ------------------------------- NOEUD ROUTIER ------------------------------- */
@@ -67,7 +67,7 @@ class RouteurURL {
         $noeudRoutierServiceService = $conteneur->register('noeud_routier_service',NoeudRoutierService::class);
         $noeudRoutierServiceService->setArguments([new Reference('noeud_routier_repository'), new Reference('noeud_commune_repository')]);
 
-        $noeudRoutierControleurService = $conteneur->register('noeud_routier_controleur',ControleurNoeudRoutier::class);
+        $noeudRoutierControleurService = $conteneur->register('noeud_routier_controleur',ControleurNoeudRoutierAPI::class);
         $noeudRoutierControleurService->setArguments([new Reference('noeud_routier_service')]);
 
         /* -------------------------------  UTILISATEUR  ------------------------------ */
@@ -79,10 +79,10 @@ class RouteurURL {
         $utilisateurRepositoryService->setArguments([new Reference('connexion_base')]);
 
         $utilisateurServiceService = $conteneur->register('utilisateur_service',UtilisateurService::class);
-        $utilisateurServiceService->setArguments([new Reference('utilisateur_repository'), new Reference('utilisateur_session')]);
+        $utilisateurServiceService->setArguments([new Reference('utilisateur_session'), new Reference('utilisateur_repository')]);
 
-        $utilisateurControleurService = $conteneur->register('utilisateur_controleur',ControleurUtilisateurAPI::class);
-        $utilisateurControleurService->setArguments([new Reference('utilisateur_service'), new Reference('utilisateur_session')]);
+        $utilisateurControleurService = $conteneur->register('utilisateur_controleur',ControleurUtilisateur::class);
+        $utilisateurControleurService->setArguments([new Reference('utilisateur_service'), new Reference('utilisateur_session'), new Reference('utilisateur_jwt')]);
 
         /* =========================================================================== */
         /* ================================ ROUTES =================================== */
@@ -95,17 +95,17 @@ class RouteurURL {
         $routes->add("navigator", $route);
 
         // ROUTE CONNEXION GET
-        $route = new Route("/connexion", ["_controller" => "\Navigator\Controleur\ControleurUtilisateur::afficherFormulaireConnexion",]);
+        $route = new Route("/connexion", ["_controller" => "utilisateur_controleur::afficherFormulaireConnexion"]);
         $routes->add("afficherFormulaireConnexion", $route);
         $route->setMethods(["GET"]);
 
         // ROUTE CONNEXION POST
-        $route = new Route("/connexion", ["_controller" => "\Navigator\Controleur\ControleurUtilisateur::connecter"]);
+        $route = new Route("/connexion", ["_controller" => "utilisateur_controleur::connecter"]);
         $routes->add("connecter", $route);
         $route->setMethods(["POST"]);
 
         // ROUTE DECONNEXION
-        $route = new Route("/deconnexion", ["_controller" => "\Navigator\Controleur\ControleurUtilisateur::deconnecter"]);
+        $route = new Route("/deconnexion", ["_controller" => "utilisateur_controleur::deconnecter"]);
         $routes->add("deconnecter", $route);
         $route->setMethods(["GET"]);
 
@@ -115,17 +115,17 @@ class RouteurURL {
         $route->setMethods(["GET"]);
 
         // ROUTE INSCRIPTION GET
-        $route = new Route("/inscription", ["_controller" => "\Navigator\Controleur\ControleurUtilisateur::afficherFormulaireCreation"]);
+        $route = new Route("/inscription", ["_controller" => "utilisateur_controleur::afficherFormulaireCreation"]);
         $routes->add("afficherFormulaireCreation", $route);
         $route->setMethods(["GET"]);
 
         // ROUTE INSCRIPTION POST
-        $route = new Route("/inscription", ["_controller" => "\Navigator\Controleur\ControleurUtilisateur::creerDepuisFormulaire"]);
+        $route = new Route("/inscription", ["_controller" => "utilisateur_controleur::creerDepuisFormulaire"]);
         $routes->add("creerDepuisFormulaire", $route);
         $route->setMethods(["POST"]);
 
         // ROUTE PAGE PERSO
-        $route = new Route("/utilisateur/{idUser}", ["_controller" => "\Navigator\Controleur\ControleurUtilisateur::afficherDetail"]);
+        $route = new Route("/utilisateur/{idUser}", ["_controller" => "utilisateur_controleur::afficherDetail"]);
         $routes->add("pagePerso", $route);
         $route->setMethods(["GET"]);
 
@@ -139,12 +139,12 @@ class RouteurURL {
         $route->setMethods(["GET"]);
 
         // recupererListeCommunes
-        $route = new Route("/communes/{text}", ["_controller" => "noeud_commune_controleur::recupererListeCommunes"]);
+        $route = new Route("/communes/{text}", ["_controller" => "noeud_routier_controleur::recupererListeCommunes"]);
         $routes->add("recupererListeCommunes", $route);
         $route->setMethods(["GET"]);
 
         // recupererCoordCommune
-        $route = new Route("/communes/coord/{commune}", ["_controller" => "noeud_commune_controleur::recupererCoordonneesCommunes"]);
+        $route = new Route("/communes/coord/{commune}", ["_controller" => "noeud_routier_controleur::recupererCoordonneesCommunes"]);
         $routes->add("recupererCoordonneesCommunes", $route);
         $route->setMethods(["GET"]);
 
@@ -206,6 +206,9 @@ class RouteurURL {
             return Conteneur::recupererService("userSession")->estConnecte();
         };
         $twig->addFunction(new TwigFunction("estConnecte", $callable));
+
+        $twig->addGlobal('messagesFlash', new MessageFlash());
+
 
 
         try {

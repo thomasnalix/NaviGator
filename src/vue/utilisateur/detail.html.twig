@@ -1,0 +1,14 @@
+{% extends "base.html.twig" %}
+
+{% block page_title %}NaviGator{% endblock %}
+
+{% block page_content %}
+<p>
+    Utilisateur <?= "$prenomHTML $nomHTML" ?> de login <?= $loginHTML ?>
+{{ utilisateur.login }}
+    <?php if (ConnexionUtilisateurSession::estUtilisateur($login)) { ?>
+    <a href="controleurFrontal.php?action=afficherFormulaireMiseAJour&controleur=utilisateur&login=<?= $loginURL ?>">(mettre à jour)</a>
+    <a href="controleurFrontal.php?action=supprimer&controleur=utilisateur&login=<?= $loginURL ?>">(supprimer)</a>
+    <?php } ?>
+</p>
+{% endblock %}
