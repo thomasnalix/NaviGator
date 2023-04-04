@@ -7,6 +7,10 @@ use Navigator\Modele\DataObject\Historique;
 
 class HistoriqueRepository extends AbstractRepository implements HistoriqueRepositoryInterface {
 
+    public function __construct(ConnexionBaseDeDonneesInterface $connexionBaseDeDonnees) {
+        parent::__construct($connexionBaseDeDonnees);
+    }
+
     protected function getNomTable(): string
     {
         return "nalixt.historique";

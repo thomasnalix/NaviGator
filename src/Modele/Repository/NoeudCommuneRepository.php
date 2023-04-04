@@ -11,7 +11,7 @@ class NoeudCommuneRepository extends AbstractRepository implements NoeudCommuneR
     private ConnexionBaseDeDonneesInterface $connexionBaseDeDonnees;
 
     public function __construct(ConnexionBaseDeDonneesInterface $connexionBaseDeDonnees) {
-        $this->connexionBaseDeDonnees = $connexionBaseDeDonnees;
+        parent::__construct($connexionBaseDeDonnees);
     }
 
     public function construireDepuisTableau(array $noeudRoutierTableau): NoeudCommune {

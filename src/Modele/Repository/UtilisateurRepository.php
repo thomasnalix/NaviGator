@@ -11,7 +11,7 @@ class UtilisateurRepository extends AbstractRepository implements UtilisateurRep
     private ConnexionBaseDeDonneesInterface $connexionBaseDeDonnees;
 
     public function __construct(ConnexionBaseDeDonneesInterface $connexionBaseDeDonnees) {
-        $this->connexionBaseDeDonnees = $connexionBaseDeDonnees;
+        parent::__construct($connexionBaseDeDonnees);
     }
 
 //    /**

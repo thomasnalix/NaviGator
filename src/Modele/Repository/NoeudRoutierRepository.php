@@ -12,7 +12,7 @@ class NoeudRoutierRepository extends AbstractRepository implements NoeudRoutierR
     private ConnexionBaseDeDonneesInterface $connexionBaseDeDonnees;
 
     public function __construct(ConnexionBaseDeDonneesInterface $connexionBaseDeDonnees) {
-        $this->connexionBaseDeDonnees = $connexionBaseDeDonnees;
+        parent::__construct($connexionBaseDeDonnees);
     }
 
     public function construireDepuisTableau(array $noeudRoutierTableau): NoeudRoutier {
