@@ -1,5 +1,5 @@
 CREATE TABLE nalixt.utilisateurs(
-   login VARCHAR(50),
+   login VARCHAR(50),+
    nom VARCHAR(2000) NOT NULL,
    prenom VARCHAR(2000) NOT NULL,
    motDePasse text NOT NULL,
