@@ -154,7 +154,8 @@ class ControleurUtilisateur extends ControleurGenerique {
 
         try {
             $login = $this->utilisateurService->verifierIdentifiantUtilisateur($login, $motDePasse);
-            ConnexionUtilisateurSession::connecter($login);
+            $this->connexionUtilisateurSession->connecter($login);
+            $this->connexionUtilisateurJWT->connecter($login);
         } catch (ServiceException $e) {
             MessageFlash::ajouter("danger", $e->getMessage());
             return ControleurUtilisateur::rediriger("utilisateur", ["afficherFormulaireConnexion"]);
@@ -165,11 +166,12 @@ class ControleurUtilisateur extends ControleurGenerique {
     }
 
     public function deconnecter(): RedirectResponse {
-        if (!ConnexionUtilisateurSession::estConnecte()) {
+        if (!$this->connexionUtilisateurSession->estConnecte()) {
             MessageFlash::ajouter("error", "Utilisateur non connecté.");
             return ControleurGenerique::rediriger('connecter');
         }
-        ConnexionUtilisateurSession::deconnecter();
+        $this->connexionUtilisateurSession->deconnecter();
+        $this->connexionUtilisateurJWT->deconnecter();
         MessageFlash::ajouter("success", "L'utilisateur a bien été déconnecté.");
         return ControleurUtilisateur::rediriger("utilisateur", ["afficherListe"]);
     }
