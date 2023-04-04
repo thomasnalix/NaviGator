@@ -2,14 +2,14 @@
 
 namespace Navigator\Modele\DataObject;
 
-class NoeudCommune extends AbstractDataObject
-{
+class NoeudCommune extends AbstractDataObject {
     public function __construct(
-        private int $gid,
+        private int    $gid,
         private string $id_rte500,
         private string $nomCommune,
         private string $id_nd_rte,
-    ) { }
+    ) {
+    }
 
     public function getGid(): int {
         return $this->gid;

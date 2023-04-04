@@ -2,21 +2,16 @@
 
 namespace Navigator\Controleur;
 
-use Navigator\Lib\MessageFlash;
-use Navigator\Service\Exception\ServiceException;
-use Navigator\Service\NoeudCommuneServiceInterface;
-use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
 
 class ControleurNoeudCommune extends ControleurGenerique {
-
 
 
     public function __construct() {
 
     }
 
-    public static function afficherErreur($errorMessage = "", $controleur = ""): Response {
+    public static function afficherErreur($errorMessage = "", $statusCode = ""): Response {
         return parent::afficherErreur($errorMessage, "noeudCommune");
     }
 

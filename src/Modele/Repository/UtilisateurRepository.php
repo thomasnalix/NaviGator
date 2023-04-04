@@ -76,7 +76,7 @@ class UtilisateurRepository extends AbstractRepository implements UtilisateurRep
     public function supprimer(string $login): bool {
         $requeteSQL = <<<SQL
             CALL SUPPRIMER_UTILISATEUR(
-                :login,
+                :login
             );
         SQL;
         $pdoStatement = $this->connexion->getPdo()->prepare($requeteSQL);

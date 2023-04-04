@@ -16,4 +16,7 @@ class HistoriqueService implements HistoriqueServiceInterface {
         return $this->historiqueRepository->recuperer();
     }
 
+    public function ajouterTrajet($login, $trajet, $json) {
+        $this->historiqueRepository->ajouterHistorique($login, $trajet, $json);
+    }
 }

@@ -8,17 +8,23 @@ use Exception;
 class NoeudRoutier extends AbstractDataObject {
 
     public function __construct(
-        private int $gid,
+        private int   $gid,
         private float $lat,
         private float $long,
     ) {
     }
 
-    public function getGid(): int { return $this->gid; }
+    public function getGid(): int {
+        return $this->gid;
+    }
 
-    public function getLat(): float { return $this->lat; }
+    public function getLat(): float {
+        return $this->lat;
+    }
 
-    public function getLong(): float { return $this->long; }
+    public function getLong(): float {
+        return $this->long;
+    }
 
     public function exporterEnFormatRequetePreparee(): array {
         // Inutile car pas d'ajout ni de màj

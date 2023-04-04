@@ -6,26 +6,18 @@ use Navigator\Lib\MotDePasse;
 
 class Utilisateur extends AbstractDataObject implements \JsonSerializable {
 
-    private string $login;
-    private string $nom;
-    private string $prenom;
-    private string $motDePasse;
-    private string $email;
-    private string $imageProfil;
 
-
-    public function __construct(string $login, string $nom, string $prenom, string $motDePasse, string $email, string $imageProfil)
-    {
-        $this->login = $login;
-        $this->nom = $nom;
-        $this->prenom = $prenom;
-        $this->motDePasse = $motDePasse;
-        $this->email = $email;
-        $this->imageProfil = $imageProfil;
+    public function __construct(
+        private string $login,
+        private string $nom,
+        private string $prenom,
+        private string $motDePasse,
+        private string $email,
+        private string $imageProfil) {
     }
 
 
-    public static function construireDepuisFormulaire (array $tableauFormulaire) : Utilisateur {
+    public static function construireDepuisFormulaire(array $tableauFormulaire): Utilisateur {
         return new Utilisateur(
             $tableauFormulaire["login"],
             $tableauFormulaire["nom"],
@@ -70,33 +62,27 @@ class Utilisateur extends AbstractDataObject implements \JsonSerializable {
         $this->prenom = $prenom;
     }
 
-    public function getMotDePasse(): string
-    {
+    public function getMotDePasse(): string {
         return $this->motDePasse;
     }
 
-    public function setMotDePasse(string $motDePasse): void
-    {
+    public function setMotDePasse(string $motDePasse): void {
         $this->motDePasse = $motDePasse;
     }
 
-    public function getEmail(): string
-    {
+    public function getEmail(): string {
         return $this->email;
     }
 
-    public function setEmail(string $email): void
-    {
+    public function setEmail(string $email): void {
         $this->email = $email;
     }
 
-    public function getImageProfil(): string
-    {
+    public function getImageProfil(): string {
         return $this->imageProfil;
     }
 
-    public function setImageProfil(string $imageProfil): void
-    {
+    public function setImageProfil(string $imageProfil): void {
         $this->imageProfil = $imageProfil;
     }
 

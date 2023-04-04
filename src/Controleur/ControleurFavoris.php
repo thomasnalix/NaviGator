@@ -13,7 +13,7 @@ class ControleurFavoris extends ControleurGenerique {
         $this->favorisService = $favorisService;
     }
 
-    public static function afficherErreur($errorMessage = "", $controleur = ""): Response {
+    public static function afficherErreur($errorMessage = "", $statusCode = ""): Response {
         return parent::afficherErreur($errorMessage, "favoris");
     }
 
