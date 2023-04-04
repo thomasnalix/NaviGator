@@ -1,15 +1,15 @@
-DROP TABLE trajets;
-DROP TABLE historique;
-DROP TABLE favoris;
-DROP TABLE utilisateurs;
+DROP TABLE nalixt.trajets;
+DROP TABLE nalixt.historique;
+DROP TABLE nalixt.favoris;
+DROP TABLE nalixt.utilisateurs;
 
-DROP PROCEDURE ajouter_favoris;
-DROP PROCEDURE supprimer_favoris;
-DROP PROCEDURE ajouter_trajet;
-DROP PROCEDURE ajouter_historique;
-DROP PROCEDURE creer_utilisateur;
-DROP PROCEDURE modifier_utilisateur;
-DROP PROCEDURE supprimer_utilisateur;
+DROP PROCEDURE nalixt.ajouter_favoris;
+DROP PROCEDURE nalixt.supprimer_favoris;
+DROP PROCEDURE nalixt.ajouter_trajet;
+DROP PROCEDURE nalixt.ajouter_historique;
+DROP PROCEDURE nalixt.creer_utilisateur;
+DROP PROCEDURE nalixt.modifier_utilisateur;
+DROP PROCEDURE nalixt.supprimer_utilisateur;
 
-DROP MATERIALIZED VIEW noeuds_from_troncon;
-DROP MATERIALIZED VIEW noeud_gid_dep;
+DROP MATERIALIZED VIEW nalixt.noeuds_from_troncon;
+DROP MATERIALIZED VIEW nalixt.noeud_gid_dep;

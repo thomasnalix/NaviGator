@@ -86,6 +86,9 @@ class RouteurURL {
         $utilisateurControleurService = $conteneur->register('utilisateur_controleur',ControleurUtilisateur::class);
         $utilisateurControleurService->setArguments([new Reference('utilisateur_service'), new Reference('utilisateur_session'), new Reference('utilisateur_jwt')]);
 
+        $utilisateurControleurService = $conteneur->register('utilisateur_controleur_api',ControleurUtilisateurAPI::class);
+        $utilisateurControleurService->setArguments([new Reference('utilisateur_service'), new Reference('utilisateur_jwt')]);
+
         /* -------------------------------  HISTORIQUE  ------------------------------ */
         $historiqueRepositoryService = $conteneur->register('historique_repository',HistoriqueRepository::class);
         $historiqueRepositoryService->setArguments([new Reference('connexion_base')]);
@@ -166,7 +169,7 @@ class RouteurURL {
         $route->setMethods(["POST"]);
 
         // info utilisateur
-        $route = new Route("/utilisateurs/{idUser}", ["_controller" => "utilisateur_controleur::afficherDetail"]);
+        $route = new Route("/utilisateur/{idUser}", ["_controller" => "utilisateur_controleur_api::afficherDetail"]);
         $routes->add("afficherDetail", $route);
         $route->setMethods(["GET"]);
 
@@ -175,6 +178,10 @@ class RouteurURL {
         $routes->add("addToHistory", $route);
         $route->setMethods(["POST"]);
 
+        // login et password en POST
+        $route = new Route("/utilisateur/{idUser}", ["_controller" => "utilisateur_controleur_api::connecter"]);
+        $routes->add("connecter", $route);
+        $route->setMethods(["POST"]);
 
         //$requete = new Request($_GET,$_POST,[],$_COOKIE,$_FILES,$_SERVER);
         $contexteRequete = (new RequestContext())->fromRequest($requete);
@@ -224,8 +231,6 @@ class RouteurURL {
         $twig->addFunction(new TwigFunction("estConnecte", $callable));
 
         $twig->addGlobal('messagesFlash', new MessageFlash());
-
-
 
         try {
             $associateurUrl = new UrlMatcher($routes, $contexteRequete);
