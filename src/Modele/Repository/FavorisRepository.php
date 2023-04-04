@@ -7,6 +7,10 @@ use Navigator\Modele\DataObject\Favoris;
 
 class FavorisRepository extends AbstractRepository implements FavorisRepositoryInterface {
 
+    public function __construct(ConnexionBaseDeDonneesInterface $connexionBaseDeDonnees) {
+        parent::__construct($connexionBaseDeDonnees);
+    }
+
     protected function getNomTable(): string
     {
         return "nalixt.favoris";

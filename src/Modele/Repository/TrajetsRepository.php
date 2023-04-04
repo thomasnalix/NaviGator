@@ -7,6 +7,10 @@ use Navigator\Modele\DataObject\Trajets;
 
 class TrajetsRepository extends AbstractRepository implements TrajetsRepositoryInterface {
 
+    public function __construct(ConnexionBaseDeDonneesInterface $connexionBaseDeDonnees) {
+        parent::__construct($connexionBaseDeDonnees);
+    }
+
     protected function getNomTable(): string
     {
         return "nalixt.trajets";

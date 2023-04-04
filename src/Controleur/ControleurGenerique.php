@@ -25,14 +25,12 @@ class ControleurGenerique {
 
     protected static function rediriger(string $nomRoute, array $params = []): RedirectResponse {
         $generateurUrl = Conteneur::recupererService("generateurUrl");
-        $url = "Location: " . $generateurUrl->generate($nomRoute, $params);
+        $url = $generateurUrl->generate($nomRoute, $params);
         return new RedirectResponse($url);
     }
 
     public static function afficherErreur($errorMessage = "", $statusCode = 400): Response {
-        $reponse = ControleurGenerique::afficherVue('vueGenerale.php', [
-            "pagetitle" => "Problème",
-            "cheminVueBody" => "erreur.php",
+        $reponse = ControleurGenerique::afficherTwig('erreur.html.twig', [
             "errorMessage" => $errorMessage
         ]);
 
