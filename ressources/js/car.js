@@ -17,6 +17,7 @@ async function getFirstCar(params) {
     return getCar(params).then(data => data[0])
 }
 
+
 // getFirstCar({make: "Toyota", model: "Corolla", year: "2019"})
 //     .then(data => {
 //         const mpg = getFuelConsumption(data, 100)

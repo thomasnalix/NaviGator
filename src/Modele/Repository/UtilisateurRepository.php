@@ -33,7 +33,9 @@ class UtilisateurRepository extends AbstractRepository implements UtilisateurRep
             $utilisateurTableau["prenom"],
             $utilisateurTableau["motdepasse"],
             $utilisateurTableau["email"],
-            $utilisateurTableau["imageprofil"]
+            $utilisateurTableau["imageprofil"],
+            $utilisateurTableau["marquevehicule"], // TODO : ne fonctionne pas car hstore
+            $utilisateurTableau["modelevehicule"]
         );
     }
 
@@ -41,29 +43,31 @@ class UtilisateurRepository extends AbstractRepository implements UtilisateurRep
         return 'nalixt.utilisateurs';
     }
 
-    public function creer($login, $nom, $prenom, $motDePasse, $email, $imageProfil): Utilisateur {
-        return new Utilisateur($login, $nom, $prenom, MotDePasse::hacher($motDePasse), $email, $imageProfil);
+    public function creer($login, $nom, $prenom, $motDePasse, $email, $imageProfil, $marqueVehicule, $modeleVehicule): Utilisateur {
+        return new Utilisateur($login, $nom, $prenom, MotDePasse::hacher($motDePasse), $email, $imageProfil, $marqueVehicule, $modeleVehicule);
     }
 
     public function ajouter(Utilisateur $utilisateur): bool {
         $requeteSQL = <<<SQL
             CALL CREER_UTILISATEUR(
-                :login,
-                :nom,
-                :prenom,
-                :motDePasse,
-                :email,
-                :imageProfil
+                :login_tag,
+                :nom_tag,
+                :prenom_tag,
+                :motDePasse_tag,
+                :email_tag,
+                :imageProfil_tag,
+                :vehicule_tag
             );
         SQL;
         $pdoStatement = $this->connexion->getPdo()->prepare($requeteSQL);
         $values = array(
-            ':login' => $utilisateur->getLogin(),
-            ':nom' => $utilisateur->getNom(),
-            ':prenom' => $utilisateur->getPrenom(),
-            ':motDePasse' => $utilisateur->getMotDePasse(),
-            ':email' => $utilisateur->getEmail(),
-            ':imageProfil' => $utilisateur->getImageProfil()
+            "login_tag" => $utilisateur->getLogin(),
+            "nom_tag" => $utilisateur->getNom(),
+            "prenom_tag" => $utilisateur->getPrenom(),
+            "motDePasse_tag" => $utilisateur->getMotDePasse(),
+            "email_tag" => $utilisateur->getEmail(),
+            "imageProfil_tag" => $utilisateur->getImageProfil(),
+            "vehicule_tag" => "' \"modele\"=>\"" . $utilisateur->getModeleVehicule() . "\", \"marque\"=>\"" . $utilisateur->getMarqueVehicule() . "\" '"
         );
         try {
             $pdoStatement->execute($values);
@@ -94,22 +98,24 @@ class UtilisateurRepository extends AbstractRepository implements UtilisateurRep
     public function mettreAJour($utilisateur): bool {
         $requeteSQL = <<<SQL
             CALL MODIFIER_UTILISATEUR(
-                :login,
-                :nom,
-                :prenom,
-                :motDePasse,
-                :email,
-                :imageProfil
+                :login_tag,
+                :nom_tag,
+                :prenom_tag,
+                :motDePasse_tag,
+                :email_tag,
+                :imageProfil_tag,
+                :vehicule_tag
             );
         SQL;
         $pdoStatement = $this->connexion->getPdo()->prepare($requeteSQL);
         $values = array(
-            ':login' => $utilisateur->getLogin(),
-            ':nom' => $utilisateur->getNom(),
-            ':prenom' => $utilisateur->getPrenom(),
-            ':motDePasse' => $utilisateur->getMotDePasse(),
-            ':email' => $utilisateur->getEmail(),
-            ':imageProfil' => $utilisateur->getImageProfil()
+            "login_tag" => $utilisateur->getLogin(),
+            "nom_tag" => $utilisateur->getNom(),
+            "prenom_tag" => $utilisateur->getPrenom(),
+            "motDePasse_tag" => $utilisateur->getMotDePasse(),
+            "email_tag" => $utilisateur->getEmail(),
+            "imageProfil_tag" => $utilisateur->getImageProfil(),
+            "vehicule_tag" => "' \"modele\"=>\"" . $utilisateur->getModeleVehicule() . "\", \"marque\"=>\"" . $utilisateur->getMarqueVehicule() . "\" '"
         );
         try {
             $pdoStatement->execute($values);
@@ -124,6 +130,6 @@ class UtilisateurRepository extends AbstractRepository implements UtilisateurRep
     }
 
     protected function getNomsColonnes(): array {
-        return ["login", "nom", "prenom", "motDePasse", "email", "imageProfil"];
+        return ["login", "nom", "prenom", "motDePasse", "email", "imageProfil", "vehicule"];
     }
 }

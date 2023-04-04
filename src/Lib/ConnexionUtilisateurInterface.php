@@ -9,4 +9,6 @@ interface ConnexionUtilisateurInterface {
 
     public function deconnecter() : void;
 
+    public function getLoginUtilisateurConnecte() : ?string;
+
 }

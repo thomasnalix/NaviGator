@@ -77,9 +77,11 @@ class ControleurUtilisateur extends ControleurGenerique {
         $motDePasse2 = $_REQUEST['mdp2'];
         $email = $_REQUEST['email'];
         $imageProfil = $_REQUEST['imageProfil'];
+        $marqueVehicule = $_REQUEST['marqueVehicule'];
+        $modeleVehicule = $_REQUEST['modeleVehicule'];
 
         try {
-            $this->utilisateurService->creerUtilisateur($login, $nom, $prenom, $motDePasse, $motDePasse2, $email, $imageProfil);
+            $this->utilisateurService->creerUtilisateur($login, $nom, $prenom, $motDePasse, $motDePasse2, $email, $imageProfil, $marqueVehicule, $modeleVehicule);
         } catch (ServiceException $e) {
             MessageFlash::ajouter("danger", $e->getMessage());
             return ControleurUtilisateur::rediriger("navigator");
@@ -123,16 +125,18 @@ class ControleurUtilisateur extends ControleurGenerique {
         $motDePasse2 = $_REQUEST['mdp2'];
         $email = $_REQUEST['email'];
         $imageProfil = $_REQUEST['imageProfil'];
+        $marqueVehicule = $_REQUEST['marqueVehicule'];
+        $modeleVehicule = $_REQUEST['modeleVehicule'];
 
         try {
-            $this->utilisateurService->mettreAJourUtilisateur($login, $nom, $prenom, $motDePasseAncien, $motDePasse, $motDePasse2, $email, $imageProfil);
+            $this->utilisateurService->mettreAJourUtilisateur($login, $nom, $prenom, $motDePasseAncien, $motDePasse, $motDePasse2, $email, $imageProfil, $marqueVehicule, $modeleVehicule);
         } catch (ServiceException $e) {
             MessageFlash::ajouter("danger", $e->getMessage());
             return ControleurUtilisateur::rediriger("navigator");
         }
 
-        MessageFlash::ajouter("success", "L'utilisateur a bien été modifié !");
-        return ControleurUtilisateur::rediriger("pagePerso");
+            MessageFlash::ajouter("success", "L'utilisateur a bien été modifié !");
+            return ControleurUtilisateur::rediriger("pagePerso");
     }
 
     public function afficherFormulaireConnexion(): Response {

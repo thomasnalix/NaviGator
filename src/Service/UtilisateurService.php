@@ -23,12 +23,12 @@ class UtilisateurService implements UtilisateurServiceInterface {
         $this->utilisateurRepository = $utilisateurRepository;
     }
 
-    public function creerUtilisateur($login, $nom, $prenom, $motDePasse, $motDePasse2, $email, $imageProfil) {
+    public function creerUtilisateur($login, $nom, $prenom, $motDePasse, $motDePasse2, $email, $imageProfil, $marqueVehicule, $modeleVehicule) {
         if ($login == null || $motDePasse == null || $email == null || $imageProfil == null) throw new ServiceException("Les champs login, mot de passe et email sont obligatoires");
         if ($motDePasse != $motDePasse2) throw new ServiceException("Les mots de passe ne correspondent pas");
         if (!filter_var($email, FILTER_VALIDATE_EMAIL)) throw new ServiceException("L'adresse email n'est pas valide");
 
-        $utilisateur = $this->utilisateurRepository->creer($login, $nom, $prenom, $motDePasse, $email, $imageProfil);
+        $utilisateur = $this->utilisateurRepository->creer($login, $nom, $prenom, $motDePasse, $email, $imageProfil, $marqueVehicule, $modeleVehicule);
         $succesSauvegarde = $this->utilisateurRepository->ajouter($utilisateur);
 
         if (!$succesSauvegarde) throw new ServiceException("Erreur lors de la création de l'utilisateur");
@@ -41,12 +41,11 @@ class UtilisateurService implements UtilisateurServiceInterface {
         $this->connexionUtilisateur->deconnecter();
     }
 
-    public function mettreAJourUtilisateur($login, $nom, $prenom, $motDePasseAncien, $motDePasse, $motDePasse2, $email, $imageProfil) {
+    public function mettreAJourUtilisateur($login, $nom, $prenom, $motDePasseAncien, $motDePasse, $motDePasse2, $email, $imageProfil, $marqueVehicule, $modeleVehicule) {
         if ($login == null || $motDePasse == null || $email == null) throw new ServiceException("Les champs login, mot de passe et email sont manquants", 400);
         if ($motDePasse != $motDePasse2) throw new ServiceException("Les mots de passe ne correspondent pas", 400);
         if (!$this->connexionUtilisateur->estConnecte()) throw new ServiceException("La mise à jour n'est possible que pour l'utilisateur connecté", 403);
         if (!filter_var($email, FILTER_VALIDATE_EMAIL)) throw new ServiceException("L'adresse email n'est pas valide", 400);
-        if ($imageProfil == null || strlen($imageProfil) == 0) throw new ServiceException("L'image de profil est manquante", 400);
 
         $utilisateur = $this->utilisateurRepository->recupererParClePrimaire($login);
         if ($utilisateur == null) throw new ServiceException("Login inconnu", 404);
@@ -56,6 +55,8 @@ class UtilisateurService implements UtilisateurServiceInterface {
         $utilisateur->setMotDePasse($motDePasse);
         $utilisateur->setEmail($email);
         $utilisateur->setImageProfil($imageProfil);
+        $utilisateur->setMarqueVehicule($marqueVehicule);
+        $utilisateur->setModeleVehicule($modeleVehicule);
 
         if (!$this->utilisateurRepository->mettreAJour($utilisateur))
             throw new ServiceException("Erreur lors de la mise à jour de l'utilisateur", 500);

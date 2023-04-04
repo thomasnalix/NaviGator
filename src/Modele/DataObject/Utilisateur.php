@@ -13,7 +13,10 @@ class Utilisateur extends AbstractDataObject implements \JsonSerializable {
         private string $prenom,
         private string $motDePasse,
         private string $email,
-        private string $imageProfil) {
+        private ?string $imageProfil,
+        private ?string $marqueVehicule,
+        private ?string $modeleVehicule
+    ) {
     }
 
 
@@ -24,7 +27,9 @@ class Utilisateur extends AbstractDataObject implements \JsonSerializable {
             $tableauFormulaire["prenom"],
             MotDePasse::hacher($tableauFormulaire["mdp"]),
             $tableauFormulaire["email"],
-            $tableauFormulaire["imageProfil"]
+            $tableauFormulaire["imageProfil"],
+            $tableauFormulaire["marqueVehicule"],
+            $tableauFormulaire["modeleVehicule"]
         );
     }
 
@@ -34,7 +39,9 @@ class Utilisateur extends AbstractDataObject implements \JsonSerializable {
             "nom" => $this->nom,
             "prenom" => $this->prenom,
             "email" => $this->email,
-            "imageProfil" => $this->imageProfil
+            "imageProfil" => $this->imageProfil,
+            "marqueVehicule" => $this->marqueVehicule,
+            "modeleVehicule" => $this->modeleVehicule
         ];
     }
 
@@ -82,8 +89,24 @@ class Utilisateur extends AbstractDataObject implements \JsonSerializable {
         return $this->imageProfil;
     }
 
-    public function setImageProfil(string $imageProfil): void {
+    public function setImageProfil(?string $imageProfil): void {
         $this->imageProfil = $imageProfil;
+    }
+
+    public function getMarqueVehicule(): string {
+        return $this->marqueVehicule;
+    }
+
+    public function setMarqueVehicule(string $marqueVehicule): void {
+        $this->marqueVehicule = $marqueVehicule;
+    }
+
+    public function getModeleVehicule(): string {
+        return $this->modeleVehicule;
+    }
+
+    public function setModeleVehicule(string $modeleVehicule): void {
+        $this->modeleVehicule = $modeleVehicule;
     }
 
     public function exporterEnFormatRequetePreparee(): array {
@@ -93,7 +116,9 @@ class Utilisateur extends AbstractDataObject implements \JsonSerializable {
             "prenom_tag" => $this->prenom,
             "motDePasse_tag" => $this->motDePasse,
             "email_tag" => $this->email,
-            "imageProfil_tag" => $this->imageProfil
+            "imageProfil_tag" => $this->imageProfil,
+            "voiture_tag" => $this->marqueVehicule,
+            "modeleVehicule_tag" => "' \"modele\"=>\"" . $this->modeleVehicule . "\", \"marque\"=>\"" . $this->marqueVehicule . "\" '"
         );
     }
 }

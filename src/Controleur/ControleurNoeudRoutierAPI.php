@@ -51,15 +51,12 @@ class ControleurNoeudRoutierAPI extends ControleurGenerique {
             $pcc = new PlusCourtChemin($villes, $this->noeudRoutierService);
             $datas = $pcc->aStarDistance();
             $parameters["distance"] = $datas[0];
-            $parameters["temps"] = $datas[2];
-            $parameters["gas"] = $datas[3];
-
             $parameters["noeudsList"] = array_values($noeudList);
             $parameters["chemin"] = count($datas[1]) > 0 ? $this->noeudRoutierService->calculerItineraire($datas[1]) : [];
+            $parameters["temps"] = $datas[2];
             $parameters["nbCommunes"] = count($noeudList);
             $parameters["nomCommuneDepart"] = array_shift($noeudList);
             $parameters["nomCommuneArrivee"] = end($noeudList);
-
             return new JsonResponse(json_encode($parameters), Response::HTTP_OK, [], true);
         } catch (ServiceException $exception) {
             MessageFlash::ajouter("danger",$exception->getMessage());

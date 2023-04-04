@@ -13,9 +13,11 @@ interface UtilisateurRepositoryInterface
      * @param string $motDePasse
      * @param string $email
      * @param string $imageProfil
+     * @param string $marqueVehicule
+     * @param string $modeleVehicule
      * @return Utilisateur
      */
-    public function creer(string $login, string $nom, string $prenom, string $motDePasse, string $email, string $imageProfil): Utilisateur;
+    public function creer(string $login, string $nom, string $prenom, string $motDePasse, string $email, string $imageProfil, string $marqueVehicule, string $modeleVehicule): Utilisateur;
 
     /**
      * @param Utilisateur $utilisateur

@@ -3,14 +3,16 @@
 {% block page_title %}NaviGator{% endblock %}
 
 {% block page_content %}
-    <div class="mt-5"></div>
-    <div>
+<div class="detail">
+    <p>
         Utilisateur <?= "$prenomHTML $nomHTML" ?> de login <?= $loginHTML ?>
         {{ utilisateur.login }}
-        <?php if (ConnexionUtilisateurSession::estUtilisateur($login)) { ?>
-        <a href="controleurFrontal.php?action=afficherFormulaireMiseAJour&controleur=utilisateur&login=<?= $loginURL ?>">(mettre
-            à jour)</a>
-        <a href="controleurFrontal.php?action=supprimer&controleur=utilisateur&login=<?= $loginURL ?>">(supprimer)</a>
-        <?php } ?>
+    </p>
+
+    <div id="voitureUser" class="flex flex-col gap-4 mb-10">
+        <input type="text" value="{{ voiture.marque }}" placeholder="Marque de votre voiture" name="marque" id="marque">
+        <input type="text" value="{{ voiture.modele }}" placeholder="Modèle de votre voiture" name="modele" id="modele">
     </div>
+
+</div>
 {% endblock %}

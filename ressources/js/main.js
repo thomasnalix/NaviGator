@@ -41,18 +41,18 @@ form.addEventListener("submit", async e => {
     }
     formData.append('nbField', nbField.value);
 
-    const response = await fetch(url, {method: 'POST', body: formData});
-    const data = await response.json();
+    const path = fetch(url, {method: 'POST', body: formData})
+    const gas = fetch('./calculConsommation', {method: 'GET'})
 
-
-    printResult(data);
-    printItinary(data.chemin);
-    await addToHistory(data);
+    const [pathResponse, gasResponse] = await Promise.all([path, gas]);
+    const [pathData, gasData] = await Promise.all([pathResponse.json(), gasResponse.json()]);
+    printResult(pathData, gasData);
+    printItinary(pathData.chemin);
+    await addToHistory(pathData);
 });
 
 /**
  * Send data to the server to add it to the history of the user
- * @param data
  */
 async function addToHistory(data) {
 
@@ -60,9 +60,9 @@ async function addToHistory(data) {
     const formData = new FormData();
 
     formData.append('datas', JSON.stringify(data));
-    formData.append('noeudsList',data.noeudsList.toString());
+    formData.append('noeudsList', data.noeudsList.toString());
 
-    const response = await fetch(url, {method: 'POST', body: formData});
+    await fetch(url, {method: 'POST', body: formData});
 }
 
 /**
@@ -76,11 +76,11 @@ function printResult(data) {
     let distanceField = document.getElementById('distance-field');
     let gasField = document.getElementById('gas-field');
     let nbStep = ((data.nbCommunes) - 2);
-    let etapesString = nbStep !== 0 ? ' (via ' + nbStep + ' étape' + (nbStep !== 1 ? 's)' :')') : '';
+    let etapesString = nbStep !== 0 ? ' (via ' + nbStep + ' étape' + (nbStep !== 1 ? 's)' : ')') : '';
     resumeField.textContent = data.nomCommuneDepart + ' vers ' + data.nomCommuneArrivee + etapesString;
     timeField.textContent = Math.floor(data.temps) + 'h' + Math.round((data.temps - Math.floor(data.temps)) * 60);
-    gasField.textContent = data.gas.toFixed(2) + ' L';
-
+    //gasField.textContent = data.gas.toFixed(2) + ' L';
+    // TODO: avec api
     // crop the distance to 2 decimals
     distanceField.textContent = data.distance.toFixed(2) + ' km';
 }
@@ -228,7 +228,7 @@ function updateWhenDelete(nomCommune) {
     let layer = map.getLayers().getArray();
     let numCommune = Number(nomCommune);
     let nbChild = formDestination.childElementCount;
-    for (let i = numCommune; i < nbChild-1; i++) {
+    for (let i = numCommune; i < nbChild - 1; i++) {
         if (layer.find(layer => layer.get('name') === `commune${i}`)) {
             layer[i].set('name', `commune${i}`);
         }

@@ -29,7 +29,7 @@
                 <a href="{{ generateurUrl("afficherFormulaireConnexion") }}">Connexion</a>
             </div>
         {% else %}
-            <a href="{{ generateurUrl("pagePerso", {'idUser': 'loginURL'}) }}">Compte</a>
+            <a href="{{ generateurUrl("pagePerso") }}">Compte</a>
             <a href="{{ generateurUrl("getHistory") }}">Historique</a>
             <a href="{{ generateurUrl("deconnecter") }}"><span class="material-symbols-outlined">logout</span></a>
         {% endif %}
