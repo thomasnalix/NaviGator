@@ -163,7 +163,7 @@ class RouteurURL {
 
         // login et password en POST
         $route = new Route("/utilisateur/{idUser}", ["_controller" => "utilisateur_controleur_api::connecter"]);
-        $routes->add("connecter", $route);
+        $routes->add("connecter_api", $route);
         $route->setMethods(["POST"]);
 
         //$requete = new Request($_GET,$_POST,[],$_COOKIE,$_FILES,$_SERVER);
