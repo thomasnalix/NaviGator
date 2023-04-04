@@ -4,11 +4,14 @@ namespace Navigator\Modele\DataObject;
 
 class Trajets extends AbstractDataObject {
 
+    private array $trajets;
+
     /**
      * @param $idTrajet
      * @param array $trajets
      */
-    public function __construct(private $idTrajet, private array $trajets) {
+    public function __construct(private $idTrajet,  string $trajets) {
+        $this->trajets = explode(",", str_replace(array("{", "}"), "",$trajets));
     }
 
     /**

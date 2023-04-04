@@ -10,10 +10,12 @@ use Navigator\Modele\Repository\ConnexionBaseDeDonnees;
 use Navigator\Modele\Repository\HistoriqueRepository;
 use Navigator\Modele\Repository\NoeudCommuneRepository;
 use Navigator\Modele\Repository\NoeudRoutierRepository;
+use Navigator\Modele\Repository\TrajetsRepository;
 use Navigator\Modele\Repository\UtilisateurRepository;
 use Navigator\Service\HistoriqueService;
 use Navigator\Service\NoeudCommuneService;
 use Navigator\Service\NoeudRoutierService;
+use Navigator\Service\TrajetsService;
 use Navigator\Service\UtilisateurService;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestStack;
@@ -36,10 +38,7 @@ use Twig\TwigFunction;
 
 class RouteurURL {
 
-
-
     public static function traiterRequete(Request $requete): Response {
-
 
 
         /* =========================================================================== */
@@ -89,15 +88,30 @@ class RouteurURL {
         $utilisateurControleurService = $conteneur->register('utilisateur_controleur_api',ControleurUtilisateurAPI::class);
         $utilisateurControleurService->setArguments([new Reference('utilisateur_service'), new Reference('utilisateur_jwt')]);
 
-        /* -------------------------------  HISTORIQUE  ------------------------------ */
+        /* -------------------------------  HISTORIQUE & TRAJET ------------------------------ */
+
+//        Historique
+
         $historiqueRepositoryService = $conteneur->register('historique_repository',HistoriqueRepository::class);
         $historiqueRepositoryService->setArguments([new Reference('connexion_base')]);
 
         $historiqueService = $conteneur->register('historique_service',HistoriqueService::class);
         $historiqueService->setArguments([new Reference('historique_repository')]);
 
+//        Trajet
+
+        $trajetRepositoryService = $conteneur->register('trajet_repository',TrajetsRepository::class);
+        $trajetRepositoryService->setArguments([new Reference('connexion_base')]);
+
+        $trajetService = $conteneur->register('trajet_service',TrajetsService::class);
+        $trajetService->setArguments([new Reference('trajet_repository')]);
+
+
         $historiqueControleurService = $conteneur->register('historique_controleur',ControleurHistorique::class);
-        $historiqueControleurService->setArguments([new Reference('historique_service')]);
+        $historiqueControleurService->setArguments([new Reference('historique_service'), new Reference('trajet_service')]);
+
+
+
 
         /* =========================================================================== */
         /* ================================ ROUTES =================================== */
@@ -178,10 +192,16 @@ class RouteurURL {
         $routes->add("addToHistory", $route);
         $route->setMethods(["POST"]);
 
+        //getHistory
+        $route = new Route("/historique", ["_controller" => "historique_controleur::getHistory"]);
+        $routes->add("getHistory", $route);
+        $route->setMethods(["GET"]);
+
         // login et password en POST
         $route = new Route("/utilisateur/{idUser}", ["_controller" => "utilisateur_controleur_api::connecter"]);
         $routes->add("connecter_api", $route);
         $route->setMethods(["POST"]);
+
 
         //$requete = new Request($_GET,$_POST,[],$_COOKIE,$_FILES,$_SERVER);
         $contexteRequete = (new RequestContext())->fromRequest($requete);

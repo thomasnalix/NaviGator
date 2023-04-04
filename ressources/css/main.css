@@ -40,7 +40,7 @@ nav {
     display: flex;
     gap: 50px;
     align-items: center;
-    padding: 10px 40px 10px 10px;
+    padding: 10px 20px 10px 10px;
     border-radius: 10px;
     margin: 12px;
     position: absolute;
@@ -49,7 +49,6 @@ nav {
 }
 
 nav a {
-    padding-left: 5px;
     display: flex;
     align-items: center;
     text-decoration: none;
@@ -245,7 +244,7 @@ form {
     color: var(--text-color);
 }
 
-input[type="text"] {
+input[type="text"], input[type="password"], input[type="email"] {
     background: var(--input-color);
     border: none;
     color: var(--text-color);
@@ -324,9 +323,35 @@ input[type="text"]:focus {
 }
 
 
+
+.bg-form {
+    padding: 15px;
+    border-radius: 10px;
+    display: flex;
+    background: linear-gradient(90deg, #213e46, #213e46) 100%;
+    width: 500px;
+    margin: 0 auto;
+}
+
+.bg-form form {
+    width: 100%;
+}
+
+.bg-form input {
+    border-radius: 10px!important;
+}
+
 /* =========================
            General
   ======================= */
+
+.title {
+    color: var(--text-color);
+}
+
+.text {
+    color: var(--text-color);
+}
 
 .box-blur {
     background: var(--blur-color);
@@ -396,3 +421,4 @@ input[type="text"]:focus {
 .align-middle { vertical-align: middle }
 .none { display: none }
 .text-center { text-align: center }
+.mt-5 { margin-top: 5rem }

@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <title>{% block page_title %}NaviGator{% endblock %}</title>
-    <link rel="icon" type="image/png" href="../ressources/img/favicon.png" />
+    <link rel="icon" type="image/png" href="../ressources/img/favicon.png"/>
     <link rel="stylesheet" href="../ressources/css/main.css">
     <link rel="stylesheet" href="https://openlayers.org/en/v6.6.1/css/ol.css" type="text/css">
     <script src="https://openlayers.org/en/v6.6.1/build/ol.js"></script>
@@ -12,30 +12,36 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Source+Sans+Pro&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
+    <link rel="stylesheet"
+          href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200"/>
 </head>
 <body data-theme="dark">
 <header>
     <nav>
-        <a class="gator" href="{{ generateurUrl("navigator") }}"><img class="logo" src="../ressources/img/logo_void.png" alt="logo"></a>
+        <a class="gator" href="{{ generateurUrl("navigator") }}"><img class="logo" src="../ressources/img/logo_void.png"
+                                                                      alt="logo"></a>
         <a href="{{ generateurUrl("map") }}">Maps</a>
 
         {% if not estConnecte() %}
-        <a href="{{ generateurUrl("afficherFormulaireCreation") }}">Inscription</a>
-        <a href="{{ generateurUrl("afficherFormulaireConnexion") }}">Connexion</a>
+            <div class="flex gap-4">
+                <a href="{{ generateurUrl("afficherFormulaireCreation") }}">Inscription</a>
+                <span class="text">/</span>
+                <a href="{{ generateurUrl("afficherFormulaireConnexion") }}">Connexion</a>
+            </div>
         {% else %}
-        <a href="{{ generateurUrl("pagePerso", {'idUser': 'loginURL'}) }}">Mon compte</a>
-        <a href="{{ generateurUrl("deconnecter") }}">Déconnexion</a>
+            <a href="{{ generateurUrl("pagePerso", {'idUser': 'loginURL'}) }}">Compte</a>
+            <a href="{{ generateurUrl("getHistory") }}">Historique</a>
+            <a href="{{ generateurUrl("deconnecter") }}"><span class="material-symbols-outlined">logout</span></a>
         {% endif %}
     </nav>
     <div>
-    {% for type in ["success", "info", "warning", "danger"] %}
-        {% for messageFlash in messagesFlash.lireMessages(type) %}
-            <div class="alert alert-{{ type }}">
-                {{ messageFlash }}
-            </div>
+        {% for type in ["success", "info", "warning", "danger"] %}
+            {% for messageFlash in messagesFlash.lireMessages(type) %}
+                <div class="alert alert-{{ type }}">
+                    {{ messageFlash }}
+                </div>
+            {% endfor %}
         {% endfor %}
-    {% endfor %}
     </div>
 </header>
 <main>

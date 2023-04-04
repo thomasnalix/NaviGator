@@ -11,22 +11,18 @@ use Symfony\Component\HttpFoundation\Response;
 
 class ControleurUtilisateurAPI {
 
-    private UtilisateurServiceInterface $utilisateurService;
 
-    private ConnexionUtilisateurInterface $connexionUtilisateur;
-
-    public function __construct(UtilisateurServiceInterface $utilisateurService, ConnexionUtilisateurInterface $connexionUtilisateur) {
-        $this->utilisateurService = $utilisateurService;
-        $this->connexionUtilisateur = $connexionUtilisateur;
+    public function __construct(
+        private readonly UtilisateurServiceInterface   $utilisateurService,
+        private readonly ConnexionUtilisateurInterface $connexionUtilisateur) {
     }
 
-    public function afficherDetail($idUser) : Response {
+    public function afficherDetail($idUser): Response {
         $utilisateur = $this->utilisateurService->afficherDetailUtilisateur($idUser);
         return new JsonResponse(json_encode($utilisateur), Response::HTTP_OK, [], true);
     }
 
-    public function connecter(Request $request): Response
-    {
+    public function connecter(Request $request): Response {
         try {
             $login = $request->get("login");
             $password = $request->get("password");

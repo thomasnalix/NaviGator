@@ -1,0 +1,20 @@
+{% extends "base.html.twig" %}
+
+{% block page_title %}NaviGator{% endblock %}
+
+{% block page_content %}
+    <div class="mt-5"></div>
+    <div class="bg-form flex-col">
+        <h1 class="title">Liste des trajets</h1>
+        {#    foreach on variable historique #}
+        {% for trajet in trajets %}
+            <div class="box-blur w-full" id="{{ trajet.getIdTrajet }}">
+                <p>
+                    {% for ville in trajet.getTrajets %}
+                        {{ ville }}
+                    {% endfor %}
+                </p>
+            </div>
+        {% endfor %}
+    </div>
+{% endblock %}

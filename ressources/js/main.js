@@ -62,9 +62,7 @@ async function addToHistory(data) {
     formData.append('datas', JSON.stringify(data));
     formData.append('noeudsList',data.noeudsList.toString());
 
-
     const response = await fetch(url, {method: 'POST', body: formData});
-    console.log(response);
 }
 
 /**

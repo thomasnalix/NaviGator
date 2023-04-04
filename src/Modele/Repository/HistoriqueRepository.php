@@ -4,6 +4,7 @@ namespace Navigator\Modele\Repository;
 
 use Navigator\Modele\DataObject\AbstractDataObject;
 use Navigator\Modele\DataObject\Historique;
+use PDO;
 use PDOException;
 
 class HistoriqueRepository extends AbstractRepository implements HistoriqueRepositoryInterface {
@@ -31,13 +32,7 @@ class HistoriqueRepository extends AbstractRepository implements HistoriqueRepos
 
     public function ajouterHistorique(string $login, string $trajet, string $json): bool {
 
-        // trad string $trajet to postgree array type
         $trajet = "{" . implode(",", explode(",", $trajet)) . "}";
-        echo $trajet;
-//        $trajet = "ARRAY['Paris', 'Montpellier']";
-//        $json="'[\"client\"]'";
-
-
         $requeteSQL = <<<SQL
             CALL AJOUTER_HISTORIQUE(
                 :login,
@@ -47,15 +42,14 @@ class HistoriqueRepository extends AbstractRepository implements HistoriqueRepos
         SQL;
         $pdoStatement = $this->connexion->getPdo()->prepare($requeteSQL);
         $values = array(
-            ':login' => $login,
-            ':trajetArray' => $trajet,
-            ':json' => $json
+            'login' => $login,
+            'trajetArray' => $trajet,
+            'json' => $json
         );
         try {
             $pdoStatement->execute($values);
             return true;
         } catch (PDOException) {
-            var_dump($pdoStatement->errorInfo());
             return false;
         }
     }

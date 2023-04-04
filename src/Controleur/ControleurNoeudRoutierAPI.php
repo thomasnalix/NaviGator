@@ -12,12 +12,11 @@ use Symfony\Component\HttpFoundation\Response;
 class ControleurNoeudRoutierAPI extends ControleurGenerique {
 
 
-    public function __construct(private NoeudRoutierServiceInterface $noeudRoutierService) { }
+    public function __construct(private readonly NoeudRoutierServiceInterface $noeudRoutierService) { }
 
     public static function afficherErreur($errorMessage = "", $statusCode = ""): Response {
         return parent::afficherErreur($errorMessage, "noeudCommune");
     }
-
 
     /**
      * Call the database to get the nearest node to the coordinates entered by the user

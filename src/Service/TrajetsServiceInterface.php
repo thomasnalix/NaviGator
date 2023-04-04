@@ -3,6 +3,7 @@
 namespace Navigator\Service;
 
 interface TrajetsServiceInterface {
-    public function recupererTrajets(): array;
+
+    public function getHistory($login):array;
 
 }

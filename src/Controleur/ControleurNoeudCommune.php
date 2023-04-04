@@ -7,9 +7,7 @@ use Symfony\Component\HttpFoundation\Response;
 class ControleurNoeudCommune extends ControleurGenerique {
 
 
-    public function __construct() {
-
-    }
+    public function __construct() { }
 
     public static function afficherErreur($errorMessage = "", $statusCode = ""): Response {
         return parent::afficherErreur($errorMessage, "noeudCommune");
