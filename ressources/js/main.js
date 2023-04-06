@@ -46,13 +46,17 @@ form.addEventListener("submit", async e => {
     calculButton.disabled = true;
 
     const path = fetch(url, {method: 'POST', body: formData})
-    const gas = fetch('./calculConsommation', {method: 'GET'})
+        .then(response => response.json());
 
-    const [pathResponse, gasResponse] = await Promise.all([path, gas]);
-    const [pathData, gasData] = await Promise.all([pathResponse.json(), gasResponse.json()]);
+    const car = fetch('./voiture', {method: 'GET'})
+        .then(response => response.json())
+        .then(carData => getFirstCar({make: carData.marque, model: carData.modele}))
+
+    const [pathData, carData] = await Promise.all([path, car]);
+
     loader.style.display = 'none';
     calculButton.disabled = false;
-    printResult(pathData, gasData);
+    printResult(pathData, carData);
     printItinary(pathData.chemin);
     await addToHistory(pathData);
 });
@@ -73,22 +77,36 @@ async function addToHistory(data) {
 
 /**
  * set variables in the resume box
- * @param data
+ * @param pathData
  */
-function printResult(data) {
+function printResult(pathData, carData) {
     result.style.display = 'initial';
-    let resumeField = document.getElementById('resume-field');
-    let timeField = document.getElementById('time-field');
-    let distanceField = document.getElementById('distance-field');
-    let gasField = document.getElementById('gas-field');
-    let nbStep = ((data.nbCommunes) - 2);
-    let etapesString = nbStep !== 0 ? ' (via ' + nbStep + ' étape' + (nbStep !== 1 ? 's)' : ')') : '';
-    resumeField.textContent = data.nomCommuneDepart + ' vers ' + data.nomCommuneArrivee + etapesString;
-    timeField.textContent = Math.floor(data.temps) + 'h' + Math.round((data.temps - Math.floor(data.temps)) * 60);
-    //gasField.textContent = data.gas.toFixed(2) + ' L';
-    // TODO: avec api
+    const resumeField = document.getElementById('resume-field');
+    const timeField = document.getElementById('time-field');
+    const distanceField = document.getElementById('distance-field');
+    const gasDiv = document.getElementById('gas-div');
+    const gasField = document.getElementById('gas-field');
+    const nbStep = ((pathData.nbCommunes) - 2);
+    const etapesString = nbStep !== 0 ? ' (via ' + nbStep + ' étape' + (nbStep !== 1 ? 's)' : ')') : '';
+    resumeField.textContent = pathData.nomCommuneDepart + ' vers ' + pathData.nomCommuneArrivee + etapesString;
+    timeField.textContent = Math.floor(pathData.temps) + 'h' + Math.round((pathData.temps - Math.floor(pathData.temps)) * 60);
+    if (carData === undefined) {
+        gasField.textContent = pathData.consommation + " L (avec une voiture moyenne)";
+    } else {
+        gasDiv.classList.add('hidden');
+        carData
+            .then(car => getFuelConsumption(car, pathData.distance))
+            .then(consumption => {
+                if (consumption !== "-1")
+                    gasField.textContent = consumption + " (avec votre voiture)";
+                else
+                    gasField.textContent = pathData.consommation + " L (avec une voiture moyenne)";
+                gasDiv.classList.remove('hidden');
+            });
+    }
+
     // crop the distance to 2 decimals
-    distanceField.textContent = data.distance.toFixed(2) + ' km';
+    distanceField.textContent = pathData.distance.toFixed(2) + ' km';
 }
 
 

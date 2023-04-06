@@ -163,6 +163,11 @@ class RouteurURL {
         $routes->add("updateVoiture", $route);
         $route->setMethods(["POST"]);
 
+        // Route update voiture
+        $route = new Route("/voiture", ["_controller" => "utilisateur_controleur::getVoiture"]);
+        $routes->add("getVoiture", $route);
+        $route->setMethods(["GET"]);
+
         /* =========================================================================== */
         /* =============================== API ROUTES ================================ */
         /* =========================================================================== */

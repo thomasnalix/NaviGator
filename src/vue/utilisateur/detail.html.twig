@@ -3,14 +3,14 @@
 {% block page_title %}NaviGator{% endblock %}
 
 {% block page_content %}
-<script defer src="../ressources/js/car.js"></script>
-<div class="detail flex flex-col mx-auto items-center">
-    <p>
+<div class="absolute form-box gap-10">
+
+    <p class="text">
         Actuellement connecté en temps que {{ utilisateur.prenom }} {{ utilisateur.nom }} ({{ utilisateur.login }})
     </p>
 
     <div id="voitureUser" class="flex flex-col gap-4 mb-10 input-box">
-        <p>Ma voiture :</p>
+        <p class="text">Ma voiture :</p>
         <form method="post" action="./voiture">
             <input class="input-detail" type="text" value="{{ voiture.marque }}" placeholder="Marque de votre voiture" name="marque" id="marque">
             <input class="input-detail" type="text" value="{{ voiture.modele }}" placeholder="Modèle de votre voiture" name="modele" id="modele">

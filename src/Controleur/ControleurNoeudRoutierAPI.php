@@ -54,6 +54,7 @@ class ControleurNoeudRoutierAPI extends ControleurGenerique {
             $parameters["noeudsList"] = array_values($noeudList);
             $parameters["chemin"] = count($datas[1]) > 0 ? $this->noeudRoutierService->calculerItineraire($datas[1]) : [];
             $parameters["temps"] = $datas[2];
+            $parameters["consommation"] = $datas[3];
             $parameters["nbCommunes"] = count($noeudList);
             $parameters["nomCommuneDepart"] = array_shift($noeudList);
             $parameters["nomCommuneArrivee"] = end($noeudList);

@@ -8,6 +8,7 @@ use Navigator\Lib\ConnexionUtilisateurSession;
 use Navigator\Lib\MessageFlash;
 use Navigator\Service\Exception\ServiceException;
 use Navigator\Service\UtilisateurServiceInterface;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -138,6 +139,20 @@ class ControleurUtilisateur extends ControleurGenerique {
 
         MessageFlash::ajouter("success", "L'utilisateur a bien été modifié !");
         return ControleurUtilisateur::rediriger("pagePerso");
+    }
+
+    public function getVoiture() : Response {
+        try {
+            $login = $this->connexionUtilisateurSession->getLoginUtilisateurConnecte();
+            $utilisateur = $this->utilisateurService->afficherDetailUtilisateur($login);
+            return new JsonResponse([
+                "marque" => $utilisateur->getMarqueVehicule(),
+                "modele" => $utilisateur->getModeleVehicule()
+            ], Response::HTTP_OK);
+        } catch (ServiceException $e) {
+            MessageFlash::ajouter("danger", $e->getMessage());
+            return new JsonResponse("Erreur", Response::HTTP_INTERNAL_SERVER_ERROR);
+        }
     }
 
     public function updateVoiture() : Response {
