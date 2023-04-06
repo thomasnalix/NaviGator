@@ -4,7 +4,6 @@ namespace Navigator\Controleur;
 
 use Navigator\Configuration\Configuration;
 use Navigator\Lib\ConnexionUtilisateurInterface;
-use Navigator\Lib\ConnexionUtilisateurSession;
 use Navigator\Lib\MessageFlash;
 use Navigator\Service\Exception\ServiceException;
 use Navigator\Service\UtilisateurServiceInterface;
@@ -23,15 +22,6 @@ class ControleurUtilisateur extends ControleurGenerique {
 
     public static function afficherErreur($errorMessage = "", $statusCode = ""): Response {
         return parent::afficherErreur($errorMessage, "utilisateur");
-    }
-
-
-    public function afficherListe(): Response {
-        $utilisateurs = $this->utilisateurService->recupererUtilisateurs();
-        return ControleurUtilisateur::afficherTwig('utilisateur/liste.html.twig', [
-            "utilisateurs" => $utilisateurs,
-            "pagetitle" => "Liste des utilisateurs"
-        ]);
     }
 
     public function afficherDetail(): Response {
@@ -141,7 +131,7 @@ class ControleurUtilisateur extends ControleurGenerique {
         return ControleurUtilisateur::rediriger("pagePerso");
     }
 
-    public function getVoiture() : Response {
+    public function getVoiture(): Response {
         try {
             $login = $this->connexionUtilisateurSession->getLoginUtilisateurConnecte();
             $utilisateur = $this->utilisateurService->afficherDetailUtilisateur($login);
@@ -155,7 +145,7 @@ class ControleurUtilisateur extends ControleurGenerique {
         }
     }
 
-    public function updateVoiture() : Response {
+    public function updateVoiture(): Response {
         $marque = $_REQUEST['marque'];
         $modele = $_REQUEST['modele'];
 
