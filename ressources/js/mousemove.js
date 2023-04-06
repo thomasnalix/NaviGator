@@ -1,4 +1,5 @@
 document.addEventListener('mousemove', parallax);
+
 function parallax(e) {
     this.querySelectorAll('.object').forEach(layer => {
         const speed = layer.getAttribute('data-value');

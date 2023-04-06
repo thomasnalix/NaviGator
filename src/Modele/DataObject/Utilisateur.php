@@ -109,8 +109,8 @@ class Utilisateur extends AbstractDataObject implements \JsonSerializable {
             "nom_tag" => $this->nom,
             "prenom_tag" => $this->prenom,
             "motDePasse_tag" => $this->motDePasse,
-            "voiture_tag" => $this->marqueVehicule,
-            "modeleVehicule_tag" => "' \"modele\"=>\"" . $this->modeleVehicule . "\", \"marque\"=>\"" . $this->marqueVehicule . "\" '"
+            "marque_tag" => $this->marqueVehicule,
+            "modele_tag" => $this->modeleVehicule
         );
     }
 }

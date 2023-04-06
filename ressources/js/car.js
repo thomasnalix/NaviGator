@@ -16,19 +16,6 @@ async function getFirstCar(params) {
     return getCar(params).then(data => data[0])
 }
 
-
-// getFirstCar({make: "Toyota", model: "Corolla", year: "2019"})
-//     .then(data => {
-//         const mpg = getFuelConsumption(data, 100)
-//         console.log(data.model + ": " + mpg);
-//     })
-//
-// getFirstCar({make: "Tesla", model: "Model 3", year: "2019"})
-//     .then(data => {
-//         const mpg = getFuelConsumption(data, 100)
-//         console.log(data.model + ": " + mpg);
-//     })
-
 function getFuelConsumption(data, distance) {
     if (data === undefined)
         return (235.214583 / 6.2 * (-distance / 100)).toFixed(2)

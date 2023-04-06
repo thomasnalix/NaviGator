@@ -80,7 +80,7 @@ function printItinary(path) {
     if (path.length === 0) {
         return;
     }
-    path.forEach(function(coord) {
+    path.forEach(function (coord) {
         geometries.push(new ol.format.WKB().readGeometry(coord, {
             dataProjection: 'EPSG:4326',  // Projection de la coordonnée d'entrée
             featureProjection: 'EPSG:3857'  // Projection de la carte (Web Mercator)

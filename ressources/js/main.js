@@ -93,7 +93,6 @@ function printResult(pathData, carData) {
     timeField.textContent = Math.floor(pathData.temps) + 'h' + Math.round((pathData.temps - Math.floor(pathData.temps)) * 60);
     if (carData === undefined) {
         const consumption = getFuelConsumption(undefined, pathData.distance)
-        console.log(consumption)
         gasField.textContent = (consumption * -1) + " L (avec une voiture moyenne)";
     } else {
         gasDiv.classList.add('hidden');
@@ -340,7 +339,7 @@ function changeAddStepButton() {
     }
 }
 
-function verifyFillField()  {
+function verifyFillField() {
     let nbChild = formDestination.childElementCount;
     let nbFilled = 0;
     for (let i = 0; i < nbChild; i++) {
