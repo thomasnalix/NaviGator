@@ -5,6 +5,7 @@ namespace Navigator\Modele\Repository;
 use Navigator\Lib\MotDePasse;
 use Navigator\Modele\DataObject\Utilisateur;
 use PDOException;
+use PHPUnit\Util\Json;
 
 class UtilisateurRepository extends AbstractRepository implements UtilisateurRepositoryInterface {
 
@@ -32,10 +33,8 @@ class UtilisateurRepository extends AbstractRepository implements UtilisateurRep
             $utilisateurTableau["nom"],
             $utilisateurTableau["prenom"],
             $utilisateurTableau["motdepasse"],
-            $utilisateurTableau["email"],
-            $utilisateurTableau["imageprofil"],
-            $utilisateurTableau["marquevehicule"], // TODO : ne fonctionne pas car hstore
-            $utilisateurTableau["modelevehicule"]
+            $utilisateurTableau["marque"],
+            $utilisateurTableau["modele"]
         );
     }
 
@@ -43,8 +42,8 @@ class UtilisateurRepository extends AbstractRepository implements UtilisateurRep
         return 'nalixt.utilisateurs';
     }
 
-    public function creer($login, $nom, $prenom, $motDePasse, $email, $imageProfil, $marqueVehicule, $modeleVehicule): Utilisateur {
-        return new Utilisateur($login, $nom, $prenom, MotDePasse::hacher($motDePasse), $email, $imageProfil, $marqueVehicule, $modeleVehicule);
+    public function creer($login, $nom, $prenom, $motDePasse,  $marqueVehicule, $modeleVehicule): Utilisateur {
+        return new Utilisateur($login, $nom, $prenom, MotDePasse::hacher($motDePasse), $marqueVehicule, $modeleVehicule);
     }
 
     public function ajouter(Utilisateur $utilisateur): bool {
@@ -54,9 +53,8 @@ class UtilisateurRepository extends AbstractRepository implements UtilisateurRep
                 :nom_tag,
                 :prenom_tag,
                 :motDePasse_tag,
-                :email_tag,
-                :imageProfil_tag,
-                :vehicule_tag
+                :maraque_tag,
+                :modele_tag
             );
         SQL;
         $pdoStatement = $this->connexion->getPdo()->prepare($requeteSQL);
@@ -65,10 +63,12 @@ class UtilisateurRepository extends AbstractRepository implements UtilisateurRep
             "nom_tag" => $utilisateur->getNom(),
             "prenom_tag" => $utilisateur->getPrenom(),
             "motDePasse_tag" => $utilisateur->getMotDePasse(),
-            "email_tag" => $utilisateur->getEmail(),
-            "imageProfil_tag" => $utilisateur->getImageProfil(),
-            "vehicule_tag" => "' \"modele\"=>\"" . $utilisateur->getModeleVehicule() . "\", \"marque\"=>\"" . $utilisateur->getMarqueVehicule() . "\" '"
+            "maraque_tag" => $utilisateur->getMarqueVehicule(),
+            "modele_tag" => $utilisateur->getModeleVehicule()
         );
+
+        // https://localhost/NaviGator/web/inscription?login=max&prenom=Maxence&nom=Tourniayre&email=maxence.tourniayre@gmail.com&mdp=a&mdp2=a&imageProfil&marqueVehicule=Tesla&modeleVehicule=Model x&action=creerDepuisFormulaire&controleur=utilisateur
+
         try {
             $pdoStatement->execute($values);
             return true;
@@ -102,9 +102,8 @@ class UtilisateurRepository extends AbstractRepository implements UtilisateurRep
                 :nom_tag,
                 :prenom_tag,
                 :motDePasse_tag,
-                :email_tag,
-                :imageProfil_tag,
-                :vehicule_tag
+                :maraque_tag,
+                :modele_tag
             );
         SQL;
         $pdoStatement = $this->connexion->getPdo()->prepare($requeteSQL);
@@ -113,9 +112,8 @@ class UtilisateurRepository extends AbstractRepository implements UtilisateurRep
             "nom_tag" => $utilisateur->getNom(),
             "prenom_tag" => $utilisateur->getPrenom(),
             "motDePasse_tag" => $utilisateur->getMotDePasse(),
-            "email_tag" => $utilisateur->getEmail(),
-            "imageProfil_tag" => $utilisateur->getImageProfil(),
-            "vehicule_tag" => "' \"modele\"=>\"" . $utilisateur->getModeleVehicule() . "\", \"marque\"=>\"" . $utilisateur->getMarqueVehicule() . "\" '"
+            "maraque_tag" => $utilisateur->getMarqueVehicule(),
+            "modele_tag" => $utilisateur->getModeleVehicule()
         );
         try {
             $pdoStatement->execute($values);
@@ -130,6 +128,6 @@ class UtilisateurRepository extends AbstractRepository implements UtilisateurRep
     }
 
     protected function getNomsColonnes(): array {
-        return ["login", "nom", "prenom", "motDePasse", "email", "imageProfil", "vehicule"];
+        return ["login", "nom", "prenom", "motDePasse", "marque", "modele"];
     }
 }

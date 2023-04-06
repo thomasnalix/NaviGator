@@ -5,9 +5,7 @@ CREATE TABLE nalixt.utilisateurs(
    nom VARCHAR(2000) NOT NULL,
    prenom VARCHAR(2000) NOT NULL,
    motDePasse text NOT NULL,
-   email VARCHAR(100) NOT NULL,
-   imageProfil VARCHAR(64),
-   voiture HSTORE,
+   voiture jsonb,
    PRIMARY KEY(login)
 );
 

@@ -158,9 +158,15 @@ class RouteurURL {
         $routes->add("pagePerso", $route);
         $route->setMethods(["GET"]);
 
+        // Route update voiture
+        $route = new Route("/voiture", ["_controller" => "utilisateur_controleur::updateVoiture"]);
+        $routes->add("updateVoiture", $route);
+        $route->setMethods(["POST"]);
+
         /* =========================================================================== */
         /* =============================== API ROUTES ================================ */
         /* =========================================================================== */
+
 
         // Route getnoeudProche
         $route = new Route("/noeudProche/lon/{long}/lat/{lat}", ["_controller" => "noeud_routier_controleur::getNoeudProche"]);

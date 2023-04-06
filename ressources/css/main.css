@@ -352,6 +352,9 @@ input[type="text"]:focus {
     padding: 10px;
 }
 
+.input-detail {
+    border-radius: 10px !important;
+}
 
 /* =========================
            General

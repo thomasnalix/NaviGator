@@ -43,8 +43,14 @@ class ControleurUtilisateur extends ControleurGenerique {
             return ControleurUtilisateur::rediriger("navigator");
         }
 
+        $voiture = array(
+            "marque" => $utilisateur->getMarqueVehicule(),
+            "modele" => $utilisateur->getModeleVehicule()
+        );
+
         return parent::afficherTwig('utilisateur/detail.html.twig', [
             "utilisateur" => $utilisateur,
+            "voiture" => $voiture,
             "pagetitle" => "Détail de l'utilisateur",
         ]);
     }
@@ -75,13 +81,10 @@ class ControleurUtilisateur extends ControleurGenerique {
         $prenom = $_REQUEST['prenom'];
         $motDePasse = $_REQUEST['mdp'];
         $motDePasse2 = $_REQUEST['mdp2'];
-        $email = $_REQUEST['email'];
-        $imageProfil = $_REQUEST['imageProfil'];
         $marqueVehicule = $_REQUEST['marqueVehicule'];
         $modeleVehicule = $_REQUEST['modeleVehicule'];
-
         try {
-            $this->utilisateurService->creerUtilisateur($login, $nom, $prenom, $motDePasse, $motDePasse2, $email, $imageProfil, $marqueVehicule, $modeleVehicule);
+            $this->utilisateurService->creerUtilisateur($login, $nom, $prenom, $motDePasse, $motDePasse2, $marqueVehicule, $modeleVehicule);
         } catch (ServiceException $e) {
             MessageFlash::ajouter("danger", $e->getMessage());
             return ControleurUtilisateur::rediriger("navigator");
@@ -123,20 +126,34 @@ class ControleurUtilisateur extends ControleurGenerique {
         $motDePasseAncien = $_REQUEST['mdpAncien'];
         $motDePasse = $_REQUEST['mdp'];
         $motDePasse2 = $_REQUEST['mdp2'];
-        $email = $_REQUEST['email'];
-        $imageProfil = $_REQUEST['imageProfil'];
         $marqueVehicule = $_REQUEST['marqueVehicule'];
         $modeleVehicule = $_REQUEST['modeleVehicule'];
 
         try {
-            $this->utilisateurService->mettreAJourUtilisateur($login, $nom, $prenom, $motDePasseAncien, $motDePasse, $motDePasse2, $email, $imageProfil, $marqueVehicule, $modeleVehicule);
+            $this->utilisateurService->mettreAJourUtilisateur($login, $nom, $prenom, $motDePasseAncien, $motDePasse, $motDePasse2, $marqueVehicule, $modeleVehicule);
         } catch (ServiceException $e) {
             MessageFlash::ajouter("danger", $e->getMessage());
             return ControleurUtilisateur::rediriger("navigator");
         }
 
-            MessageFlash::ajouter("success", "L'utilisateur a bien été modifié !");
-            return ControleurUtilisateur::rediriger("pagePerso");
+        MessageFlash::ajouter("success", "L'utilisateur a bien été modifié !");
+        return ControleurUtilisateur::rediriger("pagePerso");
+    }
+
+    public function updateVoiture() : Response {
+        $marque = $_REQUEST['marque'];
+        $modele = $_REQUEST['modele'];
+
+        try {
+            $login = $this->connexionUtilisateurSession->getLoginUtilisateurConnecte();
+            $this->utilisateurService->updateVoiture($login, $marque, $modele);
+        } catch (ServiceException $e) {
+            MessageFlash::ajouter("danger", $e->getMessage());
+            return ControleurUtilisateur::rediriger("navigator");
+        }
+
+        MessageFlash::ajouter("success", "La voiture a bien été modifiée !");
+        return ControleurUtilisateur::rediriger("pagePerso");
     }
 
     public function afficherFormulaireConnexion(): Response {
