@@ -2,14 +2,12 @@ const navBox = document.getElementById('nav-box');
 const calculButton = document.getElementById('calcul');
 const formDestination = document.getElementById('formDestination');
 const close = document.getElementsByClassName('close');
-const locateButton = document.getElementsByClassName('locate-button');
 const nbField = document.getElementById('nbField');
 const flagBox = document.getElementById('flag-box');
 const result = document.getElementById('result');
 const form = document.getElementById('form');
 const addDestination = document.getElementById('addDestination');
 
-// initLocateButtons();
 verifyChild();
 
 function debounce(callback, wait) {
@@ -174,35 +172,6 @@ function updateWhenAdd(nomCommune) {
         }
     }
 }
-
-
-/**
- * Init the event listener of all locate button
- * When click on locate button, wait for the user to click on the map
- * Then send the coordinates to the server
- * And add a point on the map
- */
-// function initLocateButtons() {
-//     for (let i = 0; i < locateButton.length; i++) {
-//         locateButton[i].addEventListener('click', e => {
-//             // wait for the user to click on the map
-//             document.body.style.cursor = 'crosshair';
-//
-//             map.once('click', function (evt) {
-//                 let coord = ol.proj.transform(evt.coordinate, 'EPSG:3857', 'EPSG:4326');
-//                 let lon = coord[0];
-//                 let lat = coord[1];
-//                 let target = e.target.parentElement;
-//                 console.log(target);
-//                 getNearestNode(lon, lat, target);
-//
-//                 // if there is already a point according to e.target.parentElement.children[0].value, remove it and add new point
-//                 addPointOnMap(target.children[0].name, lon, lat);
-//                 document.body.style.cursor = 'default';
-//             });
-//         });
-//     }
-// }
 
 
 /**

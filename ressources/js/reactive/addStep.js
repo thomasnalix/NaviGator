@@ -1,4 +1,5 @@
 import {applyAndRegister, reactive, startReactiveDom} from "./reactive.js";
+import {buttonLocation} from "./targetLocation.js";
 
 let buttonAddDestination = reactive({
     class: document.getElementById('addDestination')
@@ -36,9 +37,7 @@ buttonAddDestination.add = function () {
         const iconRight = document.createElement('span');
         iconRight.classList.add('material-symbols-outlined', 'locate-button');
         iconRight.textContent = 'my_location';
-        /*
-        * FAUT RAJOUTER LE data-onclick="buttonLoc.click()"
-        * */
+        iconRight.setAttribute('data-onclick', 'buttonLoc.click()');
         div.appendChild(iconRight);
 
         const iconDelete = document.createElement('span');
@@ -79,6 +78,7 @@ buttonAddDestination.add = function () {
         updateIdInput();
         changeAddStepButton();
         initDeleteButtons();
+        buttonLocation.addListener();
     } else {
         buttonAddDestination.class.classList.add('disabled');
     }
