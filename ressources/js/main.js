@@ -91,20 +91,12 @@ function printResult(pathData, carData) {
     const etapesString = nbStep !== 0 ? ' (via ' + nbStep + ' étape' + (nbStep !== 1 ? 's)' : ')') : '';
     resumeField.textContent = pathData.nomCommuneDepart + ' vers ' + pathData.nomCommuneArrivee + etapesString;
     timeField.textContent = Math.floor(pathData.temps) + 'h' + Math.round((pathData.temps - Math.floor(pathData.temps)) * 60);
-    if (carData === undefined) {
-        const consumption = getFuelConsumption(undefined, pathData.distance)
+
+    const consumption = getFuelConsumption(carData, pathData.distance)
+    if (consumption < 0) {
         gasField.textContent = (consumption * -1) + " L (avec une voiture moyenne)";
     } else {
-        gasDiv.classList.add('hidden');
-        carData
-            .then(car => getFuelConsumption(car, pathData.distance))
-            .then(consumption => {
-                if (consumption < 0)
-                    gasField.textContent = (consumption * -1) + " L (avec une voiture moyenne)";
-                else
-                    gasField.textContent = consumption + " (avec votre voiture)";
-                gasDiv.classList.remove('hidden');
-            });
+        gasField.textContent = consumption + " (avec votre voiture)";
     }
 
     // crop the distance to 2 decimals

@@ -1,6 +1,12 @@
 const BASE_URL = "https://api.api-ninjas.com/v1/cars?";
 const API_KEY = "z0FzwZI3t8fLYYgPD59iCw==oRy5p1Am3hLavzvv"; // https://api-ninjas.com/api/cars
 
+const voiture = document.getElementById("voiture");
+
+voiture?.addEventListener("submit", async (e) => {
+    console.log(e)
+});
+
 async function getCar(params) {
     const url = BASE_URL + new URLSearchParams(params);
     return fetch(url, {
