@@ -55,7 +55,7 @@ class TrajetsRepository extends AbstractRepository implements TrajetsRepositoryI
         return $objets;
     }
 
-    public function getTrajet($idTrajet): array {
+    public function getTrajet($idTrajet): string {
 
         $requeteSQL = <<<SQL
             SELECT json 
@@ -66,6 +66,7 @@ class TrajetsRepository extends AbstractRepository implements TrajetsRepositoryI
         $pdoStatement->execute(array(
             'idtrajet' => $idTrajet
         ));
-        return $pdoStatement->fetch(PDO::FETCH_ASSOC);
+        $result = $pdoStatement->fetch();
+        return $result['json'];
     }
 }

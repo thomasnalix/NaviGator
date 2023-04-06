@@ -197,8 +197,8 @@ class RouteurURL {
         $routes->add("getHistory", $route);
         $route->setMethods(["GET"]);
 
-        $route = new Route("/getTrajet/{idTrajet}", ["_controller" => "historique_controleur::getTrajet"]);
-        $routes->add("getTrajet", $route);
+        $route = new Route("/mapTrajet/{idTrajet}", ["_controller" => "historique_controleur::getTrajet"]);
+        $routes->add("getMapByTrajet", $route);
         $route->setMethods(["GET"]);
 
         // login et password en POST

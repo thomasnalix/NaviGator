@@ -43,7 +43,6 @@ form.addEventListener("submit", async e => {
     formData.append('nbField', nbField.value);
 
     loader.style.display = 'initial';
-    // lock the button
     calculButton.disabled = true;
 
     const path = fetch(url, {method: 'POST', body: formData})
