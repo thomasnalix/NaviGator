@@ -54,4 +54,15 @@ class ControleurHistorique extends ControleurGenerique {
             "pagetitle" => "Liste des trajets"
         ]);
     }
+
+    public function getTrajet($idTrajet): JsonResponse {
+
+        try {
+            $trajet = $this->trajetsService->getTrajet($idTrajet);
+        } catch (ServiceException $e) {
+            return new JsonResponse(["message" => $e->getMessage()], Response::HTTP_INTERNAL_SERVER_ERROR);
+        }
+
+        return new JsonResponse($trajet, Response::HTTP_OK);
+    }
 }

@@ -24,9 +24,7 @@
 
         {% if not estConnecte() %}
             <div class="flex gap-4">
-                <a href="{{ generateurUrl("afficherFormulaireCreation") }}">Inscription</a>
-                <span class="text">/</span>
-                <a href="{{ generateurUrl("afficherFormulaireConnexion") }}">Connexion</a>
+                <a href="{{ generateurUrl("afficherFormulaireConnexion") }}">Se connecter</a>
             </div>
         {% else %}
             <a href="{{ generateurUrl("pagePerso") }}">Compte</a>

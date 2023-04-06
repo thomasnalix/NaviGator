@@ -194,6 +194,16 @@ button a {
            Maps
   ======================= */
 
+#load {
+    display: none;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 100;
+    width: 5vw;
+}
+
 #map {
     height: 100vh;
     width: 100vw;
@@ -209,6 +219,25 @@ button a {
     right: 0.5em!important;
     transform: translate(-50%)!important;
     left: inherit!important;
+    background: none!important;
+}
+
+.ol-zoom .ol-zoom-in {
+    background: var(--blur-color)!important;
+    backdrop-filter: blur(15px) saturate(250%)!important;
+    -webkit-backdrop-filter: blur(15px) saturate(250%)!important;
+    -moz-backdrop-filter: blur(15px) saturate(250%)!important;
+    color: var(--text-color)!important;
+    border-radius: 5px 5px 0 0!important;
+}
+
+.ol-zoom .ol-zoom-out {
+    background: var(--blur-color)!important;
+    backdrop-filter: blur(15px) saturate(250%)!important;
+    -webkit-backdrop-filter: blur(15px) saturate(250%)!important;
+    -moz-backdrop-filter: blur(15px) saturate(250%)!important;
+    color: var(--text-color)!important;
+    border-radius: 0 0 5px 5px!important;
 }
 
 .ol-attribution.ol-uncollapsible {
@@ -237,11 +266,12 @@ form {
 .button-box {
     background: rgba(10, 200, 118, 0.71);
     border: none;
-    padding: 5px 10px;
+    padding: 10px 15px;
     border-radius: 10px;
     cursor: pointer;
-    font-weight: 600;
     color: var(--text-color);
+    font-size: 14px;
+    font-weight: 500;
 }
 
 input[type="text"], input[type="password"], input[type="email"] {
@@ -265,9 +295,15 @@ input[type="text"]:focus {
 }
 
 #addDestination {
-    display: none;
+    /*display: none;*/
+    width: 100%;
     padding-left: 10px;
     cursor: pointer;
+}
+
+.disabled {
+    cursor: default!important;
+    color: #a9a9a9;
 }
 
 .point {
@@ -322,22 +358,23 @@ input[type="text"]:focus {
     }
 }
 
-
-
-.bg-form {
+.form-box {
+    transform: translate(-50%, -50%);
+    left: 50%;
+    top: 40%;
     padding: 15px;
     border-radius: 10px;
     display: flex;
-    background: linear-gradient(90deg, #213e46, #213e46) 100%;
+    flex-direction: column;
     width: 500px;
-    margin: 0 auto;
+    background: var(--blur-color);
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+    backdrop-filter: blur(15px) saturate(250%);
+    -webkit-backdrop-filter: blur(15px) saturate(250%);
+    -moz-backdrop-filter: blur(15px) saturate(250%);
 }
 
-.bg-form form {
-    width: 100%;
-}
-
-.bg-form input {
+.form-box input {
     border-radius: 10px!important;
 }
 
@@ -357,12 +394,28 @@ input[type="text"]:focus {
            General
   ======================= */
 
+
+.background {
+    width: 100vw;
+    height: 100vh;
+    background-image: url(../img/test.png);
+    background-size: cover;
+}
+
 .title {
     color: var(--text-color);
 }
 
 .text {
     color: var(--text-color);
+}
+
+.active-button {
+    border-radius: 10px;
+    background-color: #069f5e;
+    color: #fff;
+    padding: 10px 15px;
+    text-decoration: none;
 }
 
 .box-blur {
@@ -440,3 +493,6 @@ input[type="text"]:focus {
 .hidden { display: none }
 .cursor-pointer { cursor: pointer }
 .mt-5 { margin-top: 5rem }
+.space-around { justify-content: space-around }
+.gap-10 { gap: 25px }
+.justify-center { justify-content: center }

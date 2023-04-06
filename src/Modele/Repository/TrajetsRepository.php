@@ -47,12 +47,25 @@ class TrajetsRepository extends AbstractRepository implements TrajetsRepositoryI
         $pdoStatement->execute(array(
             'login' => $login
         ));
-        // create object from data by construireDepuisTableau
         $objets = [];
         foreach ($pdoStatement->fetchAll(PDO::FETCH_ASSOC) as $objetFormatTableau) {
             $objets[] = $this->construireDepuisTableau($objetFormatTableau);
         }
 
         return $objets;
+    }
+
+    public function getTrajet($idTrajet): array {
+
+        $requeteSQL = <<<SQL
+            SELECT json 
+            FROM nalixt.trajets
+            WHERE idtrajet = :idtrajet;
+        SQL;
+        $pdoStatement = $this->connexion->getPdo()->prepare($requeteSQL);
+        $pdoStatement->execute(array(
+            'idtrajet' => $idTrajet
+        ));
+        return $pdoStatement->fetch(PDO::FETCH_ASSOC);
     }
 }

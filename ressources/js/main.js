@@ -26,12 +26,13 @@ function debounce(callback, wait) {
 formDestination.addEventListener('input', e => {
     e.target.parentElement.children[2].value = '';
     removePointOnMap(e.target.name);
-    verifyFilledField();
+    changeAddStepButton();
 });
 
 
 form.addEventListener("submit", async e => {
     e.preventDefault();
+    let loader = document.getElementById('load');
     const url = './calculChemin';
     const formData = new FormData();
     const nbChild = formDestination.childElementCount;
@@ -41,11 +42,17 @@ form.addEventListener("submit", async e => {
     }
     formData.append('nbField', nbField.value);
 
+    loader.style.display = 'initial';
+    // lock the button
+    calculButton.disabled = true;
+
     const path = fetch(url, {method: 'POST', body: formData})
     const gas = fetch('./calculConsommation', {method: 'GET'})
 
     const [pathResponse, gasResponse] = await Promise.all([path, gas]);
     const [pathData, gasData] = await Promise.all([pathResponse.json(), gasResponse.json()]);
+    loader.style.display = 'none';
+    calculButton.disabled = false;
     printResult(pathData, gasData);
     printItinary(pathData.chemin);
     await addToHistory(pathData);
@@ -100,7 +107,7 @@ map.on('pointerup', function () {
  */
 addDestination.addEventListener('click', function () {
     let nbChild = formDestination.childElementCount;
-    if (nbChild < 10) {
+    if (nbChild < 10 && verifyFillField()) {
         const div = document.createElement('div');
         div.classList.add('input-box');
 
@@ -168,11 +175,11 @@ addDestination.addEventListener('click', function () {
         updateWhenAdd(nbChild - 1)
         verifyChild();
         updateIdInput();
-        verifyFilledField();
+        changeAddStepButton();
         initDeleteButtons();
         initLocateButtons();
     } else {
-        addDestination.style.display = 'none';
+        addDestination.classList.add('disabled');
     }
 });
 
@@ -201,7 +208,7 @@ function initDeleteButtons() {
             // set all id of field
             updateIdInput(false);
             verifyChild();
-            verifyFilledField();
+            changeAddStepButton();
         }
     }
 }
@@ -292,7 +299,7 @@ function verifyChild() {
 /**
  * Verify if all field are filled and if yes, display the button to add a destination
  */
-function verifyFilledField() {
+function changeAddStepButton() {
     let nbChild = formDestination.childElementCount;
     if (nbChild < 8) {
         let nbChild = formDestination.childElementCount;
@@ -302,15 +309,26 @@ function verifyFilledField() {
                 nbFilled++;
         }
         if (nbFilled === nbChild) {
-            addDestination.style.display = 'inherit';
+            addDestination.classList.remove('disabled');
+            //addDestination.style.display = 'inherit';
             calculButton.disabled = false;
         } else {
+            addDestination.classList.add('disabled');
             calculButton.disabled = true;
-            addDestination.style.display = 'none';
+            //addDestination.style.display = 'none';
         }
     }
 }
 
+function verifyFillField()  {
+    let nbChild = formDestination.childElementCount;
+    let nbFilled = 0;
+    for (let i = 0; i < nbChild; i++) {
+        if (formDestination.children[i].children[0].value !== '')
+            nbFilled++;
+    }
+    return nbFilled === nbChild;
+}
 
 /**
  * Send request to get the nearest node
@@ -326,6 +344,6 @@ async function getNearestNode(long, lat, target) {
     target.children[0].value = data.nom_comm + ' - ' + data.departement + ' (Périphérie)';
     target.children[2].value = data.gid;
     addPointOnMap(target.children[0].name, data.long, data.lat, data.nom_comm);
-    verifyFilledField();
+    changeAddStepButton();
 }
 

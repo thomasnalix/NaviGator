@@ -20,4 +20,15 @@ class TrajetsService implements TrajetsServiceInterface {
         }
         return $result;
     }
+
+    /**
+     * @throws ServiceException
+     */
+    public function getTrajet($idTrajet):array {
+        $result = $this->trajetsRepository->getTrajet($idTrajet);
+        if ($result == null) {
+            throw new ServiceException("Erreur lors de la récupération du trajet");
+        }
+        return $result;
+    }
 }

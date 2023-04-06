@@ -3,21 +3,25 @@
 {% block page_title %}NaviGator{% endblock %}
 
 {% block page_content %}
-    <div class="mt-5"></div>
-    <div class="bg-form">
-        <form method="POST" action="./connexion">
-            <h1 class="title">Connexion</h1>
-            <div class="input-box">
-                <input type="text" value="" placeholder="Login" name="login" id="login_id" required>
+    <div class="background">
+    <div class=" absolute form-box gap-10">
+        <div class="flex space-around items-center">
+            <div class="flex gap-4">
+                <span class="text material-symbols-outlined">person</span>
+                <p class="text">Se connecter</p>
             </div>
-            <div class="input-box">
+            <a class="flex gap-4 active-button" href="{{ generateurUrl("afficherFormulaireCreation") }}">
+                <span class="material-symbols-outlined">person_add</span>
+                S'inscrire
+            </a>
+        </div>
+        <form method="POST" class="flex-col flex gap-10 w-full" action="./connexion">
+            <div class="flex-col flex gap-4">
+                <input type="text" value="" placeholder="Login" name="login" id="login_id" required>
                 <input type="password" value="" placeholder="Mot de passe" name="mdp" id="mdp_id" required>
             </div>
-            <input type='hidden' name='action' value='connecter'>
-            <input type='hidden' name='controleur' value='utilisateur'>
-            <div>
-                <input class="button-box text-center" type="submit" value="Connexion"/>
-            </div>
+            <input class="button-box text-center w-full" type="submit" value="Connexion"/>
         </form>
+    </div>
     </div>
 {% endblock %}
