@@ -80,14 +80,14 @@ class UtilisateurService implements UtilisateurServiceInterface {
     }
 
     public function afficherDetailUtilisateur($login): Utilisateur {
-        if ($login == null) throw new ServiceException("Login manquant");
+        if ($login == null) throw new ServiceException("Login manquant", 400);
         $utilisateur = $this->utilisateurRepository->recupererParClePrimaire($login);
         if ($utilisateur === null) throw new ServiceException("L'utilisateur n'existe pas", 404);
         return $utilisateur;
     }
 
     public function afficherFormulaireMAJUtilisateur($login): Utilisateur {
-        if ($login == null) throw new ServiceException("Login manquant");
+        if ($login == null) throw new ServiceException("Login manquant", 400);
         $utilisateur = $this->utilisateurRepository->recupererParClePrimaire($login);
         if ($utilisateur === null) throw new ServiceException("L'utilisateur n'existe pas", 404);
         if (!$this->connexionUtilisateur->estConnecte($login)) throw new ServiceException("La mise à jour n'est possible que pour l'utilisateur connecté");

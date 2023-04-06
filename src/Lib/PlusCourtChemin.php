@@ -46,13 +46,12 @@ class PlusCourtChemin {
      */
     function aStarDistance(): ?array {
         $cameFrom = $chemin = $coordTrocon = $numDepartement = [];
-        $distance = $temps = $gas = 0;
+        $distance = $temps = 0;
         $gid = $this->noeudsRoutier[$this->index]->getGid();
         $cost[$gid] = 0;
         $vitesse[$gid] = 50;
         $gScore[$gid] = 0;
         $fScore[$gid] = 0;
-        $gasPath[$gid] = 0;
         $this->openSet->insert($gid, 0);
         $visited[$gid] = true;
 
@@ -61,21 +60,20 @@ class PlusCourtChemin {
             unset($visited[$noeudRoutierGidCourant]);
             // Path found
             if ($noeudRoutierGidCourant == $this->noeudsRoutier[$this->index + 1]->getGid()) {
-                $cheminReconstruit = $this->reconstruireChemin($cameFrom, $noeudRoutierGidCourant, $cost, $coordTrocon, $vitesse, $gasPath);
+                $cheminReconstruit = $this->reconstruireChemin($cameFrom, $noeudRoutierGidCourant, $cost, $coordTrocon, $vitesse);
                 $chemin = array_merge($chemin, $cheminReconstruit[1]);
                 $distance += $cheminReconstruit[0];
                 $temps += $cheminReconstruit[2];
-                $gas += $cheminReconstruit[3];
                 if ($this->index == count($this->noeudsRoutier) - 2) {
-                    return [$distance, $chemin, $temps, $gas];
+                    return [$distance, $chemin, $temps];
                 } else {
                     $this->index++;
-                    $cameFrom = $cost = $coordTrocon = $gScore = $fScore = $visited = $gasPath = []; // reset des variables
+                    $cameFrom = $cost = $coordTrocon = $gScore = $fScore = $visited = []; // reset des variables
                     $this->openSet = new PriorityQueue();
                     $this->openSet->setExtractFlags(SplPriorityQueue::EXTR_DATA);
                     $gid = $this->noeudsRoutier[$this->index]->getGid();
                     $this->openSet->insert($gid, 0);
-                    $cost[$this->noeudsRoutier[$this->index]->getGid()] = $gScore[$gid] = $fScore[$gid] = $gasPath[$gid] = 0;
+                    $cost[$this->noeudsRoutier[$this->index]->getGid()] = $gScore[$gid] = $fScore[$gid] = 0;
                     $noeudRoutierGidCourant = $this->openSet->top();
                 }
             }
@@ -95,7 +93,6 @@ class PlusCourtChemin {
                     $numDepartement[$neighbor['noeud_gid']] = $this->numDepartementCourant;
                     $cameFrom[$neighbor['noeud_gid']] = $noeudRoutierGidCourant;
                     $cost[$neighbor['noeud_gid']] = $neighbor['longueur_troncon'];
-                    $gasPath[$neighbor['noeud_gid']] = 1;
                     $vitesse[$neighbor['noeud_gid']] = $neighbor['vitesse'];
                     $coordTrocon[$neighbor['noeud_gid']] = $neighbor['troncon_gid'];
                     $gScore[$neighbor['noeud_gid']] = $tentativeGScore;
@@ -135,12 +132,11 @@ class PlusCourtChemin {
      * @param $coordTrocon
      * @return array [distance, troncons]
      */
-    private function reconstruireChemin(array $cameFrom, $current, $cost, $coordTrocon, $vitesse, $gas): array {
+    private function reconstruireChemin(array $cameFrom, $current, $cost, $coordTrocon, $vitesse): array {
         $total_path = [$current];
         $trocons = [];
         $distance = 0;
         $tempsTotal = 0;
-        $gasTotal = 0;
         while (array_key_exists($current, $cameFrom)) {
             $current = $cameFrom[$current];
             $total_path[] = $current;
@@ -148,10 +144,9 @@ class PlusCourtChemin {
         foreach ($total_path as $gid) {
             $distance += $cost[$gid];
             $tempsTotal += $cost[$gid] / $vitesse[$gid];
-            $gasTotal += $gas[$gid];
             $trocons[] = $coordTrocon[$gid] ?? null;
         }
-        return [$distance, $trocons, $tempsTotal, $gasTotal];
+        return [$distance, $trocons, $tempsTotal];
     }
 
     private function getNumDepartement($noeudRoutierGidCourant): ?string {

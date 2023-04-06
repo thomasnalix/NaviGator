@@ -31,7 +31,7 @@ async function getFirstCar(params) {
 
 function getFuelConsumption(data, distance) {
     if (data === undefined)
-        return "-1";
+        return (235.214583 / 6.2 * (-distance / 100)).toFixed(2)
     if (data.fuel_type === "electricity")
         return `${(data.highway_mpg * 0.425143707 * 0.4 * (distance / 100)).toFixed(2)} kWh`
     else if (data.fuel_type === "gas")
@@ -39,5 +39,5 @@ function getFuelConsumption(data, distance) {
     else if (data.fuel_type === "diesel")
         return `${(235.214583 / data.highway_mpg * 1.1 * (distance / 100)).toFixed(2)} L`
     else
-        return "-1";
+        return (235.214583 / 6.2 * (-distance / 100)).toFixed(2);
 }

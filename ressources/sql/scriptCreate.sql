@@ -5,7 +5,8 @@ CREATE TABLE nalixt.utilisateurs(
    nom VARCHAR(2000) NOT NULL,
    prenom VARCHAR(2000) NOT NULL,
    motDePasse text NOT NULL,
-   voiture jsonb,
+   marque VARCHAR(50),
+   modele VARCHAR(50),
    PRIMARY KEY(login)
 );
 

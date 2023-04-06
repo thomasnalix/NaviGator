@@ -141,7 +141,7 @@ class ControleurUtilisateur extends ControleurGenerique {
             ], Response::HTTP_OK);
         } catch (ServiceException $e) {
             MessageFlash::ajouter("danger", $e->getMessage());
-            return new JsonResponse("Erreur", Response::HTTP_INTERNAL_SERVER_ERROR);
+            return new JsonResponse("", Response::HTTP_OK); // c'est ok de pas avoir de voiture
         }
     }
 

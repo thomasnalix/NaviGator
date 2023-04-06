@@ -51,6 +51,7 @@ form.addEventListener("submit", async e => {
     const car = fetch('./voiture', {method: 'GET'})
         .then(response => response.json())
         .then(carData => getFirstCar({make: carData.marque, model: carData.modele}))
+        .catch(() => undefined);
 
     const [pathData, carData] = await Promise.all([path, car]);
 
@@ -91,16 +92,18 @@ function printResult(pathData, carData) {
     resumeField.textContent = pathData.nomCommuneDepart + ' vers ' + pathData.nomCommuneArrivee + etapesString;
     timeField.textContent = Math.floor(pathData.temps) + 'h' + Math.round((pathData.temps - Math.floor(pathData.temps)) * 60);
     if (carData === undefined) {
-        gasField.textContent = pathData.consommation + " L (avec une voiture moyenne)";
+        const consumption = getFuelConsumption(undefined, pathData.distance)
+        console.log(consumption)
+        gasField.textContent = (consumption * -1) + " L (avec une voiture moyenne)";
     } else {
         gasDiv.classList.add('hidden');
         carData
             .then(car => getFuelConsumption(car, pathData.distance))
             .then(consumption => {
-                if (consumption !== "-1")
-                    gasField.textContent = consumption + " (avec votre voiture)";
+                if (consumption < 0)
+                    gasField.textContent = (consumption * -1) + " L (avec une voiture moyenne)";
                 else
-                    gasField.textContent = pathData.consommation + " L (avec une voiture moyenne)";
+                    gasField.textContent = consumption + " (avec votre voiture)";
                 gasDiv.classList.remove('hidden');
             });
     }
