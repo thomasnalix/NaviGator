@@ -3,38 +3,33 @@
 {% block page_title %}NaviGator{% endblock %}
 
 {% block page_content %}
-    <div class="mt-5"></div>
-    <div class="bg-form">
-        <form method="post" action="./inscription">
-            <h1 class="title">S'inscrire</h1>
-            <div class="input-box">
+    <div class="background">
+    <div class="absolute form-box flex flex-col gap-10">
+        <div class="flex space-around items-center">
+            <a class="flex gap-4 active-button" href="{{ generateurUrl("afficherFormulaireConnexion") }}">
+                <span class="material-symbols-outlined">person</span>
+                Se connecter
+            </a>
+            <div class="flex gap-4">
+                <span class="text material-symbols-outlined">person_add</span>
+                <p class="text">S'inscrire</p>
+            </div>
+        </div>
+        <form method="post" class="flex-col flex gap-10 w-full" action="./inscription">
+            <div class="flex-col flex gap-4">
                 <input type="text" placeholder="Login" name="login" id="login_id" required>
-            </div>
-            <div class="input-box">
                 <input type="text" placeholder="Prénom" name="prenom" id="prenom_id" required>
-            </div>
-            <div class="input-box">
                 <input type="text" placeholder="Nom de famille" name="nom" id="nom_id" required>
             </div>
             <div class="input-box">
                 <input type="password" placeholder="Mot de passe" name="mdp" id="mdp_id" required>
-            </div>
-            <div class="input-box">
                 <input type="password" placeholder="Confirmer le mot de passe" name="mdp2" id="mdp2_id" required>
             </div>
             <div class="input-box">
                 <input type="text" value="" placeholder="Marque voiture" name="marqueVehicule" id="marquevehicule_id">
-            </div>
-            <div class="input-box">
                 <input type="text" value="" placeholder="Modele voiture" name="modeleVehicule" id="modelevehicule_id">
             </div>
-
-            <input type='hidden' name='action' value='creerDepuisFormulaire'>
-            <input type='hidden' name='controleur' value='utilisateur'>
-            <p class="InputAddOn">
-                <input class="button-box text-center" type="submit" value="S'inscrire"/>
-            </p>
-            </fieldset>
+            <input class="button-box text-center w-full" type="submit" value="S'inscrire"/>
         </form>
     </div>
 

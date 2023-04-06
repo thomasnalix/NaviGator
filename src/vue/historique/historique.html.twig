@@ -3,8 +3,10 @@
 {% block page_title %}NaviGator{% endblock %}
 
 {% block page_content %}
+{#    <script defer src="../ressources/js/history.js"></script>#}
+{#    <script src="../ressources/js/mapInteraction.js"></script>#}
     <div class="mt-5"></div>
-    <div class="bg-form flex-col">
+    <div id="history" class="bg-form flex-col">
         <h1 class="title">Liste des trajets</h1>
         {#    foreach on variable historique #}
         {% for trajet in trajets %}

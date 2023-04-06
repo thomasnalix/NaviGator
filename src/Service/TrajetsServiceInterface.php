@@ -6,4 +6,6 @@ interface TrajetsServiceInterface {
 
     public function getHistory($login):array;
 
+    public function getTrajet($idTrajet):string;
+
 }
