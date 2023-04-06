@@ -398,7 +398,7 @@ input[type="text"]:focus {
 .background {
     width: 100vw;
     height: 100vh;
-    background-image: url(../img/test.png);
+    background-image: url(../img/background.png);
     background-size: cover;
 }
 

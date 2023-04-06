@@ -80,8 +80,6 @@ class NoeudRoutierService implements NoeudRoutierServiceInterface {
             if (str_starts_with($b, $nomCommune)) return 1;
             return 0;
         });
-        if ($nomCommunes === null)
-            throw new ServiceException("Nom de commune introuvable", Response::HTTP_BAD_REQUEST);
         return $nomCommunes;
     }
 }
