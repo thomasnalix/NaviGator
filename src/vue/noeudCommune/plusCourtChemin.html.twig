@@ -4,6 +4,8 @@
 
 {% block page_content %}
     <script defer src="../ressources/js/main.js"></script>
+    <script defer src="../ressources/js/reactive/addStep.js" type="module"></script>
+    <script defer src="../ressources/js/reactive/targetLocation.js" type="module"></script>
     <script defer src="../ressources/js/autocompletion.js"></script>
     <script defer src="../ressources/js/mapInteraction.js"></script>
     <script defer src="../ressources/js/car.js"></script>
@@ -22,7 +24,7 @@
                                        name="commune0" class="commune" id="commune0" required>
                                 <datalist id="auto-completion-0"></datalist>
                                 <input type="hidden" name="gid0" id="gid0">
-                                <span class="locate-button material-symbols-outlined">my_location</span>
+                                <span class="locate-button material-symbols-outlined" data-onclick="buttonLoc.click()">my_location</span>
                                 <span class="material-symbols-outlined close">close</span>
                             </div>
                             <div class="input-box">
@@ -30,7 +32,7 @@
                                        name="commune1" class="commune" id="commune1" required>
                                 <datalist id="auto-completion-1"></datalist>
                                 <input type="hidden" name="gid1" id="gid1">
-                                <span class="locate-button material-symbols-outlined">my_location</span>
+                                <span class="locate-button material-symbols-outlined" data-onclick="buttonLoc.click()">my_location</span>
                                 <span class="material-symbols-outlined close">close</span>
                             </div>
                         </div>
@@ -39,7 +41,7 @@
                 <input type="hidden" name="nbField" id="nbField" value="2">
                 <input type="hidden" name="XDEBUG_TRIGGER">
                 <div class="flex">
-                    <div id="addDestination" class="box-flex disabled">
+                    <div id="addDestination" data-onclick="buttonAdd.add()" class="box-flex disabled">
                         <span class="material-symbols-outlined">add_circle</span>
                         <p>Ajouter une étape</p>
                     </div>

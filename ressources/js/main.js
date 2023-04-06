@@ -1,6 +1,5 @@
 const navBox = document.getElementById('nav-box');
 const calculButton = document.getElementById('calcul');
-const addDestination = document.getElementById('addDestination');
 const formDestination = document.getElementById('formDestination');
 const close = document.getElementsByClassName('close');
 const locateButton = document.getElementsByClassName('locate-button');
@@ -8,8 +7,9 @@ const nbField = document.getElementById('nbField');
 const flagBox = document.getElementById('flag-box');
 const result = document.getElementById('result');
 const form = document.getElementById('form');
+const addDestination = document.getElementById('addDestination');
 
-initLocateButtons();
+// initLocateButtons();
 verifyChild();
 
 function debounce(callback, wait) {
@@ -101,88 +101,6 @@ map.on('pointerup', function () {
     navBox.style.display = 'flex';
 });
 
-
-/**
- * Add event listener on add destination button and add new field in formDestination
- */
-addDestination.addEventListener('click', function () {
-    let nbChild = formDestination.childElementCount;
-    if (nbChild < 10 && verifyFillField()) {
-        const div = document.createElement('div');
-        div.classList.add('input-box');
-
-        const dataList = document.createElement('datalist');
-        dataList.id = `auto-completion-${nbChild - 1}`;
-
-        const input = document.createElement('input');
-        input.type = 'text';
-        input.placeholder = 'Commune de transition';
-        input.classList.add('commune');
-        input.name = `commune${nbChild - 1}`;
-        input.id = `commune${nbChild - 1}`;
-        input.setAttribute('list', dataList.id);
-        input.required = true;
-        input.addEventListener('input', debounce(e => autocomplete(input.list, e.target.value), 200));
-        input.oninput = e => checkForValidInput(e.target);
-
-        div.appendChild(input);
-        div.appendChild(dataList);
-
-        const gidInput = document.createElement('input');
-        gidInput.type = 'hidden';
-        gidInput.name = `gid${nbChild - 1}`;
-        gidInput.id = `gid${nbChild - 1}`;
-        div.appendChild(gidInput);
-
-        const iconRight = document.createElement('span');
-        iconRight.classList.add('material-symbols-outlined', 'locate-button');
-        iconRight.textContent = 'my_location';
-        div.appendChild(iconRight);
-
-        const iconDelete = document.createElement('span');
-        iconDelete.classList.add('material-symbols-outlined', 'close');
-        iconDelete.textContent = 'close';
-        div.appendChild(iconDelete);
-
-
-        // if nbItem = 2, add more point
-        if (nbChild === 2) {
-            for (let i = 0; i < 2; i++) {
-                let point = document.createElement('span');
-                point.classList.add('point');
-                // append child end - 1
-                flagBox.insertBefore(point, flagBox.children[flagBox.childElementCount - 1]);
-            }
-        }
-
-        const iconEtape = document.createElement('span');
-        iconEtape.classList.add('material-symbols-outlined', 'etape');
-        iconEtape.textContent = 'fiber_manual_record';
-        // append child end - 1
-        flagBox.insertBefore(iconEtape, flagBox.children[flagBox.childElementCount - 1]);
-
-        for (let i = 0; i < 2; i++) {
-            let point = document.createElement('span');
-            point.classList.add('point');
-            // append child end - 1
-            flagBox.insertBefore(point, flagBox.children[flagBox.childElementCount - 1]);
-        }
-
-
-        // add new field in formDestination before end - 1
-        formDestination.insertBefore(div, formDestination.children[formDestination.childElementCount - 1]);
-        nbField.setAttribute('value', nbChild + 1);
-        updateWhenAdd(nbChild - 1)
-        verifyChild();
-        updateIdInput();
-        changeAddStepButton();
-        initDeleteButtons();
-        initLocateButtons();
-    } else {
-        addDestination.classList.add('disabled');
-    }
-});
-
 /**
  * Init delete button event listener
  * When click on close class icon, remove the parent field
@@ -264,26 +182,27 @@ function updateWhenAdd(nomCommune) {
  * Then send the coordinates to the server
  * And add a point on the map
  */
-function initLocateButtons() {
-    for (let i = 0; i < locateButton.length; i++) {
-        locateButton[i].addEventListener('click', e => {
-            // wait for the user to click on the map
-            document.body.style.cursor = 'crosshair';
-
-            map.once('click', function (evt) {
-                let coord = ol.proj.transform(evt.coordinate, 'EPSG:3857', 'EPSG:4326');
-                let lon = coord[0];
-                let lat = coord[1];
-                let target = e.target.parentElement;
-                getNearestNode(lon, lat, target);
-
-                // if there is already a point according to e.target.parentElement.children[0].value, remove it and add new point
-                addPointOnMap(target.children[0].name, lon, lat);
-                document.body.style.cursor = 'default';
-            });
-        });
-    }
-}
+// function initLocateButtons() {
+//     for (let i = 0; i < locateButton.length; i++) {
+//         locateButton[i].addEventListener('click', e => {
+//             // wait for the user to click on the map
+//             document.body.style.cursor = 'crosshair';
+//
+//             map.once('click', function (evt) {
+//                 let coord = ol.proj.transform(evt.coordinate, 'EPSG:3857', 'EPSG:4326');
+//                 let lon = coord[0];
+//                 let lat = coord[1];
+//                 let target = e.target.parentElement;
+//                 console.log(target);
+//                 getNearestNode(lon, lat, target);
+//
+//                 // if there is already a point according to e.target.parentElement.children[0].value, remove it and add new point
+//                 addPointOnMap(target.children[0].name, lon, lat);
+//                 document.body.style.cursor = 'default';
+//             });
+//         });
+//     }
+// }
 
 
 /**
