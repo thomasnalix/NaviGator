@@ -4,8 +4,7 @@ namespace Navigator\Modele\Repository;
 
 use Navigator\Modele\DataObject\Utilisateur;
 
-interface UtilisateurRepositoryInterface
-{
+interface UtilisateurRepositoryInterface {
     /**
      * @param string $login
      * @param string $nom
@@ -23,18 +22,18 @@ interface UtilisateurRepositoryInterface
      * @param Utilisateur $utilisateur
      * @return bool
      */
-    public function ajouter(Utilisateur $utilisateur) : bool;
+    public function ajouter(Utilisateur $utilisateur): bool;
 
     /**
      * @param string $login
      * @return bool
      */
-    public function supprimer(string $login) : bool;
+    public function supprimer(string $login): bool;
 
     /**
      * @param Utilisateur $utilisateur
      * @return bool
      */
-    public function mettreAJour(Utilisateur $utilisateur) : bool;
+    public function mettreAJour(Utilisateur $utilisateur): bool;
 
 }
