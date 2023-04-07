@@ -134,13 +134,12 @@ class ControleurUtilisateur extends ControleurGenerique {
     public function getVoiture(): Response {
         try {
             $login = $this->connexionUtilisateurSession->getLoginUtilisateurConnecte();
-            $utilisateur = $this->utilisateurService->afficherDetailUtilisateur($login);
+            $utilisateur = $this->utilisateurService->recupererUtilisateurParId($login);
             return new JsonResponse([
                 "marque" => $utilisateur->getMarqueVehicule(),
                 "modele" => $utilisateur->getModeleVehicule()
             ], Response::HTTP_OK);
         } catch (ServiceException $e) {
-            MessageFlash::ajouter("danger", $e->getMessage());
             return new JsonResponse("", Response::HTTP_OK); // c'est ok de pas avoir de voiture
         }
     }

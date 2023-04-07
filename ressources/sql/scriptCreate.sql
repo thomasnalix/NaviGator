@@ -45,7 +45,6 @@ SELECT
     st_y(st_astext(nr2.geom)::geometry) AS noeud_arrivee_lat,
     tr.gid AS troncon_gid,
     tr.longueur AS longueur_troncon,
-    tr.geom AS troncon_coord,
     "left"(nc.insee_comm::text, 2) AS num_departement_depart,
     "left"(nc2.insee_comm::text, 2) AS num_departement_arrivee,
     CASE

@@ -3,8 +3,12 @@ const API_KEY = "z0FzwZI3t8fLYYgPD59iCw==oRy5p1Am3hLavzvv"; // https://api-ninja
 
 const voiture = document.getElementById("voiture");
 
-voiture?.addEventListener("submit", async (e) => {
-    console.log(e)
+voiture.addEventListener("submit", async e => {
+    const data = new FormData(voiture);
+    const car = await getFirstCar({make: data.get("marque"), model: data.get("modele")});
+    if (car !== undefined) return;
+    const errorMsg = document.createElement("p");
+    // TODO : AJOUTER MESSAGE "Voiture introuvable" pendant 3 secondes
 });
 
 async function getCar(params) {
@@ -24,7 +28,7 @@ async function getFirstCar(params) {
 
 function getFuelConsumption(data, distance) {
     if (data === undefined)
-        return (235.214583 / 6.2 * (-distance / 100)).toFixed(2)
+        return (-6.3 * distance / 100).toFixed(2)
     if (data.fuel_type === "electricity")
         return `${(data.highway_mpg * 0.425143707 * 0.4 * (distance / 100)).toFixed(2)} kWh`
     else if (data.fuel_type === "gas")
@@ -32,5 +36,5 @@ function getFuelConsumption(data, distance) {
     else if (data.fuel_type === "diesel")
         return `${(235.214583 / data.highway_mpg * 1.1 * (distance / 100)).toFixed(2)} L`
     else
-        return (235.214583 / 6.2 * (-distance / 100)).toFixed(2);
+        return (-6.3 * distance / 100).toFixed(2)
 }

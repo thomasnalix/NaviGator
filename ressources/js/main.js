@@ -79,6 +79,7 @@ async function addToHistory(data) {
 /**
  * set variables in the resume box
  * @param pathData
+ * @param carData the car data from the API (can be undefined)
  */
 function printResult(pathData, carData) {
     result.style.display = 'initial';

@@ -172,7 +172,6 @@ class RouteurURL {
         /* =============================== API ROUTES ================================ */
         /* =========================================================================== */
 
-
         // Route getnoeudProche
         $route = new Route("/noeudProche/lon/{long}/lat/{lat}", ["_controller" => "noeud_routier_controleur::getNoeudProche"]);
         $routes->add("getNoeudProche", $route);
