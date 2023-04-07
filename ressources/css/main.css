@@ -1,7 +1,6 @@
 @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@100;200;300;400;500;600;700;800;900&display=swap');
 
 
-
 [data-theme="light"] {
     --blur-color: rgba(255, 255, 255, 0.59);
     --text-color: #171717;
@@ -44,7 +43,7 @@ nav {
     border-radius: 10px;
     margin: 12px;
     position: absolute;
-    top : 0;
+    top: 0;
     z-index: 100;
 }
 
@@ -99,21 +98,21 @@ section {
     min-height: 100vh;
 }
 
-section:nth-child(1){
+section:nth-child(1) {
     color: #fff;
     background-color: #0ac876;
 }
 
-section:nth-child(2){
+section:nth-child(2) {
     color: #0ac876;
 }
 
-section:nth-child(3){
+section:nth-child(3) {
     color: #fff;
     background-color: #0ac876;
 }
 
-section:nth-child(4){
+section:nth-child(4) {
     color: #0ac876;
 }
 
@@ -129,7 +128,7 @@ section h1 {
     font-size: 80px;
 }
 
-section h2{
+section h2 {
     font-size: 40px;
     text-align: center;
     text-transform: uppercase;
@@ -158,14 +157,14 @@ section .cards .text-card img {
     border-radius: 15px;
 }
 
-.reveal{
+.reveal {
     position: relative;
     transform: translateY(150px);
     opacity: 0;
     transition: all 2s ease;
 }
 
-.reveal.active{
+.reveal.active {
     transform: translateY(0px);
     opacity: 1;
 }
@@ -216,28 +215,28 @@ button a {
 }
 
 .ol-zoom {
-    right: 0.5em!important;
-    transform: translate(-50%)!important;
-    left: inherit!important;
-    background: none!important;
+    right: 0.5em !important;
+    transform: translate(-50%) !important;
+    left: inherit !important;
+    background: none !important;
 }
 
 .ol-zoom .ol-zoom-in {
-    background: var(--blur-color)!important;
-    backdrop-filter: blur(15px) saturate(250%)!important;
-    -webkit-backdrop-filter: blur(15px) saturate(250%)!important;
-    -moz-backdrop-filter: blur(15px) saturate(250%)!important;
-    color: var(--text-color)!important;
-    border-radius: 5px 5px 0 0!important;
+    background: var(--blur-color) !important;
+    backdrop-filter: blur(15px) saturate(250%) !important;
+    -webkit-backdrop-filter: blur(15px) saturate(250%) !important;
+    -moz-backdrop-filter: blur(15px) saturate(250%) !important;
+    color: var(--text-color) !important;
+    border-radius: 5px 5px 0 0 !important;
 }
 
 .ol-zoom .ol-zoom-out {
-    background: var(--blur-color)!important;
-    backdrop-filter: blur(15px) saturate(250%)!important;
-    -webkit-backdrop-filter: blur(15px) saturate(250%)!important;
-    -moz-backdrop-filter: blur(15px) saturate(250%)!important;
-    color: var(--text-color)!important;
-    border-radius: 0 0 5px 5px!important;
+    background: var(--blur-color) !important;
+    backdrop-filter: blur(15px) saturate(250%) !important;
+    -webkit-backdrop-filter: blur(15px) saturate(250%) !important;
+    -moz-backdrop-filter: blur(15px) saturate(250%) !important;
+    color: var(--text-color) !important;
+    border-radius: 0 0 5px 5px !important;
 }
 
 .ol-attribution.ol-uncollapsible {
@@ -261,7 +260,9 @@ form {
     gap: 2px;
 }
 
-.material-symbols-outlined { user-select: none; }
+.material-symbols-outlined {
+    user-select: none;
+}
 
 .button-box {
     background: rgba(10, 200, 118, 0.71);
@@ -302,7 +303,7 @@ input[type="text"]:focus {
 }
 
 .disabled {
-    cursor: default!important;
+    cursor: default !important;
     color: #a9a9a9;
 }
 
@@ -331,12 +332,13 @@ input[type="text"]:focus {
     cursor: pointer;
     height: 40px;
 }
+
 .locate-button:hover {
     backdrop-filter: opacity(0.4);
 }
 
 .etape {
-    font-size: 15px!important;
+    font-size: 15px !important;
 }
 
 #result {
@@ -375,7 +377,7 @@ input[type="text"]:focus {
 }
 
 .form-box input {
-    border-radius: 10px!important;
+    border-radius: 10px !important;
 }
 
 /* =========================
@@ -391,6 +393,11 @@ input[type="text"]:focus {
 
 .input-detail {
     border-radius: 10px !important;
+}
+
+#loading {
+    margin: auto;
+    width: 15%;
 }
 
 /* =========================
@@ -424,7 +431,7 @@ input[type="text"]:focus {
 .box-blur {
     background: var(--blur-color);
     color: var(--text-color);
-    margin : 12px 12px 0 12px;
+    margin: 12px 12px 0 12px;
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
     padding: 10px;
     border-radius: 10px;
@@ -433,7 +440,6 @@ input[type="text"]:focus {
     -webkit-backdrop-filter: blur(15px) saturate(250%);
     -moz-backdrop-filter: blur(15px) saturate(250%);
 }
-
 
 
 /* Bootstrap alerts */
@@ -477,25 +483,91 @@ input[type="text"]:focus {
 }
 
 /* Tailwind */
-.flex { display: flex }
-.flex-col { flex-direction: column }
-.gap-4 { gap: 10px }
-.space-between { justify-content: space-between }
-.p-4 { padding: 10px }
-.items-center { align-items: center }
-.justify-start { justify-content: flex-start }
-.w-full { width: 100% }
-.mb-10 { margin-bottom: 10px }
-.mb-6 { margin-bottom: 6px }
-.absolute { position: absolute }
-.z-100 { z-index: 100 }
-.align-middle { vertical-align: middle }
-.none { display: none }
-.text-center { text-align: center }
-.text-left { text-align: left }
-.hidden { display: none }
-.cursor-pointer { cursor: pointer }
-.mt-5 { margin-top: 5rem }
-.space-around { justify-content: space-around }
-.gap-10 { gap: 25px }
-.justify-center { justify-content: center }
+
+.flex {
+    display: flex
+}
+
+.flex-col {
+    flex-direction: column
+}
+
+.gap-4 {
+    gap: 10px
+}
+
+.space-between {
+    justify-content: space-between
+}
+
+.p-4 {
+    padding: 10px
+}
+
+.items-center {
+    align-items: center
+}
+
+.justify-start {
+    justify-content: flex-start
+}
+
+.w-full {
+    width: 100%
+}
+
+.mb-10 {
+    margin-bottom: 10px
+}
+
+.mb-6 {
+    margin-bottom: 6px
+}
+
+.absolute {
+    position: absolute
+}
+
+.z-100 {
+    z-index: 100
+}
+
+.align-middle {
+    vertical-align: middle
+}
+
+.none {
+    display: none
+}
+
+.text-center {
+    text-align: center
+}
+
+.text-left {
+    text-align: left
+}
+
+.hidden {
+    display: none
+}
+
+.cursor-pointer {
+    cursor: pointer
+}
+
+.mt-5 {
+    margin-top: 5rem
+}
+
+.space-around {
+    justify-content: space-around
+}
+
+.gap-10 {
+    gap: 25px
+}
+
+.justify-center {
+    justify-content: center
+}
