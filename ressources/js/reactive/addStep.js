@@ -37,7 +37,7 @@ buttonAddDestination.add = function () {
         const iconRight = document.createElement('span');
         iconRight.classList.add('material-symbols-outlined', 'locate-button');
         iconRight.textContent = 'my_location';
-        iconRight.setAttribute('data-onclick', 'buttonLoc.click()');
+        iconRight.setAttribute('data-onclick', 'buttonLoc.click(' + (buttonLocation.buttonNumber+1) + ')');
         div.appendChild(iconRight);
 
         const iconDelete = document.createElement('span');
@@ -78,7 +78,8 @@ buttonAddDestination.add = function () {
         updateIdInput();
         changeAddStepButton();
         initDeleteButtons();
-        buttonLocation.addListener();
+        buttonLocation.buttonNumber++;
+        buttonLocation.refresh();
     } else {
         buttonAddDestination.class.classList.add('disabled');
     }
