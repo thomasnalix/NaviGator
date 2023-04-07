@@ -8,6 +8,7 @@ let buttonAddDestination = reactive({
 buttonAddDestination.add = function () {
     let nbChild = formDestination.childElementCount;
     if (nbChild < 10 && verifyFillField()) {
+        buttonLocation.buttonNumber++;
         const div = document.createElement('div');
         div.classList.add('input-box');
 
@@ -37,7 +38,7 @@ buttonAddDestination.add = function () {
         const iconRight = document.createElement('span');
         iconRight.classList.add('material-symbols-outlined', 'locate-button');
         iconRight.textContent = 'my_location';
-        iconRight.setAttribute('data-onclick', 'buttonLoc.click(' + (buttonLocation.buttonNumber+1) + ')');
+        iconRight.setAttribute('data-onclick', 'buttonLoc.click(' + buttonLocation.buttonNumber + ')');
         div.appendChild(iconRight);
 
         const iconDelete = document.createElement('span');
@@ -78,7 +79,6 @@ buttonAddDestination.add = function () {
         updateIdInput();
         changeAddStepButton();
         initDeleteButtons();
-        buttonLocation.buttonNumber++;
         buttonLocation.refresh();
     } else {
         buttonAddDestination.class.classList.add('disabled');

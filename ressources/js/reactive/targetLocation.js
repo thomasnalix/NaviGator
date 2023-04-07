@@ -33,9 +33,10 @@ buttonLocation.click = function (i) {
 }
 
 buttonLocation.refresh = function() {
+    console.log("refresh")
     buttonLocation.buttons = document.getElementById('formDestination').children;
 }
 
-applyAndRegister(() => buttonLocation.click());
+applyAndRegister(() => buttonLocation.buttonNumber);
 
 startReactiveDom();
