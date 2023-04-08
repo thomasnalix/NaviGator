@@ -3,16 +3,18 @@
 namespace Navigator\Controleur;
 
 use Navigator\Lib\MessageFlash;
-use Navigator\Lib\PlusCourtChemin;
 use Navigator\Service\Exception\ServiceException;
 use Navigator\Service\NoeudRoutierServiceInterface;
+use Navigator\Service\PlusCourtCheminServiceInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
 
 class ControleurNoeudRoutierAPI extends ControleurGenerique {
 
 
-    public function __construct(private readonly NoeudRoutierServiceInterface $noeudRoutierService) {
+    public function __construct(
+        private readonly PlusCourtCheminServiceInterface $plusCourtCheminService,
+        private readonly NoeudRoutierServiceInterface    $noeudRoutierService) {
     }
 
     public static function afficherErreur($errorMessage = "", $statusCode = ""): Response {
@@ -50,13 +52,11 @@ class ControleurNoeudRoutierAPI extends ControleurGenerique {
         try {
             $villes = $this->noeudRoutierService->getVillesItinary($nbFields, $noeudList);
 
-            foreach ($villes as $ville) {
+            foreach ($villes as $ville)
                 $parameters['noeudsList'][] = $ville->getGid();
-            }
 
-            $pcc = new PlusCourtChemin($villes, $this->noeudRoutierService);
             $now = microtime(true);
-            $datas = $pcc->aStarDistance();
+            $datas = $this->plusCourtCheminService->aStarDistance($villes);
             $parameters["time"] = microtime(true) - $now;
             $parameters["distance"] = $datas[0];
             $now = microtime(true);
@@ -69,7 +69,11 @@ class ControleurNoeudRoutierAPI extends ControleurGenerique {
             return new JsonResponse(json_encode($parameters), Response::HTTP_OK, [], true);
         } catch (ServiceException $exception) {
             MessageFlash::ajouter("danger", $exception->getMessage());
-            return new JsonResponse(["error" => $exception->getMessage()], $exception->getCode());
+//            return new JsonResponse(["error" => $exception->getMessage()], $exception->getCode());
+            $parameters["error"] = $exception->getMessage();
+            $parameters["distance"] = -1; // for js
+            return new JsonResponse(json_encode($parameters), Response::HTTP_OK, [], true);
+                                                            // $exception->getCode() ??
         }
     }
 

@@ -51,8 +51,8 @@ form.addEventListener("submit", async e => {
 
     const [pathData, carData] = await Promise.all([path, car]);
     toggleLoading(false);
-    console.log(pathData);
-    console.log(pathData.time);
+
+    console.log(pathData); // TODO: A SUPPRIMER APRES TEST
 
     printResult(pathData, carData);
     printItinary(pathData.chemin);

@@ -1,11 +1,12 @@
 <?php
 
-namespace Navigator\Lib;
+namespace Navigator\Service;
 
-use Navigator\Service\NoeudRoutierService;
+use Navigator\Lib\PriorityQueue;
 use SplPriorityQueue;
+use function PHPUnit\Framework\isEmpty;
 
-class PlusCourtChemin {
+class PlusCourtCheminService implements PlusCourtCheminServiceInterface {
 
     /**
      * Construit comme suit:
@@ -21,7 +22,7 @@ class PlusCourtChemin {
      *     numDepartement2 => [ ... ]
      * ]
      */
-    private array $noeudsRoutierCache = [];
+    public array $noeudsRoutierCache = [];
 
     /**
      * Index du noeud routier courant a traiter, commence a 0 et augmente de 1
@@ -29,25 +30,23 @@ class PlusCourtChemin {
      */
     private int $index = 0;
     private const EARTH_RADIUS = 6371;
-    private ?string $numDepartementCourant;
+    public ?string $numDepartementCourant;
     private PriorityQueue $openSet;
 
-    private NoeudRoutierService $noeudRoutierService;
-
-    public function __construct(private array $noeudsRoutier, NoeudRoutierService $noeudRoutierService) {
+    public function __construct(private NoeudRoutierServiceInterface $noeudRoutierService) {
         $this->openSet = new PriorityQueue();
         $this->openSet->setExtractFlags(SplPriorityQueue::EXTR_DATA);
-        $this->noeudRoutierService = $noeudRoutierService;
     }
 
     /**
      * Calcule la distance la plus courte et l'itinéraire entre 2 ou plusieurs points
      * @return array|int[]|null
+     * @throws \Exception si aucun chemin trouvé
      */
-    function aStarDistance(): ?array {
+    public function aStarDistance(array $noeudsRoutier): ?array {
         $cameFrom = $chemin = $coordTrocon = $numDepartement = [];
         $distance = $temps = 0;
-        $gid = $this->noeudsRoutier[$this->index]->getGid();
+        $gid = $noeudsRoutier[$this->index]->getGid();
         $cost[$gid] = 0;
         $vitesse[$gid] = 50;
         $gScore[$gid] = 0;
@@ -55,25 +54,30 @@ class PlusCourtChemin {
         $this->openSet->insert($gid, 0);
         $visited[$gid] = true;
 
+        $latArrivee = $noeudsRoutier[$this->index + 1]->getLat();
+        $longArrivee = $noeudsRoutier[$this->index + 1]->getLong();
+
         while ($this->openSet->valid()) {
             $noeudRoutierGidCourant = $this->openSet->extract();
             unset($visited[$noeudRoutierGidCourant]);
             // Path found
-            if ($noeudRoutierGidCourant == $this->noeudsRoutier[$this->index + 1]->getGid()) {
+            if ($noeudRoutierGidCourant == $noeudsRoutier[$this->index + 1]->getGid()) {
                 $cheminReconstruit = $this->reconstruireChemin($cameFrom, $noeudRoutierGidCourant, $cost, $coordTrocon, $vitesse);
                 $chemin = array_merge($chemin, $cheminReconstruit[1]);
                 $distance += $cheminReconstruit[0];
                 $temps += $cheminReconstruit[2];
-                if ($this->index == count($this->noeudsRoutier) - 2) {
+                if ($this->index == count($noeudsRoutier) - 2) {
                     return [$distance, $chemin, $temps];
                 } else {
                     $this->index++;
+                    $latArrivee = $noeudsRoutier[$this->index + 1]->getLat();
+                    $longArrivee = $noeudsRoutier[$this->index + 1]->getLong();
                     $cameFrom = $cost = $coordTrocon = $gScore = $fScore = $visited = []; // reset des variables
                     $this->openSet = new PriorityQueue();
                     $this->openSet->setExtractFlags(SplPriorityQueue::EXTR_DATA);
-                    $gid = $this->noeudsRoutier[$this->index]->getGid();
+                    $gid = $noeudsRoutier[$this->index]->getGid();
                     $this->openSet->insert($gid, 0);
-                    $cost[$this->noeudsRoutier[$this->index]->getGid()] = $gScore[$gid] = $fScore[$gid] = 0;
+                    $cost[$noeudsRoutier[$this->index]->getGid()] = $gScore[$gid] = $fScore[$gid] = 0;
                     $noeudRoutierGidCourant = $this->openSet->top();
                 }
             }
@@ -96,27 +100,24 @@ class PlusCourtChemin {
                     $vitesse[$neighbor['noeud_gid']] = $neighbor['vitesse'];
                     $coordTrocon[$neighbor['noeud_gid']] = $neighbor['troncon_gid'];
                     $gScore[$neighbor['noeud_gid']] = $tentativeGScore;
-                    $fScore[$neighbor['noeud_gid']] = $tentativeGScore + $this->getHeuristiqueEuclidienne($neighbor['noeud_coord_lat'], $neighbor['noeud_coord_long']);
+                    $fScore[$neighbor['noeud_gid']] = $tentativeGScore + $this->getHeuristiqueHaversine($latArrivee, $longArrivee, $neighbor['noeud_coord_lat'], $neighbor['noeud_coord_long']);
                     if (!isset($visited[$neighbor['noeud_gid']]))
                         $this->openSet->insert($neighbor['noeud_gid'], $fScore[$neighbor['noeud_gid']]);
                 }
             }
         }
-        return [-1, [], -1];
+        throw new \Exception('Aucun chemin trouvé !');
     }
 
 
     /**
      * Euristique euclidienne entre le noeud courant et le noeud d'arrivee qui calcule la distance entre les 2 noeuds
-     * à vol d'oiseau.
+     * en utilisant la formule de Haversine
      * @param float $lat latitude du noeud courant
      * @param float $long longitude du noeud courant
      * @return float distance entre le noeud courant et le noeud d'arrivee
      */
-    private function getHeuristiqueEuclidienne(float $lat, float $long): float {
-        $latArrivee = $this->noeudsRoutier[$this->index + 1]->getLat();
-        $longArrivee = $this->noeudsRoutier[$this->index + 1]->getLong();
-
+    public function getHeuristiqueHaversine(float $latArrivee, float $longArrivee, float $lat, float $long): float {
         $dLat = deg2rad($latArrivee - $lat);
         $dLon = deg2rad($longArrivee - $long);
         $a = sin($dLat / 2) ** 2 + cos(deg2rad($lat)) * cos(deg2rad($latArrivee)) * sin($dLon / 2) ** 2;
@@ -127,12 +128,12 @@ class PlusCourtChemin {
 
     /**
      * @param array $cameFrom
-     * @param $current
-     * @param $cost
-     * @param $coordTrocon
+     * @param int $current
+     * @param array $cost
+     * @param array $coordTrocon
      * @return array [distance, troncons]
      */
-    private function reconstruireChemin(array $cameFrom, $current, $cost, $coordTrocon, $vitesse): array {
+    public function reconstruireChemin(array $cameFrom, int $current, array $cost, array $coordTrocon, array $vitesse): array {
         $total_path = [$current];
         $trocons = [];
         $distance = 0;
@@ -141,15 +142,17 @@ class PlusCourtChemin {
             $current = $cameFrom[$current];
             $total_path[] = $current;
         }
-        foreach ($total_path as $gid) {
-            $distance += $cost[$gid];
-            $tempsTotal += $cost[$gid] / $vitesse[$gid];
-            $trocons[] = $coordTrocon[$gid] ?? null;
+        if (count($cost) > 1) {
+            foreach ($total_path as $gid) {
+                $distance += $cost[$gid];
+                $tempsTotal += $cost[$gid] / $vitesse[$gid];
+                $trocons[] = $coordTrocon[$gid] ?? null;
+            }
         }
         return [$distance, $trocons, $tempsTotal];
     }
 
-    private function getNumDepartement($noeudRoutierGidCourant): ?string {
+    public function getNumDepartement($noeudRoutierGidCourant): ?string {
         if (isset($this->numDepartementCourant) && isset($this->noeudsRoutierCache[$this->numDepartementCourant][$noeudRoutierGidCourant]))
             return $this->numDepartementCourant;
         foreach (array_keys($this->noeudsRoutierCache) as $numDepartement)
