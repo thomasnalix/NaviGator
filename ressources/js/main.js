@@ -32,7 +32,6 @@ formDestination.addEventListener('input', e => {
 
 form.addEventListener("submit", async e => {
     e.preventDefault();
-    let loader = document.getElementById('load');
     const url = './calculChemin';
     const formData = new FormData();
     const nbChild = formDestination.childElementCount;
@@ -41,10 +40,7 @@ form.addEventListener("submit", async e => {
         formData.append(`gid${i}`, formDestination.children[i].children[2].value);
     }
     formData.append('nbField', nbField.value);
-
-    loader.style.display = 'initial';
-    calculButton.disabled = true;
-
+    toggleLoading(true);
     const path = fetch(url, {method: 'POST', body: formData})
         .then(response => response.json());
 
@@ -54,15 +50,29 @@ form.addEventListener("submit", async e => {
         .catch(() => undefined);
 
     const [pathData, carData] = await Promise.all([path, car]);
-
+    toggleLoading(false);
     console.log(pathData);
     console.log(pathData.time);
-    loader.style.display = 'none';
-    calculButton.disabled = false;
+
     printResult(pathData, carData);
     printItinary(pathData.chemin);
     await addToHistory(pathData);
 });
+
+/** toggle button and input field with disable status or not and depending on the boolean value
+ * @param type
+ */
+function toggleLoading(type) {
+    let loader = document.getElementById('load');
+    if (type) {
+        loader.style.display = 'initial';
+    } else {
+        loader.style.display = 'none';
+    }
+    calculButton.disabled = type;
+    for (let i = 0; i < formDestination.childElementCount; i++)
+        formDestination.children[i].children[0].disabled = type;
+}
 
 /**
  * Send data to the server to add it to the history of the user
@@ -84,26 +94,32 @@ async function addToHistory(data) {
  * @param carData the car data from the API (can be undefined)
  */
 function printResult(pathData, carData) {
-    result.style.display = 'initial';
-    const resumeField = document.getElementById('resume-field');
+    result.style.display = 'flex';
+    const infoField = document.getElementById('info');
     const timeField = document.getElementById('time-field');
     const distanceField = document.getElementById('distance-field');
-    const gasDiv = document.getElementById('gas-div');
     const gasField = document.getElementById('gas-field');
-    const nbStep = ((pathData.nbCommunes) - 2);
-    const etapesString = nbStep !== 0 ? ' (via ' + nbStep + ' étape' + (nbStep !== 1 ? 's)' : ')') : '';
-    resumeField.textContent = pathData.nomCommuneDepart + ' vers ' + pathData.nomCommuneArrivee + etapesString;
-    timeField.textContent = Math.floor(pathData.temps) + 'h' + Math.round((pathData.temps - Math.floor(pathData.temps)) * 60);
 
-    const consumption = getFuelConsumption(carData, pathData.distance)
-    if (consumption < 0) {
-        gasField.textContent = (consumption * -1) + " L (avec une voiture moyenne)";
+    if (pathData.distance === -1) {
+        distanceField.textContent = "-km";
+        timeField.textContent = "-h";
+        gasField.textContent = "-L";
+        infoField.textContent = "Aucun itinéraire n'a été trouvé.";
     } else {
-        gasField.textContent = consumption + " (avec votre voiture)";
-    }
+        timeField.textContent = ((jours = Math.floor(pathData.temps / 24)) > 0 ? jours + 'j ' : '') + ((heures = Math.floor(pathData.temps % 24)) > 0 ? heures + 'h ' : '') + Math.round((pathData.temps - Math.floor(pathData.temps)) * 60) + 'm';
 
-    // crop the distance to 2 decimals
-    distanceField.textContent = pathData.distance.toFixed(2) + ' km';
+        const consumption = getFuelConsumption(carData, pathData.distance)
+        if (consumption < 0) {
+            gasField.textContent = (consumption * -1) + " L";
+            infoField.textContent = "Vous n'avez pas renseigné de voiture, nous avons donc utilisé une voiture moyenne pour calculer votre consommation de carburant.";
+        } else {
+            gasField.textContent = consumption;
+            infoField.textContent = "Calcul de la consommation de carburant effectué avec votre voiture.";
+        }
+
+        // crop the distance to 2 decimals
+        distanceField.textContent = pathData.distance.toFixed(2) + ' km';
+    }
 }
 
 

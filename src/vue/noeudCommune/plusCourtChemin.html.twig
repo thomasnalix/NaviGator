@@ -50,20 +50,22 @@
                 </div>
             </form>
         </div>
-        <div class="box-blur flex-col flex" id="result">
-            <p id="resume-field">Erreur lors du chargement</p>
-            <div class="flex gap-4">
-                <span class="material-symbols-outlined">schedule</span>
-                <p id="time-field">Erreur</p>
+        <div class="box-blur flex-col flex gap-4" id="result">
+            <div class="flex space-around">
+                <div class="flex pastille gap-4">
+                    <span class="material-symbols-outlined">schedule</span>
+                    <p id="time-field">Erreur</p>
+                </div>
+                <div class="flex pastille gap-4">
+                    <span class="material-symbols-outlined">directions_car</span>
+                    <p id="distance-field">Erreur</p>
+                </div>
+                <div class="flex pastille gap-4">
+                    <span class="material-symbols-outlined">local_gas_station</span>
+                    <p id="gas-field">Erreur</p>
+                </div>
             </div>
-            <div class="flex gap-4">
-                <span class="material-symbols-outlined">directions_car</span>
-                <p id="distance-field">Erreur</p>
-            </div>
-            <div id="gas-div" class="flex gap-4">
-                <span class="material-symbols-outlined">local_gas_station</span>
-                <p id="gas-field">Erreur</p>
-            </div>
+            <span id="info"></span>
         </div>
     </div>
     <img src="{{ assistantUrl("../ressources/img/load.gif")}}" alt="load" id="load">
