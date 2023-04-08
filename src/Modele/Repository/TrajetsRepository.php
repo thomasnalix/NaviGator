@@ -5,6 +5,7 @@ namespace Navigator\Modele\Repository;
 use Navigator\Modele\DataObject\AbstractDataObject;
 use Navigator\Modele\DataObject\Trajets;
 use PDO;
+use PDOException;
 
 class TrajetsRepository extends AbstractRepository implements TrajetsRepositoryInterface {
 
@@ -29,7 +30,7 @@ class TrajetsRepository extends AbstractRepository implements TrajetsRepositoryI
                             $objetFormatTableau["trajets"]);
     }
 
-    public function getHistory($login): array {
+    public function getHistory($login): ?array {
 
         $requeteSQL = <<<SQL
             SELECT idtrajet, array_agg(DISTINCT nom_comm) as trajets FROM
@@ -44,9 +45,13 @@ class TrajetsRepository extends AbstractRepository implements TrajetsRepositoryI
             GROUP BY idtrajet;
         SQL;
         $pdoStatement = $this->connexion->getPdo()->prepare($requeteSQL);
-        $pdoStatement->execute(array(
-            'login' => $login
-        ));
+        try {
+            $pdoStatement->execute(array(
+                'login' => $login
+            ));
+        } catch (PDOException) {
+            return null;
+        }
         $objets = [];
         foreach ($pdoStatement->fetchAll(PDO::FETCH_ASSOC) as $objetFormatTableau) {
             $objets[] = $this->construireDepuisTableau($objetFormatTableau);

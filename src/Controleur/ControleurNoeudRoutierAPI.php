@@ -54,13 +54,17 @@ class ControleurNoeudRoutierAPI extends ControleurGenerique {
             }
 
             $pcc = new PlusCourtChemin($villes, $this->noeudRoutierService);
+
             $now = microtime(true);
             $datas = $pcc->aStarDistance();
             $parameters["time"] = microtime(true) - $now;
-            $parameters["distance"] = $datas[0];
+
+
             $now = microtime(true);
             $parameters["chemin"] = count($datas[1]) > 0 ? $this->noeudRoutierService->calculerItineraire($datas[1]) : [];
             $parameters["time2"] = microtime(true) - $now;
+
+            $parameters["distance"] = $datas[0];
             $parameters["temps"] = $datas[2];
             $parameters["nbCommunes"] = count($noeudList);
             $parameters["nomCommuneDepart"] = array_shift($noeudList);
@@ -85,7 +89,11 @@ class ControleurNoeudRoutierAPI extends ControleurGenerique {
 
     public function recupererCoordonneesCommunes($commune): Response {
         try {
-            $noeudsCommunes = $this->noeudRoutierService->getCoordNoeudCommune($commune);
+            // if commune is a number, it's a gid
+            if (is_numeric($commune))
+                $noeudsCommunes = $this->noeudRoutierService->getCoordNoeudByGid($commune);
+            else
+                $noeudsCommunes = $this->noeudRoutierService->getCoordNoeudCommune($commune);
             return new JsonResponse(json_encode($noeudsCommunes), Response::HTTP_OK, [], true);
         } catch (ServiceException $exception) {
             MessageFlash::ajouter("danger", $exception->getMessage());

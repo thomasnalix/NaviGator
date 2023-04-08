@@ -17,4 +17,6 @@ interface NoeudRoutierRepositoryInterface {
     public function getDepartementGid(int $noeudRoutierGid);
 
     public function getNoeudProche(float $lat, float $long);
+
+    public function getCoordNoeudByGid(int $gid);
 }

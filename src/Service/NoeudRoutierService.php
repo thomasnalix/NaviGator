@@ -32,6 +32,14 @@ class NoeudRoutierService implements NoeudRoutierServiceInterface {
         return $result;
     }
 
+    public function getCoordNoeudByGid(int $commune): array {
+        $result = $this->noeudRoutierRepository->getCoordNoeudByGid($commune);
+        if ($result === null) {
+            throw new ServiceException("Noeud routier not found",Response::HTTP_BAD_REQUEST);
+        }
+        return $result;
+    }
+
     /**
      * @throws ServiceException
      */

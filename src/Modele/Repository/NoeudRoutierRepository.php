@@ -47,6 +47,19 @@ class NoeudRoutierRepository extends AbstractRepository implements NoeudRoutierR
         return $noeudsRoutier;
     }
 
+    public function getCoordNoeudByGid(int $gid): ?array {
+        $sql = <<<SQL
+            SELECT lat, long
+            FROM nalixt.noeud_routier
+            WHERE gid = :gid
+        SQL;
+        $pdoStatement = $this->connexion->getPdo()->prepare($sql);
+        $pdoStatement->execute([
+            "gid" => $gid
+        ]);
+        return $pdoStatement->fetch(PDO::FETCH_ASSOC) ?? null;
+    }
+
     public function getNoeudsRoutierDepartement(int $noeudRoutierGid): array {
         $numDepartementNoeudRoutier = $this->getDepartementGid($noeudRoutierGid);
         $requeteSQL = <<<SQL

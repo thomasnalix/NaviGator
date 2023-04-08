@@ -56,9 +56,11 @@ form.addEventListener("submit", async e => {
 
     printResult(pathData, carData);
     printItinary(pathData.chemin);
-    for (let i = 0; i < nbChild; i++)
-        if (!formDestination.children[i].children[0].value.match(/\s\(\d+\)/))
-            placePoint(formDestination.children[i].children[0].value, formDestination.children[i].children[0].id);
+    for (let i = 0; i < nbChild; i++) {
+        let field = formDestination.children[i].children[0];
+        if (!field.value.match(/\s\(\d+\)/) && !field.value.match(/Périphérie/))
+            placePoint(field.value, field.id);
+    }
     await addToHistory(pathData);
 });
 
@@ -75,7 +77,42 @@ function toggleLoading(type) {
     calculButton.disabled = type;
     for (let i = 0; i < formDestination.childElementCount; i++)
         formDestination.children[i].children[0].disabled = type;
+
 }
+
+/**
+ * When redirecting from the history page, the map is loaded with the data of the selected path
+ */
+window.addEventListener('load', function() {
+    const trajet = JSON.parse(localStorage.getItem('trajet'));
+    if (trajet === null) return;
+    toggleLoading(true);
+    const car = fetch('./voiture', {method: 'GET'})
+        .then(response => response.json())
+        .then(carData => getFirstCar({make: carData.marque, model: carData.modele}))
+        .catch(() => undefined);
+    toggleLoading(false);
+    printResult(trajet, car);
+    printItinary(trajet.chemin);
+    for (let i = 0; i < trajet.noeudsList.length; i++)
+        placePoint(trajet.noeudsList[i], "commune"+i);
+
+    // set all the fields with the data of the selected path
+    if (trajet.noeudsList.length > 2) {
+        formDestination.children[0].children[0].value = "Chargement...";
+        formDestination.children[1].children[0].value = "Chargement...";
+        for (let i = 0; i < trajet.noeudsList.length - 2; i++) {
+            addField();
+            formDestination.children[i+1].children[0].value = "Chargement...";
+        }
+    }
+    for (let i = 0; i < trajet.noeudsList.length; i++) {
+        let field = formDestination.children[i].children[0];
+        field.value = trajet.noeudsList[i];
+        field.parentElement.children[2].value = trajet.noeudsList[i];
+    }
+    localStorage.removeItem('trajet');
+});
 
 /**
  * Send data to the server to add it to the history of the user
@@ -138,7 +175,9 @@ map.on('pointerup', function () {
 /**
  * Add event listener on add destination button and add new field in formDestination
  */
-addDestination.addEventListener('click', function () {
+addDestination.addEventListener('click', addField);
+
+function addField() {
     let nbChild = formDestination.childElementCount;
     if (nbChild < 10 && verifyFillField()) {
         const div = document.createElement('div');
@@ -214,7 +253,7 @@ addDestination.addEventListener('click', function () {
     } else {
         addDestination.classList.add('disabled');
     }
-});
+}
 
 /**
  * Init delete button event listener
