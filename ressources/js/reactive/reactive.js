@@ -62,6 +62,11 @@ function startReactiveDom() {
         const [obj, fun, arg] = rel.dataset.stylefun.split(/[.()]+/);
         applyAndRegister(() => {Object.assign(rel.style, objectByName.get(obj)[fun](arg))});
     }
+
+    for (let rel of document.querySelectorAll("[data-htmlfun]")) {
+        const [obj, fun, arg] = rel.dataset.htmlfun.split(/[.()]+/);
+        applyAndRegister(() => {Object.assign(rel.innerHTML, objectByName.get(obj)[fun](arg))});
+    }
 }
 
 function registerEffect(target, key) {

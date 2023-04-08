@@ -125,6 +125,7 @@ function initDeleteButtons() {
             updateIdInput(false);
             verifyChild();
             changeAddStepButton();
+        //    buttonNumber -1;
         }
     }
 }

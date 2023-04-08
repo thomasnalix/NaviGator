@@ -78,8 +78,8 @@ buttonAddDestination.add = function () {
         verifyChild();
         updateIdInput();
         changeAddStepButton();
-        initDeleteButtons();
         buttonLocation.refresh();
+        initDeleteButtons();
     } else {
         buttonAddDestination.class.classList.add('disabled');
     }
