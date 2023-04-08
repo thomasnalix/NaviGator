@@ -44,7 +44,6 @@ class ControleurNoeudRoutierAPI extends ControleurGenerique {
             if ($_POST["gid$i"] != "")
                 $noeudList['gid' . $i] = $_POST["gid$i"];
             else
-                // detect pattern " (56879)" and remove it
                 $noeudList['commune' . $i] = preg_replace('/\s\(\d+\)/', '', $_POST["commune$i"]);
         }
         try {

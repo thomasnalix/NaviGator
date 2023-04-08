@@ -51,11 +51,14 @@ form.addEventListener("submit", async e => {
 
     const [pathData, carData] = await Promise.all([path, car]);
     toggleLoading(false);
-    console.log(pathData);
-    console.log(pathData.time);
+
+    console.log(pathData); // TODO: A SUPPRIMER APRES TEST
 
     printResult(pathData, carData);
     printItinary(pathData.chemin);
+    for (let i = 0; i < nbChild; i++)
+        if (!formDestination.children[i].children[0].value.match(/\s\(\d+\)/))
+            placePoint(formDestination.children[i].children[0].value, formDestination.children[i].children[0].id);
     await addToHistory(pathData);
 });
 
@@ -78,7 +81,6 @@ function toggleLoading(type) {
  * Send data to the server to add it to the history of the user
  */
 async function addToHistory(data) {
-
     const url = './historique';
     const formData = new FormData();
 
@@ -122,11 +124,12 @@ function printResult(pathData, carData) {
     }
 }
 
-
+/* When the user move the map, the navBox is hidden */
 map.on('pointerdrag', function () {
     navBox.style.display = 'none';
 });
 
+/* When the user stop moving the map, the navBox is shown */
 map.on('pointerup', function () {
     navBox.style.display = 'flex';
 });

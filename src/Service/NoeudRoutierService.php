@@ -42,6 +42,9 @@ class NoeudRoutierService implements NoeudRoutierServiceInterface {
                 $noeudRoutier[] = $this->noeudRoutierRepository->recupererParGid($value);
             } else {
                 $noeudCommune = $this->noeudCommuneRepository->getCommune($value);
+                if ($noeudCommune === null) {
+                    throw new ServiceException("Noeud commune not found", Response::HTTP_BAD_REQUEST);
+                }
                 $noeudRoutier[] = $this->noeudRoutierRepository->recupererNoeudRoutier($noeudCommune->getId_nd_rte());
             }
         }
