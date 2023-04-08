@@ -1,5 +1,6 @@
 import {applyAndRegister, reactive, startReactiveDom} from "./reactive.js";
 import {buttonLocation} from "./targetLocation.js";
+import {cross} from "./deleteCross";
 
 let buttonAddDestination = reactive({
     class: document.getElementById('addDestination')
@@ -9,6 +10,7 @@ buttonAddDestination.add = function () {
     let nbChild = formDestination.childElementCount;
     if (nbChild < 10 && verifyFillField()) {
         buttonLocation.buttonNumber++;
+        cross.crossNumber++;
         const div = document.createElement('div');
         div.classList.add('input-box');
 
@@ -44,6 +46,7 @@ buttonAddDestination.add = function () {
         const iconDelete = document.createElement('span');
         iconDelete.classList.add('material-symbols-outlined', 'close');
         iconDelete.textContent = 'close';
+        iconDelete.setAttribute('data-onclick', 'cross.click(' + cross.crossNumber + ')');
         div.appendChild(iconDelete);
 
 
@@ -79,7 +82,7 @@ buttonAddDestination.add = function () {
         updateIdInput();
         changeAddStepButton();
         buttonLocation.refresh();
-        initDeleteButtons();
+        // initDeleteButtons();
     } else {
         buttonAddDestination.class.classList.add('disabled');
     }

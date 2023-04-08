@@ -103,32 +103,32 @@ map.on('pointerup', function () {
  * Init delete button event listener
  * When click on close class icon, remove the parent field
  */
-function initDeleteButtons() {
-    for (let i = 0; i < close.length; i++) {
-        close[i].onclick = function () {
-            let nbChild = formDestination.childElementCount;
-            if (nbChild > 2) {
-                removePointOnMap(this.parentElement.children[0].name);
-                updateWhenDelete(this.parentElement.children[0].name)
-                this.parentElement.remove();
-                // remove point last - 1 point in flagBox
-                for (let i = 0; i < 3; i++) {
-                    flagBox.children[flagBox.childElementCount - 2].remove();
-                }
-                if (nbChild === 3) {
-                    flagBox.children[flagBox.childElementCount - 2].remove();
-                    flagBox.children[flagBox.childElementCount - 2].remove();
-                }
-            }
-            nbField.setAttribute('value', nbChild - 1);
-            // set all id of field
-            updateIdInput(false);
-            verifyChild();
-            changeAddStepButton();
-        //    buttonNumber -1;
-        }
-    }
-}
+// function initDeleteButtons() {
+//     for (let i = 0; i < close.length; i++) {
+//         close[i].onclick = function () {
+//             let nbChild = formDestination.childElementCount;
+//             if (nbChild > 2) {
+//                 removePointOnMap(this.parentElement.children[0].name);
+//                 updateWhenDelete(this.parentElement.children[0].name)
+//                 this.parentElement.remove();
+//                 // remove point last - 1 point in flagBox
+//                 for (let i = 0; i < 3; i++) {
+//                     flagBox.children[flagBox.childElementCount - 2].remove();
+//                 }
+//                 if (nbChild === 3) {
+//                     flagBox.children[flagBox.childElementCount - 2].remove();
+//                     flagBox.children[flagBox.childElementCount - 2].remove();
+//                 }
+//             }
+//             nbField.setAttribute('value', nbChild - 1);
+//             // set all id of field
+//             updateIdInput(false);
+//             verifyChild();
+//             changeAddStepButton();
+//         //    buttonNumber -1;
+//         }
+//     }
+// }
 
 /**
  * Update all id of children of input-box and point on map
