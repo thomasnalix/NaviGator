@@ -3,10 +3,10 @@
 {% block page_title %}NaviGator{% endblock %}
 
 {% block page_content %}
-    <script defer src="../ressources/js/main.js"></script>
-    <script defer src="../ressources/js/autocompletion.js"></script>
-    <script defer src="../ressources/js/mapInteraction.js"></script>
-    <script defer src="../ressources/js/car.js"></script>
+    <script defer src="{{ assistantUrl("../ressources/js/main.js") }}" ></script>
+    <script defer src="{{ assistantUrl("../ressources/js/autocompletion.js") }}" ></script>
+    <script defer src="{{ assistantUrl("../ressources/js/mapInteraction.js") }}"></script>
+    <script defer src="{{ assistantUrl("../ressources/js/car.js") }}"></script>
     <div id="nav-box" class="flex flex-col absolute z-100">
         <div class="itinerary-box box-blur">
             <form id="form">
@@ -66,7 +66,7 @@
             </div>
         </div>
     </div>
-    <img src="../ressources/img/load.gif" alt="load" id="load">
+    <img src="{{ assistantUrl("../ressources/img/load.gif")}}" alt="load" id="load">
     <div id="map"></div>
     <div id="popup" class="absolute"></div>
     <script defer>

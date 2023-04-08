@@ -55,8 +55,8 @@ form.addEventListener("submit", async e => {
 
     const [pathData, carData] = await Promise.all([path, car]);
 
+    console.log(pathData);
     console.log(pathData.time);
-    console.log(pathData.time2);
     loader.style.display = 'none';
     calculButton.disabled = false;
     printResult(pathData, carData);

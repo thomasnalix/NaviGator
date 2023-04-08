@@ -49,12 +49,15 @@ class ControleurNoeudRoutierAPI extends ControleurGenerique {
         try {
             $villes = $this->noeudRoutierService->getVillesItinary($nbFields, $noeudList);
 
+            foreach ($villes as $ville) {
+                $parameters['noeudsList'][] = $ville->getGid();
+            }
+
             $pcc = new PlusCourtChemin($villes, $this->noeudRoutierService);
             $now = microtime(true);
             $datas = $pcc->aStarDistance();
             $parameters["time"] = microtime(true) - $now;
             $parameters["distance"] = $datas[0];
-            $parameters["noeudsList"] = array_values($noeudList);
             $now = microtime(true);
             $parameters["chemin"] = count($datas[1]) > 0 ? $this->noeudRoutierService->calculerItineraire($datas[1]) : [];
             $parameters["time2"] = microtime(true) - $now;
