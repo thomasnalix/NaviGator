@@ -2,8 +2,6 @@
 
 namespace Navigator\Modele\Repository;
 
-use Navigator\Lib\PlusCourtChemin;
-use Navigator\Modele\DataObject\AbstractDataObject;
 use Navigator\Modele\DataObject\NoeudRoutier;
 use PDO;
 

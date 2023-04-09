@@ -3,16 +3,18 @@
 namespace Navigator\Controleur;
 
 use Navigator\Lib\MessageFlash;
-use Navigator\Lib\PlusCourtChemin;
 use Navigator\Service\Exception\ServiceException;
 use Navigator\Service\NoeudRoutierServiceInterface;
+use Navigator\Service\PlusCourtCheminServiceInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
 
 class ControleurNoeudRoutierAPI extends ControleurGenerique {
 
 
-    public function __construct(private readonly NoeudRoutierServiceInterface $noeudRoutierService) {
+    public function __construct(
+        private readonly PlusCourtCheminServiceInterface $plusCourtCheminService,
+        private readonly NoeudRoutierServiceInterface    $noeudRoutierService) {
     }
 
     public static function afficherErreur($errorMessage = "", $statusCode = ""): Response {
@@ -41,38 +43,32 @@ class ControleurNoeudRoutierAPI extends ControleurGenerique {
         $nbFields = $_POST['nbField'];
         $noeudList = [];
         for ($i = 0; $i < $nbFields; $i++) {
-            if ($_POST["gid$i"] != "")
+            if (isset($_POST["gid$i"]) && $_POST["gid$i"] != "")
                 $noeudList['gid' . $i] = $_POST["gid$i"];
             else
-                $noeudList['commune' . $i] = preg_replace('/\s\(\d+\)/', '', $_POST["commune$i"]);
+                // detect pattern " (56879)" or " (2B096) and remove it
+                $noeudList['commune' . $i] = preg_replace('/\s\(\w+\d+\)/', '', $_POST["commune$i"]);
         }
         try {
             $villes = $this->noeudRoutierService->getVillesItinary($nbFields, $noeudList);
 
-            foreach ($villes as $ville) {
+            foreach ($villes as $ville)
                 $parameters['noeudsList'][] = $ville->getGid();
-            }
-
-            $pcc = new PlusCourtChemin($villes, $this->noeudRoutierService);
 
             $now = microtime(true);
-            $datas = $pcc->aStarDistance();
+            $datas = $this->plusCourtCheminService->aStarDistance($villes);
             $parameters["time"] = microtime(true) - $now;
-
-
-            $now = microtime(true);
-            $parameters["chemin"] = count($datas[1]) > 0 ? $this->noeudRoutierService->calculerItineraire($datas[1]) : [];
-            $parameters["time2"] = microtime(true) - $now;
-
             $parameters["distance"] = $datas[0];
+            $parameters["chemin"] = count($datas[1]) > 0 ? $this->noeudRoutierService->calculerItineraire($datas[1]) : [];
             $parameters["temps"] = $datas[2];
             $parameters["nbCommunes"] = count($noeudList);
             $parameters["nomCommuneDepart"] = array_shift($noeudList);
             $parameters["nomCommuneArrivee"] = end($noeudList);
             return new JsonResponse(json_encode($parameters), Response::HTTP_OK, [], true);
         } catch (ServiceException $exception) {
-            MessageFlash::ajouter("danger", $exception->getMessage());
-            return new JsonResponse(["error" => $exception->getMessage()], $exception->getCode());
+            $parameters["error"] = $exception->getMessage();
+            $parameters["distance"] = -1; // for js
+            return new JsonResponse(json_encode($parameters), Response::HTTP_OK, [], true);
         }
     }
 

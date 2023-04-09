@@ -52,16 +52,17 @@ form.addEventListener("submit", async e => {
     const [pathData, carData] = await Promise.all([path, car]);
     toggleLoading(false);
 
-    console.log(pathData); // TODO: A SUPPRIMER APRES TEST
-
     printResult(pathData, carData);
-    printItinary(pathData.chemin);
-    for (let i = 0; i < nbChild; i++) {
-        let field = formDestination.children[i].children[0];
-        if (!field.value.match(/\s\(\w+\d+\)/) && !field.value.match(/Périphérie/))
-            placePoint(field.value, field.id);
+    if (pathData.distance !== -1) {
+        printItinary(pathData.chemin);
+        for (let i = 0; i < nbChild; i++) {
+            let field = formDestination.children[i].children[0];
+            if (!field.value.match(/\s\(\w+\d+\)/) &&
+                !field.value.match(/Périphérie/))
+                placePoint(field.value, field.id);
+        }
+        await addToHistory(pathData);
     }
-    await addToHistory(pathData);
 });
 
 /** toggle button and input field with disable status or not and depending on the boolean value
