@@ -164,6 +164,66 @@ class PlusCourtCheminTest extends TestCase {
         $this->assertEquals($path, $result[1]);
     }
 
+    public function testAStarSameDepartmentOneStep() {
+        $noeudRoutierDepart = new NoeudRoutier(903713, 43.548571275422475, 3.977081144893388); // Carnon
+        $noeudRoutierStep = new NoeudRoutier(56310, 43.561939791703864, 4.084459714500611); // La Grande Motte
+        $noeudRoutierArrivee = new NoeudRoutier(54720, 43.53384787008224, 4.138118267057888); // Grau du Roi
+        $noeudsRoutier = [$noeudRoutierDepart, $noeudRoutierStep, $noeudRoutierArrivee];
+        $noeudsRoutierDepartementFirstCall = json_decode(file_get_contents('..\..\ressources\data\34.json'), true);
+        $noeudsRoutierDepartementSecondCall = json_decode(file_get_contents('..\..\ressources\data\30.json'), true);
+        $this->noeudRoutierService->expects($this->exactly(2))
+            ->method('getNoeudsRoutierDepartement')
+            ->willReturnOnConsecutiveCalls($noeudsRoutierDepartementFirstCall, $noeudsRoutierDepartementSecondCall);
+        $result = $this->lib->aStarDistance($noeudsRoutier);
+        $this->assertEquals(15.99, round($result[0], 6));
+        $this->assertCount(42, $result[1]);
+        $path = [
+            1227366,
+            1227371,
+            1237165,
+            1227377,
+            1237390,
+            1227390,
+            1236973,
+            1227375,
+            1227374,
+            40826,
+            40827,
+            40825,
+            100392,
+            27413,
+            27414,
+            27406,
+            27416,
+            27415,
+            27407,
+            27408,
+            27402,
+            140248,
+            98275,
+            1229459,
+            40467,
+            1229440,
+            130885,
+            1229441,
+            132775,
+            183365,
+            183370,
+            40486,
+            40484,
+            40485,
+            40483,
+            1227359,
+            1227358,
+            1227360,
+            1227373,
+            1225304,
+            1225296,
+            1227372
+        ];
+        $this->assertEquals($path, $result[1]);
+    }
+
     public function testAStarImpossible() {
         $noeudRoutierDepart = new NoeudRoutier(2584, 42.31130862288786, 9.150005433988802); // Corte
         $noeudRoutierArrivee = new NoeudRoutier(61526, 43.59917864959453, 3.894125217456986); // Montpellier
