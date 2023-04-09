@@ -58,8 +58,8 @@ class NoeudRoutierRepository extends AbstractRepository implements NoeudRoutierR
         return $pdoStatement->fetch(PDO::FETCH_ASSOC) ?? null;
     }
 
-    public function getNoeudsRoutierDepartement(int $noeudRoutierGid): array {
-        $numDepartementNoeudRoutier = $this->getDepartementGid($noeudRoutierGid);
+    public function getNoeudsRoutierDepartement(int $numDepartement): array {
+        $numDepartementNoeudRoutier = $this->getDepartementGid($numDepartement);
         $requeteSQL = <<<SQL
             SELECT *
             FROM nalixt.vitesses_route

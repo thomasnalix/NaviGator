@@ -93,7 +93,7 @@ class PlusCourtCheminTest extends TestCase {
         $noeudRoutierDepart = new NoeudRoutier(61526, 43.59917864959453, 43.56752258324011); // Montpellier
         $noeudRoutierArrivee = new NoeudRoutier(57806, 3.894125217456986, 3.901286019097689); // Lattes
         $noeudsRoutier = [$noeudRoutierDepart, $noeudRoutierArrivee];
-        $noeudsRoutierDepartement = json_decode(file_get_contents('..\..\ressources\data\34.json'), true);
+        $noeudsRoutierDepartement = json_decode(file_get_contents('C:\xampp\htdocs\NaviGator\ressources\data\34.json'), true);
         $this->noeudRoutierService->expects($this->once())
             ->method('getNoeudsRoutierDepartement')
             ->willReturn($noeudsRoutierDepartement);
@@ -134,8 +134,8 @@ class PlusCourtCheminTest extends TestCase {
         $noeudRoutierDepart = new NoeudRoutier(56310, 43.561939791703864, 4.084459714500611); // La Grande Motte
         $noeudRoutierArrivee = new NoeudRoutier(54720, 43.53384787008224, 4.138118267057888); // Grau du Roi
         $noeudsRoutier = [$noeudRoutierDepart, $noeudRoutierArrivee];
-        $noeudsRoutierDepartementFirstCall = json_decode(file_get_contents('..\..\ressources\data\34.json'), true);
-        $noeudsRoutierDepartementSecondCall = json_decode(file_get_contents('..\..\ressources\data\30.json'), true);
+        $noeudsRoutierDepartementFirstCall = json_decode(file_get_contents('C:\xampp\htdocs\NaviGator\ressources\data\34.json'), true);
+        $noeudsRoutierDepartementSecondCall = json_decode(file_get_contents('C:\xampp\htdocs\NaviGator\ressources\data\30.json'), true);
         $this->noeudRoutierService->expects($this->exactly(2))
             ->method('getNoeudsRoutierDepartement')
             ->willReturnOnConsecutiveCalls($noeudsRoutierDepartementFirstCall, $noeudsRoutierDepartementSecondCall);
@@ -169,8 +169,8 @@ class PlusCourtCheminTest extends TestCase {
         $noeudRoutierStep = new NoeudRoutier(56310, 43.561939791703864, 4.084459714500611); // La Grande Motte
         $noeudRoutierArrivee = new NoeudRoutier(54720, 43.53384787008224, 4.138118267057888); // Grau du Roi
         $noeudsRoutier = [$noeudRoutierDepart, $noeudRoutierStep, $noeudRoutierArrivee];
-        $noeudsRoutierDepartementFirstCall = json_decode(file_get_contents('..\..\ressources\data\34.json'), true);
-        $noeudsRoutierDepartementSecondCall = json_decode(file_get_contents('..\..\ressources\data\30.json'), true);
+        $noeudsRoutierDepartementFirstCall = json_decode(file_get_contents('C:\xampp\htdocs\NaviGator\ressources\data\34.json'), true);
+        $noeudsRoutierDepartementSecondCall = json_decode(file_get_contents('C:\xampp\htdocs\NaviGator\ressources\data\30.json'), true);
         $this->noeudRoutierService->expects($this->exactly(2))
             ->method('getNoeudsRoutierDepartement')
             ->willReturnOnConsecutiveCalls($noeudsRoutierDepartementFirstCall, $noeudsRoutierDepartementSecondCall);
@@ -228,8 +228,8 @@ class PlusCourtCheminTest extends TestCase {
         $noeudRoutierDepart = new NoeudRoutier(2584, 42.31130862288786, 9.150005433988802); // Corte
         $noeudRoutierArrivee = new NoeudRoutier(61526, 43.59917864959453, 3.894125217456986); // Montpellier
         $noeudsRoutier = [$noeudRoutierDepart, $noeudRoutierArrivee];
-        $noeudsRoutierDepartementFirstCall = json_decode(file_get_contents('..\..\ressources\data\2B.json'), true);
-        $noeudsRoutierDepartementSecondCall = json_decode(file_get_contents('..\..\ressources\data\2A.json'), true);
+        $noeudsRoutierDepartementFirstCall = json_decode(file_get_contents('C:\xampp\htdocs\NaviGator\ressources\data\2B.json'), true);
+        $noeudsRoutierDepartementSecondCall = json_decode(file_get_contents('C:\xampp\htdocs\NaviGator\ressources\data\2A.json'), true);
         $this->noeudRoutierService->expects($this->atLeast(1))
             ->method('getNoeudsRoutierDepartement')
             ->willReturnOnConsecutiveCalls($noeudsRoutierDepartementFirstCall, $noeudsRoutierDepartementSecondCall);

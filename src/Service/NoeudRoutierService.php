@@ -20,15 +20,8 @@ class NoeudRoutierService implements NoeudRoutierServiceInterface {
         $this->noeudCommuneRepository = $noeudCommuneRepository;
     }
 
-    /**
-     * @throws ServiceException
-     */
     public function getNoeudRoutierProche(float $lat, float $long): array {
-        $result = $this->noeudRoutierRepository->getNoeudProche($lat, $long);
-        if ($result === null) {
-            throw new ServiceException("Noeud routier not found", Response::HTTP_BAD_REQUEST);
-        }
-        return $result;
+        return $this->noeudRoutierRepository->getNoeudProche($lat, $long);
     }
 
     public function getCoordNoeudByGid(int $commune): array {
@@ -64,8 +57,15 @@ class NoeudRoutierService implements NoeudRoutierServiceInterface {
         return $this->noeudRoutierRepository->calculerItineraire($tronconsGid);
     }
 
+    /**
+     * @throws ServiceException
+     */
     public function getNoeudsRoutierDepartement(int $noeudRoutierGid): array {
-        return $this->noeudRoutierRepository->getNoeudsRoutierDepartement($noeudRoutierGid);
+        $departement = $this->noeudRoutierRepository->getNoeudsRoutierDepartement($noeudRoutierGid);
+        if ($departement == []) {
+            throw new ServiceException("Department not found", Response::HTTP_BAD_REQUEST);
+        }
+        return $departement;
     }
 
     /**
