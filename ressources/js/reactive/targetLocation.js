@@ -1,4 +1,5 @@
 import {applyAndRegister, reactive, startReactiveDom} from "./reactive.js";
+import {cross} from "./deleteCross.js";
 export {buttonLocation};
 
 let buttonLocation = reactive({
@@ -30,12 +31,39 @@ buttonLocation.click = function (i) {
         addPointOnMap(target.children[0].name, lon, lat);
         document.body.style.cursor = 'default';
     });
+
+    console.log("ButtonNumber : " + buttonLocation.buttonNumber)
+    console.log("CrossNumber : " + cross.crossNumber)
+    console.log("---------------------")
 }
 
 buttonLocation.refresh = function() {
-    console.log("refresh")
     buttonLocation.buttons = document.getElementById('formDestination').children;
-    startReactiveDom();
+    // startReactiveDom();
+}
+
+buttonLocation.backFields = function() {
+    let btn = [];
+    for (let i = 1; i < buttonLocation.buttonNumber; i++) {
+        btn.push(`
+            <div class="input-box">
+                <input type="text"
+                       list="auto-completion-${i-1}"
+                       placeholder="Commune de départ"
+                       name="commune${i-1}"
+                       class="commune"
+                       id="commune${i-1}"
+                       required>
+                <datalist id="auto-completion-${i-1}"></datalist>
+                <input type="hidden" name="gid${i-1}" id="gid${i-1}">
+                <span class="locate-button material-symbols-outlined"
+                      data-onclick="buttonLoc.click(${i})">my_location</span>
+                <span class="material-symbols-outlined close"
+                      data-onclick="crossX.click(${i})">close</span>
+            </div>    
+        `)
+    }
+    return btn.join("");
 }
 
 applyAndRegister(() => buttonLocation.buttonNumber);

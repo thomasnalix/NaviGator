@@ -1,16 +1,18 @@
 import {applyAndRegister, reactive, startReactiveDom} from "./reactive.js";
 import {buttonLocation} from "./targetLocation.js";
-import {cross} from "./deleteCross";
+import {cross} from "./deleteCross.js";
 
 let buttonAddDestination = reactive({
     class: document.getElementById('addDestination')
 }, "buttonAdd");
 
 buttonAddDestination.add = function () {
+    console.log("ZEGJREPOJGQREOJGOPREQ")
     let nbChild = formDestination.childElementCount;
     if (nbChild < 10 && verifyFillField()) {
         buttonLocation.buttonNumber++;
         cross.crossNumber++;
+
         const div = document.createElement('div');
         div.classList.add('input-box');
 
@@ -25,7 +27,7 @@ buttonAddDestination.add = function () {
         input.id = `commune${nbChild - 1}`;
         input.setAttribute('list', dataList.id);
         input.required = true;
-        input.addEventListener('input', debounce(e => autocomplete(input.list, e.target.value), 200));
+        // input.addEventListener('input', debounce(e => autocomplete(input.list, e.target.value), 200));
         input.oninput = e => checkForValidInput(e.target);
 
         div.appendChild(input);
@@ -46,7 +48,7 @@ buttonAddDestination.add = function () {
         const iconDelete = document.createElement('span');
         iconDelete.classList.add('material-symbols-outlined', 'close');
         iconDelete.textContent = 'close';
-        iconDelete.setAttribute('data-onclick', 'cross.click(' + cross.crossNumber + ')');
+        iconDelete.setAttribute('data-onclick', 'crossX.click(' + cross.crossNumber + ')');
         div.appendChild(iconDelete);
 
 
@@ -82,12 +84,11 @@ buttonAddDestination.add = function () {
         updateIdInput();
         changeAddStepButton();
         buttonLocation.refresh();
-        // initDeleteButtons();
+        cross.refresh();
+        startReactiveDom();
     } else {
         buttonAddDestination.class.classList.add('disabled');
     }
 }
 
-applyAndRegister(() => buttonAddDestination.add());
-
-startReactiveDom();
+applyAndRegister(() => buttonAddDestination.class);

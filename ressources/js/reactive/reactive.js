@@ -35,33 +35,40 @@ function reactive(passiveObject, name) {
     return reactiveObject;
 }
 
-function startReactiveDom() {
-    for (let elementClickable of document.querySelectorAll("[data-onclick]")) {
+function startReactiveDom(doc = document) {
+    for (let elementClickable of doc.querySelectorAll("[data-onclick]")) {
         const [nomObjet, methode, argument] = elementClickable.dataset.onclick.split(/[.()]+/);
         elementClickable.addEventListener('click', (event) => {
-            const objet = objectByName.get(nomObjet);
-            objet[methode](argument);
+            objectByName.get(nomObjet)[methode](argument);
+        });
+    }
+
+    for (let elementClickable of doc.querySelectorAll("[data-htmlfun]")) {
+        const [nomObjet, methode, argument] = elementClickable.dataset.htmlfun.split(/[.()]+/);
+        applyAndRegister(() => {
+            elementClickable.innerHTML = objectByName.get(nomObjet)[methode](argument);
+            startReactiveDom(elementClickable)
         })
     }
 
-    for (let rel of document.querySelectorAll("[data-textfun]")) {
-        const [obj, fun, arg] = rel.dataset.textfun.split(/[.()]+/);
-        applyAndRegister(() => {
-            rel.textContent = objectByName.get(obj)[fun](arg)
-        });
-    }
+    // for (let rel of document.querySelectorAll("[data-textfun]")) {
+    //     const [obj, fun, arg] = rel.dataset.textfun.split(/[.()]+/);
+    //     applyAndRegister(() => {
+    //         rel.textContent = objectByName.get(obj)[fun](arg)
+    //     });
+    // }
 
-    for (let rel of document.querySelectorAll("[data-textvar]")) {
-        const [obj, prop] = rel.dataset.textvar.split('.');
-        applyAndRegister(() => {
-            rel.textContent = objectByName.get(obj)[prop]
-        });
-    }
+    // for (let rel of document.querySelectorAll("[data-textvar]")) {
+    //     const [obj, prop] = rel.dataset.textvar.split('.');
+    //     applyAndRegister(() => {
+    //         rel.textContent = objectByName.get(obj)[prop]
+    //     });
+    // }
 
-    for (let rel of document.querySelectorAll("[data-stylefun]")) {
-        const [obj, fun, arg] = rel.dataset.stylefun.split(/[.()]+/);
-        applyAndRegister(() => {Object.assign(rel.style, objectByName.get(obj)[fun](arg))});
-    }
+    // for (let rel of document.querySelectorAll("[data-stylefun]")) {
+    //     const [obj, fun, arg] = rel.dataset.stylefun.split(/[.()]+/);
+    //     applyAndRegister(() => {Object.assign(rel.style, objectByName.get(obj)[fun](arg))});
+    // }
 }
 
 function registerEffect(target, key) {
