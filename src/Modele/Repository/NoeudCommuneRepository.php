@@ -76,6 +76,8 @@ class NoeudCommuneRepository extends AbstractRepository implements NoeudCommuneR
             "nomCommune" => $nomCommune
         ]);
         $objetFormatTableau = $pdoStatement->fetch();
-        return $this->construireDepuisTableau($objetFormatTableau) ?? null;
+        if ($objetFormatTableau === false)
+            return null;
+        return $this->construireDepuisTableau($objetFormatTableau);
     }
 }

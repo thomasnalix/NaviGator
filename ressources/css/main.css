@@ -193,6 +193,35 @@ button a {
            Maps
   ======================= */
 
+.pastille {
+    padding: 5px;
+    border-radius: 10px;
+    background: var(--input-color);
+    color: var(--text-color);
+}
+
+#info {
+    font-size: 12px;
+    font-style: italic;
+}
+
+#calcul:disabled {
+    background: #ccc;
+    cursor: default;
+}
+
+#calcul:hover {
+    background: #07b36a;
+}
+
+#calcul:hover:disabled {
+    background: #ccc;
+}
+
+#calcul {
+    transition-duration: 0.1s;
+}
+
 #load {
     display: none;
     position: absolute;
@@ -211,7 +240,7 @@ button a {
 }
 
 .itinerary-box {
-    width: 370px;
+    width: 400px;
 }
 
 .ol-zoom {
@@ -400,9 +429,70 @@ input[type="text"]:focus {
     width: 15%;
 }
 
+
+/* =========================
+           History
+  ======================= */
+
+#history {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    padding: 10px;
+    height: 500px;
+    overflow-y: auto;
+    scrollbar-width: thin;
+}
+
+.history-child {
+    padding: 5px;
+    border-radius: 10px;
+    background: var(--input-color);
+    color: var(--text-color);
+    min-height: 2.5em;
+    overflow: hidden;
+    cursor: pointer;
+    width: 100%;
+    display: flex;
+    align-items: center;
+}
+
+.crop-text {
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    overflow: hidden;
+    transition-duration: .1s;
+}
+
+.overflowed-text {
+}
+.overflowed-text:hover {
+    text-overflow: initial;
+    overflow: initial;
+    /*animation: marquee 5s linear infinite;*/
+}
+
+@keyframes marquee {
+    from {
+        transform: translateX(0%);
+    }
+    to {
+        transform: translateX(-100%);
+    }
+}
+
+
+
+
+
+/* When crop-text is over, the text forward slowly to the left ONLY if the text is too long */
+
+
+
 /* =========================
            General
   ======================= */
+
 
 
 .background {
@@ -435,7 +525,7 @@ input[type="text"]:focus {
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
     padding: 10px;
     border-radius: 10px;
-    width: 370px;
+    width: 400px;
     backdrop-filter: blur(15px) saturate(250%);
     -webkit-backdrop-filter: blur(15px) saturate(250%);
     -moz-backdrop-filter: blur(15px) saturate(250%);
@@ -570,4 +660,7 @@ input[type="text"]:focus {
 
 .justify-center {
     justify-content: center
+}
+.overflow-hidden {
+    overflow: hidden
 }

@@ -17,4 +17,6 @@ interface NoeudRoutierServiceInterface {
 
     public function getNomCommunes(string $nomCommune): array;
 
+    public function getCoordNoeudByGid(int $commune);
+
 }

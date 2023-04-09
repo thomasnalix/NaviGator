@@ -3,10 +3,10 @@
 {% block page_title %}NaviGator{% endblock %}
 
 {% block page_content %}
-    <script defer src="../ressources/js/main.js"></script>
-    <script defer src="../ressources/js/autocompletion.js"></script>
-    <script defer src="../ressources/js/mapInteraction.js"></script>
-    <script defer src="../ressources/js/car.js"></script>
+    <script defer src="{{ assistantUrl("../ressources/js/main.js") }}" ></script>
+    <script defer src="{{ assistantUrl("../ressources/js/autocompletion.js") }}" ></script>
+    <script defer src="{{ assistantUrl("../ressources/js/mapInteraction.js") }}"></script>
+    <script defer src="{{ assistantUrl("../ressources/js/car.js") }}"></script>
     <div id="nav-box" class="flex flex-col absolute z-100">
         <div class="itinerary-box box-blur">
             <form id="form">
@@ -50,23 +50,25 @@
                 </div>
             </form>
         </div>
-        <div class="box-blur flex-col flex" id="result">
-            <p id="resume-field">Erreur lors du chargement</p>
-            <div class="flex gap-4">
-                <span class="material-symbols-outlined">schedule</span>
-                <p id="time-field">Erreur</p>
+        <div class="box-blur flex-col flex gap-4" id="result">
+            <div class="flex space-around">
+                <div class="flex pastille gap-4">
+                    <span class="material-symbols-outlined">schedule</span>
+                    <p id="time-field">Erreur</p>
+                </div>
+                <div class="flex pastille gap-4">
+                    <span class="material-symbols-outlined">directions_car</span>
+                    <p id="distance-field">Erreur</p>
+                </div>
+                <div class="flex pastille gap-4">
+                    <span class="material-symbols-outlined">local_gas_station</span>
+                    <p id="gas-field">Erreur</p>
+                </div>
             </div>
-            <div class="flex gap-4">
-                <span class="material-symbols-outlined">directions_car</span>
-                <p id="distance-field">Erreur</p>
-            </div>
-            <div id="gas-div" class="flex gap-4">
-                <span class="material-symbols-outlined">local_gas_station</span>
-                <p id="gas-field">Erreur</p>
-            </div>
+            <span id="info"></span>
         </div>
     </div>
-    <img src="../ressources/img/load.gif" alt="load" id="load">
+    <img src="{{ assistantUrl("../ressources/img/load.gif")}}" alt="load" id="load">
     <div id="map"></div>
     <div id="popup" class="absolute"></div>
     <script defer>

@@ -5,7 +5,7 @@ const voiture = document.getElementById("voiture");
 const message = document.getElementById("message");
 const loading = document.getElementById("loading");
 
-voiture.addEventListener("submit", async e => {
+voiture?.addEventListener("submit", async e => {
     e.preventDefault();
     loading.classList.remove("hidden");
     await fetch('./voiture', {

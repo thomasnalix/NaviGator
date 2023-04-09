@@ -2,7 +2,6 @@
 
 namespace Navigator\Service;
 
-use Navigator\Lib\PlusCourtChemin;
 use Navigator\Modele\Repository\NoeudCommuneRepositoryInterface;
 use Navigator\Modele\Repository\NoeudRoutierRepositoryInterface;
 use Navigator\Service\Exception\ServiceException;
@@ -27,6 +26,14 @@ class NoeudRoutierService implements NoeudRoutierServiceInterface {
     public function getNoeudRoutierProche(float $lat, float $long): array {
         $result = $this->noeudRoutierRepository->getNoeudProche($lat, $long);
         if ($result === null) {
+            throw new ServiceException("Noeud routier not found", Response::HTTP_BAD_REQUEST);
+        }
+        return $result;
+    }
+
+    public function getCoordNoeudByGid(int $commune): array {
+        $result = $this->noeudRoutierRepository->getCoordNoeudByGid($commune);
+        if ($result === null) {
             throw new ServiceException("Noeud routier not found",Response::HTTP_BAD_REQUEST);
         }
         return $result;
@@ -42,6 +49,9 @@ class NoeudRoutierService implements NoeudRoutierServiceInterface {
                 $noeudRoutier[] = $this->noeudRoutierRepository->recupererParGid($value);
             } else {
                 $noeudCommune = $this->noeudCommuneRepository->getCommune($value);
+                if ($noeudCommune === null) {
+                    throw new ServiceException("Noeud commune not found", Response::HTTP_BAD_REQUEST);
+                }
                 $noeudRoutier[] = $this->noeudRoutierRepository->recupererNoeudRoutier($noeudCommune->getId_nd_rte());
             }
         }
@@ -50,7 +60,7 @@ class NoeudRoutierService implements NoeudRoutierServiceInterface {
 
     public function calculerItineraire(array $tronconsGid): array {
         if (count($tronconsGid) == 0)
-            throw new ServiceException("Error while calculating the path",Response::HTTP_BAD_REQUEST);
+            throw new ServiceException("Error while calculating the path", Response::HTTP_BAD_REQUEST);
         return $this->noeudRoutierRepository->calculerItineraire($tronconsGid);
     }
 

@@ -3,7 +3,7 @@
 {% block page_title %}NaviGator{% endblock %}
 
 {% block page_content %}
-<script defer src="../ressources/js/car.js"></script>
+<script defer src="{{ assistantUrl("../ressources/js/car.js")}}"></script>
 
 <div class="background">
 
@@ -18,7 +18,7 @@
         <form id="voiture">
             <input class="input-detail" type="text" value="{{ voiture.marque }}" placeholder="Marque de votre voiture" name="marque" id="marque">
             <input class="input-detail" type="text" value="{{ voiture.modele }}" placeholder="Modèle de votre voiture" name="modele" id="modele">
-            <img src="../ressources/img/load.gif" id="loading" class="hidden" alt="loading...">
+            <img src="{{ assistantUrl("../ressources/img/load.gif")}}" id="loading" class="hidden" alt="loading...">
             <p id="message" class="text"></p>
             <input class="button-box text-center" value="Modifier" type="submit"/>
         </form>

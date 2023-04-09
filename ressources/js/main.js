@@ -32,7 +32,6 @@ formDestination.addEventListener('input', e => {
 
 form.addEventListener("submit", async e => {
     e.preventDefault();
-    let loader = document.getElementById('load');
     const url = './calculChemin';
     const formData = new FormData();
     const nbChild = formDestination.childElementCount;
@@ -41,10 +40,7 @@ form.addEventListener("submit", async e => {
         formData.append(`gid${i}`, formDestination.children[i].children[2].value);
     }
     formData.append('nbField', nbField.value);
-
-    loader.style.display = 'initial';
-    calculButton.disabled = true;
-
+    toggleLoading(true);
     const path = fetch(url, {method: 'POST', body: formData})
         .then(response => response.json());
 
@@ -54,21 +50,92 @@ form.addEventListener("submit", async e => {
         .catch(() => undefined);
 
     const [pathData, carData] = await Promise.all([path, car]);
+    toggleLoading(false);
 
-    console.log(pathData.time);
-    console.log(pathData.time2);
-    loader.style.display = 'none';
-    calculButton.disabled = false;
     printResult(pathData, carData);
-    printItinary(pathData.chemin);
-    await addToHistory(pathData);
+    if (pathData.distance !== -1) {
+        printItinary(pathData.chemin);
+        for (let i = 0; i < nbChild; i++) {
+            let field = formDestination.children[i].children[0];
+            if (!field.value.match(/\s\(\w+\d+\)/) &&
+                !field.value.match(/Périphérie/))
+                placePoint(field.value, field.id);
+        }
+        await addToHistory(pathData);
+    }
 });
+
+/** toggle button and input field with disable status or not and depending on the boolean value
+ * @param type
+ */
+function toggleLoading(type) {
+    let loader = document.getElementById('load');
+    if (type) {
+        loader.style.display = 'initial';
+    } else {
+        loader.style.display = 'none';
+    }
+    calculButton.disabled = type;
+    for (let i = 0; i < formDestination.childElementCount; i++)
+        formDestination.children[i].children[0].disabled = type;
+
+}
+
+/**
+ * When redirecting from the history page, the map is loaded with the data of the selected path
+ */
+window.addEventListener('load', async function () {
+    const trajet = JSON.parse(localStorage.getItem('trajet'));
+    if (trajet === null) return;
+    toggleLoading(true);
+    const response = await fetch('./voiture', {method: 'GET'});
+    const datasReponse = await response.json();
+    const carData = await getFirstCar({make: datasReponse.marque, model: datasReponse.modele});
+
+    toggleLoading(false);
+    printResult(trajet, carData);
+    printItinary(trajet.chemin);
+    for (let i = 0; i < trajet.noeudsList.length; i++)
+        placePointByGid(trajet.noeudsList[i].nomCommune, trajet.noeudsList[i].gid, "commune" + i);
+
+    // set all the fields with the data of the selected path
+    if (trajet.noeudsList.length > 2) {
+        formDestination.children[0].children[0].value = "Chargement...";
+        formDestination.children[1].children[0].value = "Chargement...";
+        for (let i = 0; i < trajet.noeudsList.length - 2; i++) {
+            addField();
+            formDestination.children[i + 1].children[0].value = "Chargement...";
+        }
+    }
+    for (let i = 0; i < trajet.noeudsList.length; i++) {
+        let field = formDestination.children[i].children[0];
+        field.value = trajet.noeudsList[i].nomCommune;
+        field.parentElement.children[2].value = trajet.noeudsList[i].gid;
+    }
+    localStorage.removeItem('trajet');
+});
+
+/**
+ * Place a point on the map by requesting the server with a gid and not a city name
+ * @param nomCommune
+ * @param gid
+ * @param id
+ */
+function placePointByGid(nomCommune,gid = "", id) {
+    // should send a request to the server to get the coordinates of the city and place a marker on the map
+    const url = './communes/coord/'+ gid;
+    fetch(url)
+        .then(response => response.json())
+        .then(data => {
+            addPointOnMap(id, data.long, data.lat, nomCommune);
+        })
+        .catch(error => console.log(error));
+}
 
 /**
  * Send data to the server to add it to the history of the user
  */
 async function addToHistory(data) {
-
     const url = './historique';
     const formData = new FormData();
 
@@ -84,33 +151,40 @@ async function addToHistory(data) {
  * @param carData the car data from the API (can be undefined)
  */
 function printResult(pathData, carData) {
-    result.style.display = 'initial';
-    const resumeField = document.getElementById('resume-field');
+    result.style.display = 'flex';
+    const infoField = document.getElementById('info');
     const timeField = document.getElementById('time-field');
     const distanceField = document.getElementById('distance-field');
-    const gasDiv = document.getElementById('gas-div');
     const gasField = document.getElementById('gas-field');
-    const nbStep = ((pathData.nbCommunes) - 2);
-    const etapesString = nbStep !== 0 ? ' (via ' + nbStep + ' étape' + (nbStep !== 1 ? 's)' : ')') : '';
-    resumeField.textContent = pathData.nomCommuneDepart + ' vers ' + pathData.nomCommuneArrivee + etapesString;
-    timeField.textContent = Math.floor(pathData.temps) + 'h' + Math.round((pathData.temps - Math.floor(pathData.temps)) * 60);
 
-    const consumption = getFuelConsumption(carData, pathData.distance)
-    if (consumption < 0) {
-        gasField.textContent = (consumption * -1) + " L (avec une voiture moyenne)";
+    if (pathData.distance === -1) {
+        distanceField.textContent = "-km";
+        timeField.textContent = "-h";
+        gasField.textContent = "-L";
+        infoField.textContent = "Aucun itinéraire n'a été trouvé.";
     } else {
-        gasField.textContent = consumption + " (avec votre voiture)";
-    }
+        timeField.textContent = ((jours = Math.floor(pathData.temps / 24)) > 0 ? jours + 'j ' : '') + ((heures = Math.floor(pathData.temps % 24)) > 0 ? heures + 'h ' : '') + Math.round((pathData.temps - Math.floor(pathData.temps)) * 60) + 'm';
 
-    // crop the distance to 2 decimals
-    distanceField.textContent = pathData.distance.toFixed(2) + ' km';
+        const consumption = getFuelConsumption(carData, pathData.distance)
+        if (consumption < 0) {
+            gasField.textContent = (consumption * -1) + " L";
+            infoField.textContent = "Vous n'avez pas renseigné de voiture, nous avons donc utilisé une voiture moyenne pour calculer votre consommation de carburant.";
+        } else {
+            gasField.textContent = consumption;
+            infoField.textContent = "Calcul de la consommation de carburant effectué avec votre voiture.";
+        }
+
+        // crop the distance to 2 decimals
+        distanceField.textContent = pathData.distance.toFixed(2) + ' km';
+    }
 }
 
-
+/* When the user move the map, the navBox is hidden */
 map.on('pointerdrag', function () {
     navBox.style.display = 'none';
 });
 
+/* When the user stop moving the map, the navBox is shown */
 map.on('pointerup', function () {
     navBox.style.display = 'flex';
 });
@@ -119,7 +193,9 @@ map.on('pointerup', function () {
 /**
  * Add event listener on add destination button and add new field in formDestination
  */
-addDestination.addEventListener('click', function () {
+addDestination.addEventListener('click', addField);
+
+function addField() {
     let nbChild = formDestination.childElementCount;
     if (nbChild < 10 && verifyFillField()) {
         const div = document.createElement('div');
@@ -195,7 +271,7 @@ addDestination.addEventListener('click', function () {
     } else {
         addDestination.classList.add('disabled');
     }
-});
+}
 
 /**
  * Init delete button event listener

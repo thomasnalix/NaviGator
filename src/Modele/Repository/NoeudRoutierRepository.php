@@ -2,8 +2,6 @@
 
 namespace Navigator\Modele\Repository;
 
-use Navigator\Lib\PlusCourtChemin;
-use Navigator\Modele\DataObject\AbstractDataObject;
 use Navigator\Modele\DataObject\NoeudRoutier;
 use PDO;
 
@@ -45,6 +43,19 @@ class NoeudRoutierRepository extends AbstractRepository implements NoeudRoutierR
             $noeudsRoutier[] = $noeudRoutier['geom'];
         }
         return $noeudsRoutier;
+    }
+
+    public function getCoordNoeudByGid(int $gid): ?array {
+        $sql = <<<SQL
+            SELECT lat, long
+            FROM nalixt.noeud_routier
+            WHERE gid = :gid
+        SQL;
+        $pdoStatement = $this->connexion->getPdo()->prepare($sql);
+        $pdoStatement->execute([
+            "gid" => $gid
+        ]);
+        return $pdoStatement->fetch(PDO::FETCH_ASSOC) ?? null;
     }
 
     public function getNoeudsRoutierDepartement(int $noeudRoutierGid): array {
