@@ -19,7 +19,7 @@
                         <span class="material-symbols-outlined">flag</span>
                     </div>
                     <div class="flex-col flex gap-4 w-full">
-                        <div data-htmlfun="buttonLoc.backFields()" id="formDestination" class="flex flex-col gap-4 w-full">
+                        <div id="formDestination" class="flex flex-col gap-4 w-full">
                             <div class="input-box">
                                 <input type="text"
                                        list="auto-completion-0"
@@ -35,36 +35,6 @@
                                 <span class="material-symbols-outlined close"
                                       data-onclick="crossX.click(1)">close</span>
                             </div>
-{#                            <div class="input-box">#}
-{#                                <input type="text"#}
-{#                                       list="auto-completion-1"#}
-{#                                       placeholder="Commune d'arrivée"#}
-{#                                       name="commune1"#}
-{#                                       class="commune"#}
-{#                                       id="commune1"#}
-{#                                       required>#}
-{#                                <datalist id="auto-completion-1"></datalist>#}
-{#                                <input type="hidden" name="gid1" id="gid1">#}
-{#                                <span class="locate-button material-symbols-outlined"#}
-{#                                      data-onclick="buttonLoc.click(2)">my_location</span>#}
-{#                                <span class="material-symbols-outlined close"#}
-{#                                      data-onclick="crossX.click(2)">close</span>#}
-{#                            </div>#}
-{#                            <div class="input-box">#}
-{#                                <input type="text"#}
-{#                                       list="auto-completion-2"#}
-{#                                       placeholder="Commune d'arrivée"#}
-{#                                       name="commune2"#}
-{#                                       class="commune"#}
-{#                                       id="commune2"#}
-{#                                       required>#}
-{#                                <datalist id="auto-completion-2"></datalist>#}
-{#                                <input type="hidden" name="gid2" id="gid2">#}
-{#                                <span class="locate-button material-symbols-outlined"#}
-{#                                      data-onclick="buttonLoc.click(3)">my_location</span>#}
-{#                                <span class="material-symbols-outlined close"#}
-{#                                      data-onclick="crossX.click(3)">close</span>#}
-{#                            </div>#}
                             <div class="input-box">
                                 <input type="text"
                                        list="auto-completion-1"
@@ -80,13 +50,12 @@
                                 <span class="material-symbols-outlined close"
                                       data-onclick="crossX.click(10)">close</span>
                             </div>
-
                         </div>
                     </div>
                 </div>
                 <input type="hidden" name="nbField" id="nbField" value="2">
                 <input type="hidden" name="XDEBUG_TRIGGER">
-                <div class="flex">
+                <div class="flex" id="destination">
                     <div id="addDestination" data-onclick="buttonAdd.add()" class="box-flex disabled">
                         <span class="material-symbols-outlined">add_circle</span>
                         <p>Ajouter une étape</p>

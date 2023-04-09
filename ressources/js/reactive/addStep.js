@@ -3,11 +3,9 @@ import {buttonLocation} from "./targetLocation.js";
 import {cross} from "./deleteCross.js";
 
 let buttonAddDestination = reactive({
-    class: document.getElementById('addDestination')
 }, "buttonAdd");
 
 buttonAddDestination.add = function () {
-    console.log("ZEGJREPOJGQREOJGOPREQ")
     let nbChild = formDestination.childElementCount;
     if (nbChild < 10 && verifyFillField()) {
         buttonLocation.buttonNumber++;
@@ -84,11 +82,9 @@ buttonAddDestination.add = function () {
         updateIdInput();
         changeAddStepButton();
         buttonLocation.refresh();
-        cross.refresh();
-        startReactiveDom();
     } else {
-        buttonAddDestination.class.classList.add('disabled');
+        addDestination.classList.add('disabled');
     }
 }
 
-applyAndRegister(() => buttonAddDestination.class);
+startReactiveDom(document.getElementById("destination"));

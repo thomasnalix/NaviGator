@@ -1,4 +1,4 @@
-import {applyAndRegister, reactive} from "./reactive.js";
+import {applyAndRegister, reactive, startReactiveDom} from "./reactive.js";
 import {buttonLocation} from "./targetLocation.js";
 
 export {cross};
@@ -52,4 +52,4 @@ cross.refresh = function () {
     cross.crosses = document.getElementsByClassName('close');
 }
 
-applyAndRegister(() => cross.crosses);
+applyAndRegister(() => cross);
