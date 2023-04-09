@@ -3,28 +3,32 @@
 {% block page_title %}NaviGator{% endblock %}
 
 {% block page_content %}
-<script defer src="{{ assistantUrl("../ressources/js/car.js")}}"></script>
+    <script defer src="{{ assistantUrl("../ressources/js/car.js") }}"></script>
+    <script defer src="{{ assistantUrl("../ressources/js/nasaApi.js") }}"></script>
+    <div class="background">
 
-<div class="background">
+        <div class="absolute form-box gap-10">
 
-<div class="absolute form-box gap-10">
+            <p class="text text-center">
+                Actuellement connecté en temps que {{ utilisateur.prenom }} {{ utilisateur.nom }}
+                ({{ utilisateur.login }})
+            </p>
 
-    <p class="text text-center">
-        Actuellement connecté en temps que {{ utilisateur.prenom }} {{ utilisateur.nom }} ({{ utilisateur.login }})
-    </p>
+            <div class="flex flex-col gap-4 mb-10 input-box">
+                <p class="text">Ma voiture :</p>
+                <form id="voiture">
+                    <input class="input-detail" type="text" value="{{ voiture.marque }}"
+                           placeholder="Marque de votre voiture" name="marque" id="marque">
+                    <input class="input-detail" type="text" value="{{ voiture.modele }}"
+                           placeholder="Modèle de votre voiture" name="modele" id="modele">
+                    <img src="{{ assistantUrl("../ressources/img/load.gif") }}" id="loading" class="hidden"
+                         alt="loading...">
+                    <p id="message" class="text"></p>
+                    <input class="button-box text-center" value="Modifier" type="submit"/>
+                </form>
+            </div>
 
-    <div class="flex flex-col gap-4 mb-10 input-box">
-        <p class="text">Ma voiture :</p>
-        <form id="voiture">
-            <input class="input-detail" type="text" value="{{ voiture.marque }}" placeholder="Marque de votre voiture" name="marque" id="marque">
-            <input class="input-detail" type="text" value="{{ voiture.modele }}" placeholder="Modèle de votre voiture" name="modele" id="modele">
-            <img src="{{ assistantUrl("../ressources/img/load.gif")}}" id="loading" class="hidden" alt="loading...">
-            <p id="message" class="text"></p>
-            <input class="button-box text-center" value="Modifier" type="submit"/>
-        </form>
+        </div>
+        s
     </div>
-
-</div>
-s
-</div>
 {% endblock %}

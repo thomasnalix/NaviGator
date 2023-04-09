@@ -5,12 +5,14 @@
     --blur-color: rgba(255, 255, 255, 0.59);
     --text-color: #171717;
     --input-color: rgba(255, 255, 255, 0.66);
+    --bg-color: #f6f6f6;
 }
 
 [data-theme="dark"] {
     --blur-color: rgba(0, 0, 0, 0.72);
     --text-color: #f6f6f6;
     --input-color: rgba(0, 0, 0, 0.48);
+    --bg-color: #171717;
 }
 
 * {
@@ -21,7 +23,7 @@
 }
 
 body {
-    background: #fff;
+    background: var(--bg-color);
 }
 
 /* =========================
@@ -493,12 +495,23 @@ input[type="text"]:focus {
            General
   ======================= */
 
+*::-webkit-scrollbar {
+    width: 10px;
+}
 
+*::-webkit-scrollbar-track {
+    border-radius: 8px;
+    background-color: transparent;
+}
+
+*::-webkit-scrollbar-thumb {
+    border-radius: 8px;
+    background-color: var(--blur-color);
+}
 
 .background {
     width: 100vw;
     height: 100vh;
-    background-image: url(../img/background.png);
     background-size: cover;
 }
 
