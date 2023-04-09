@@ -9,16 +9,16 @@ let cross = reactive({
 }, "crossX");
 
 cross.click = function (i) {
+    console.log(i)
     i = parseInt(i);
-    if (i === 10) i = (cross.crosses.length - 1);
-    else i = i - 1;
+    console.log(`DOING THE ${i} CROSS`);
+    console.log(cross.crosses[i-1]);
 
     let nbChild = formDestination.childElementCount;
     if (nbChild > 2) {
-        removePointOnMap(cross.crosses[i].parentElement.children[0].name);
-        updateWhenDelete(cross.crosses[i].parentElement.children[0].name);
-        console.log(cross.crosses[i]);
-        cross.crosses[i].parentElement.remove();
+        removePointOnMap(cross.crosses[i-1].parentElement.children[0].name);
+        updateWhenDelete(cross.crosses[i-1].parentElement.children[0].name);
+        cross.crosses[i-1].parentElement.remove();
 
         // remove point last - 1 point in flagBox
         for (let i = 0; i < 3; i++) {

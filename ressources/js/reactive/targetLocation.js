@@ -3,15 +3,19 @@ import {cross} from "./deleteCross.js";
 export {buttonLocation};
 
 let buttonLocation = reactive({
-    buttonNumber: 1
+    buttonNumber: 1,
+    buttons: document.getElementById('formDestination').children
 }, "buttonLoc");
 
 buttonLocation.click = function (i) {
+    console.log(i)
     i = parseInt(i);
-    if (i === 10) i = formDestination.children.length;
+    console.log(`DOING THE ${i} BUTTON`);
+    console.log(buttonLocation.buttons);
+    console.log(buttonLocation.buttons[i-1]);
     document.body.style.cursor = 'crosshair';
 
-    let find = formDestination.children[i - 1];
+    let find = buttonLocation.buttons[i-1];
 
     // use loc the find variable on click
     map.once('click', function (evt) {
@@ -35,6 +39,7 @@ buttonLocation.click = function (i) {
 buttonLocation.refresh = function () {
     // console.log("APPLYING ON click(" + buttonLocation.buttonNumber + ")");
     // console.log(document.getElementById('formDestination').children[buttonLocation.buttonNumber-1]);
+    buttonLocation.buttons = document.getElementById('formDestination').children;
     startReactiveDom(document.getElementById('formDestination').children[buttonLocation.buttonNumber-1]);
 }
 

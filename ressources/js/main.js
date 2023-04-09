@@ -104,15 +104,15 @@ map.on('pointerup', function () {
  * Update all id of children of input-box and point on map
  */
 function updateIdInput(add = true) {
-    for (let i = 0; i < formDestination.childElementCount; i++) {
+    for (let i = 0; i < formDestination.children.length; i++) {
         formDestination.children[i].children[0].setAttribute('id', `commune${i}`);
         formDestination.children[i].children[0].setAttribute('name', `commune${i}`);
         formDestination.children[i].children[0].setAttribute('list', `auto-completion-${i}`);
         formDestination.children[i].children[1].setAttribute('id', `auto-completion-${i}`);
         formDestination.children[i].children[2].setAttribute('id', `gid${i}`);
         formDestination.children[i].children[2].setAttribute('name', `gid${i}`);
-        formDestination.children[i].children[3].setAttribute('data-onclick', `buttonLoc.click(${i})`);
-        formDestination.children[i].children[4].setAttribute('data-onclick', `crossX.click(${i})`);
+        formDestination.children[i].children[3].setAttribute('data-onclick', `buttonLoc.click(${i+1})`);
+        formDestination.children[i].children[4].setAttribute('data-onclick', `crossX.click(${i+1})`);
     }
 }
 
