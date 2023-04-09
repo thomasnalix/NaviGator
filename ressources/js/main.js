@@ -42,7 +42,8 @@ form.addEventListener("submit", async e => {
     formData.append('nbField', nbField.value);
     toggleLoading(true);
     const path = fetch(url, {method: 'POST', body: formData})
-        .then(response => response.json());
+        .then(response => response.json())
+
 
     const car = fetch('./voiture', {method: 'GET'})
         .then(response => response.json())
@@ -52,11 +53,11 @@ form.addEventListener("submit", async e => {
     const [pathData, carData] = await Promise.all([path, car]);
     toggleLoading(false);
 
-    console.log(pathData); // TODO: A SUPPRIMER APRES TEST
-
     printResult(pathData, carData);
-    printItinary(pathData.chemin);
-    await addToHistory(pathData);
+    if (pathData.distance !== -1) {
+        printItinary(pathData.chemin);
+        await addToHistory(pathData);
+    }
 });
 
 /** toggle button and input field with disable status or not and depending on the boolean value

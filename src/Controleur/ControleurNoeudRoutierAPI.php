@@ -43,37 +43,35 @@ class ControleurNoeudRoutierAPI extends ControleurGenerique {
         $nbFields = $_POST['nbField'];
         $noeudList = [];
         for ($i = 0; $i < $nbFields; $i++) {
-            if ($_POST["gid$i"] != "")
+            if (isset($_POST["gid$i"]) && $_POST["gid$i"] != "")
                 $noeudList['gid' . $i] = $_POST["gid$i"];
             else
-                // detect pattern " (56879)" and remove it
-                $noeudList['commune' . $i] = preg_replace('/\s\(\d+\)/', '', $_POST["commune$i"]);
+                // detect pattern " (56879)" or " (2B096) and remove it
+                $noeudList['commune' . $i] = preg_replace('/\s\(\w+\d+\)/', '', $_POST["commune$i"]);
         }
         try {
             $villes = $this->noeudRoutierService->getVillesItinary($nbFields, $noeudList);
 
-            foreach ($villes as $ville)
+            foreach ($villes as $ville) {
+                $parameters['communes']["lat"][] = $ville->getLat();
+                $parameters['communes']["long"][] = $ville->getLong();
                 $parameters['noeudsList'][] = $ville->getGid();
+            }
 
             $now = microtime(true);
             $datas = $this->plusCourtCheminService->aStarDistance($villes);
             $parameters["time"] = microtime(true) - $now;
             $parameters["distance"] = $datas[0];
-            $now = microtime(true);
             $parameters["chemin"] = count($datas[1]) > 0 ? $this->noeudRoutierService->calculerItineraire($datas[1]) : [];
-            $parameters["time2"] = microtime(true) - $now;
             $parameters["temps"] = $datas[2];
             $parameters["nbCommunes"] = count($noeudList);
             $parameters["nomCommuneDepart"] = array_shift($noeudList);
             $parameters["nomCommuneArrivee"] = end($noeudList);
             return new JsonResponse(json_encode($parameters), Response::HTTP_OK, [], true);
         } catch (ServiceException $exception) {
-            MessageFlash::ajouter("danger", $exception->getMessage());
-//            return new JsonResponse(["error" => $exception->getMessage()], $exception->getCode());
             $parameters["error"] = $exception->getMessage();
             $parameters["distance"] = -1; // for js
             return new JsonResponse(json_encode($parameters), Response::HTTP_OK, [], true);
-                                                            // $exception->getCode() ??
         }
     }
 

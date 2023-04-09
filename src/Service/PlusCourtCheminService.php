@@ -3,6 +3,7 @@
 namespace Navigator\Service;
 
 use Navigator\Lib\PriorityQueue;
+use Navigator\Service\Exception\ServiceException;
 use SplPriorityQueue;
 use function PHPUnit\Framework\isEmpty;
 
@@ -106,7 +107,7 @@ class PlusCourtCheminService implements PlusCourtCheminServiceInterface {
                 }
             }
         }
-        throw new \Exception('Aucun chemin trouvé !');
+        throw new ServiceException('Aucun chemin trouvé !');
     }
 
 
@@ -146,7 +147,8 @@ class PlusCourtCheminService implements PlusCourtCheminServiceInterface {
             foreach ($total_path as $gid) {
                 $distance += $cost[$gid];
                 $tempsTotal += $cost[$gid] / $vitesse[$gid];
-                $trocons[] = $coordTrocon[$gid] ?? null;
+                if (isset($coordTrocon[$gid]))
+                    $trocons[] = $coordTrocon[$gid];
             }
         }
         return [$distance, $trocons, $tempsTotal];
