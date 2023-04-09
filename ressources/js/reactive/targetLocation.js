@@ -12,10 +12,6 @@ buttonLocation.click = function (i) {
     document.body.style.cursor = 'crosshair';
 
     let find = formDestination.children[i - 1];
-    // console.log(buttonLocation.buttons)
-    // console.log("Bouton " + i + " = ")
-    // console.log(find)
-    // console.log("---------------------")
 
     // use loc the find variable on click
     map.once('click', function (evt) {
@@ -41,7 +37,5 @@ buttonLocation.refresh = function () {
     // console.log(document.getElementById('formDestination').children[buttonLocation.buttonNumber-1]);
     startReactiveDom(document.getElementById('formDestination').children[buttonLocation.buttonNumber-1]);
 }
-
-applyAndRegister(() => buttonLocation.buttonNumber);
 
 startReactiveDom(document.getElementById('formDestination'));
