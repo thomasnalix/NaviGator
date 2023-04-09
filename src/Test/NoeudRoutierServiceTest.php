@@ -99,4 +99,23 @@ class NoeudRoutierServiceTest extends TestCase {
         $this->assertEquals([], $this->service->getNomCommunes("PellierMont"));
     }
 
+    public function testGetCoordNoeudByGid() {
+        $this->noeudRoutierRepositoryMock->method('getCoordNoeudByGid')->willReturn([
+            "lat" => "43.59917864959453",
+            "long" => "3.894125217456986"
+        ]);
+
+        $result = $this->service->getCoordNoeudByGid(1);
+        $this->assertEquals([
+            "lat" => "43.59917864959453",
+            "long" => "3.894125217456986"
+        ], $result);
+    }
+
+    public function testGetCoordNoeudByGidException() {
+        $this->noeudRoutierRepositoryMock->method('getCoordNoeudByGid')->willReturn(null);
+        $this->expectException(ServiceException::class);
+        $this->service->getCoordNoeudByGid(1);
+    }
+
 }

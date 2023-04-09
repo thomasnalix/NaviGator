@@ -22,7 +22,7 @@ function addPointOnMap(target, lon, lat, nomCommune = "") {
         features: [feature]
     });
     let text = new ol.style.Text({
-        text: nomCommune+"",
+        text: nomCommune,
         offsetY: 5,
         stroke: new ol.style.Stroke({
             color: '#fff',

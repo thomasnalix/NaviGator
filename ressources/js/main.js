@@ -58,7 +58,7 @@ form.addEventListener("submit", async e => {
     printItinary(pathData.chemin);
     for (let i = 0; i < nbChild; i++) {
         let field = formDestination.children[i].children[0];
-        if (!field.value.match(/\s\(\d+\)/) && !field.value.match(/Périphérie/))
+        if (!field.value.match(/\s\(\w+\d+\)/) && !field.value.match(/Périphérie/))
             placePoint(field.value, field.id);
     }
     await addToHistory(pathData);
@@ -83,19 +83,19 @@ function toggleLoading(type) {
 /**
  * When redirecting from the history page, the map is loaded with the data of the selected path
  */
-window.addEventListener('load', function() {
+window.addEventListener('load', async function () {
     const trajet = JSON.parse(localStorage.getItem('trajet'));
     if (trajet === null) return;
     toggleLoading(true);
-    const car = fetch('./voiture', {method: 'GET'})
-        .then(response => response.json())
-        .then(carData => getFirstCar({make: carData.marque, model: carData.modele}))
-        .catch(() => undefined);
+    const response = await fetch('./voiture', {method: 'GET'});
+    const datasReponse = await response.json();
+    const carData = await getFirstCar({make: datasReponse.marque, model: datasReponse.modele});
+
     toggleLoading(false);
-    printResult(trajet, car);
+    printResult(trajet, carData);
     printItinary(trajet.chemin);
     for (let i = 0; i < trajet.noeudsList.length; i++)
-        placePoint(trajet.noeudsList[i], "commune"+i);
+        placePointByGid(trajet.noeudsList[i].nomCommune, trajet.noeudsList[i].gid, "commune" + i);
 
     // set all the fields with the data of the selected path
     if (trajet.noeudsList.length > 2) {
@@ -103,16 +103,33 @@ window.addEventListener('load', function() {
         formDestination.children[1].children[0].value = "Chargement...";
         for (let i = 0; i < trajet.noeudsList.length - 2; i++) {
             addField();
-            formDestination.children[i+1].children[0].value = "Chargement...";
+            formDestination.children[i + 1].children[0].value = "Chargement...";
         }
     }
     for (let i = 0; i < trajet.noeudsList.length; i++) {
         let field = formDestination.children[i].children[0];
-        field.value = trajet.noeudsList[i];
-        field.parentElement.children[2].value = trajet.noeudsList[i];
+        field.value = trajet.noeudsList[i].nomCommune;
+        field.parentElement.children[2].value = trajet.noeudsList[i].gid;
     }
     localStorage.removeItem('trajet');
 });
+
+/**
+ * Place a point on the map by requesting the server with a gid and not a city name
+ * @param nomCommune
+ * @param gid
+ * @param id
+ */
+function placePointByGid(nomCommune,gid = "", id) {
+    // should send a request to the server to get the coordinates of the city and place a marker on the map
+    const url = './communes/coord/'+ gid;
+    fetch(url)
+        .then(response => response.json())
+        .then(data => {
+            addPointOnMap(id, data.long, data.lat, nomCommune);
+        })
+        .catch(error => console.log(error));
+}
 
 /**
  * Send data to the server to add it to the history of the user

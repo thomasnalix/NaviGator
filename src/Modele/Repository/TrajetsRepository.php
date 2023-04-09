@@ -33,16 +33,16 @@ class TrajetsRepository extends AbstractRepository implements TrajetsRepositoryI
     public function getHistory($login): ?array {
 
         $requeteSQL = <<<SQL
-            SELECT idtrajet, array_agg(DISTINCT nom_comm) as trajets FROM
-                (SELECT unnest(nalixt.historique.historique[(cardinality(nalixt.historique.historique)-9):(cardinality(nalixt.historique.historique))])
-                            as id FROM nalixt.historique
-                 WHERE login = :login)
-                    as h
-                    JOIN nalixt.trajets t ON h.id = t.idtrajet
-                    JOIN unnest(t.trajets) as tt ON true
-                    JOIN nalixt.noeud_routier nr ON (tt)::int = nr.gid
-                    JOIN nalixt.noeud_commune nc on nr.insee_comm = nc.insee_comm
-            GROUP BY idtrajet;
+            SELECT t.idtrajet, array_agg(nc.nom_comm ORDER BY t.idtrajet) as trajets
+            FROM nalixt.historique h
+            JOIN nalixt.trajets t ON t.idtrajet = ANY(h.historique)
+            JOIN unnest(t.trajets) as tt ON true
+            JOIN nalixt.noeud_routier nr ON (tt)::int = nr.gid
+            JOIN nalixt.noeud_commune nc on nr.insee_comm = nc.insee_comm
+            WHERE h.login = :login
+            GROUP BY t.idtrajet
+            ORDER BY t.idtrajet DESC;
+
         SQL;
         $pdoStatement = $this->connexion->getPdo()->prepare($requeteSQL);
         try {
@@ -63,9 +63,13 @@ class TrajetsRepository extends AbstractRepository implements TrajetsRepositoryI
     public function getTrajet($idTrajet): string {
 
         $requeteSQL = <<<SQL
-            SELECT json 
-            FROM nalixt.trajets
-            WHERE idtrajet = :idtrajet;
+            SELECT jsonb_set(json, '{noeudsList}', jsonb_agg(jsonb_build_object('gid', g, 'nomCommune', nc.nom_comm) ORDER BY idx)) as json
+            FROM nalixt.trajets t
+            JOIN jsonb_array_elements_text(json->'noeudsList') WITH ORDINALITY as elem(g, idx) ON true
+            JOIN nalixt.noeud_routier nr ON g::int = nr.gid
+            JOIN nalixt.noeud_commune nc on nr.insee_comm = nc.insee_comm
+            WHERE t.idtrajet = :idtrajet
+            GROUP BY t.idtrajet, json;
         SQL;
         $pdoStatement = $this->connexion->getPdo()->prepare($requeteSQL);
         $pdoStatement->execute(array(
