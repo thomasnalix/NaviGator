@@ -31,18 +31,7 @@ create unique index troncon_route_geom_idx
     on nalixt.troncon_route using gist (geom);
 
 
--- VUE NOEUDS_FROM_TRONCON
-create index noeuds_from_troncon_idx_departement_depart
-    on nalixt.noeuds_from_troncon (num_departement_depart);
 
-create index noeuds_from_troncon_idx_departement_arrivee
-    on nalixt.noeuds_from_troncon (num_departement_arrivee);
-
-create index noeuds_from_troncon_idx_depart_gid
-    on nalixt.noeuds_from_troncon (noeud_depart_gid);
-
-create index noeuds_from_troncon_idx_arrivee_gid
-    on nalixt.noeuds_from_troncon (noeud_arrivee_gid);
 
 
 -- VUE VITESSES

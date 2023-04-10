@@ -1,6 +1,6 @@
-import {applyAndRegister, reactive, startReactiveDom} from "./reactive.js";
+import {reactive, startReactiveDom} from "./reactive.js";
 import {buttonLocation} from "./targetLocation.js";
-import {cross} from "./deleteCross.js";
+export {addStep, idData};
 
 let idData = 2;
 
@@ -8,6 +8,10 @@ let buttonAddDestination = reactive({
 }, "buttonAdd");
 
 buttonAddDestination.add = function () {
+    addStep();
+}
+
+function addStep() {
     let nbChild = formDestination.childElementCount;
     if (nbChild < 10 && verifyFillField()) {
         buttonLocation.buttonNumber++;

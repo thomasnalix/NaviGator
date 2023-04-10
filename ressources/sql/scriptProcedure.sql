@@ -8,13 +8,11 @@ p_modele nalixt.utilisateurs.modele%TYPE) LANGUAGE plpgsql AS $$
 BEGIN
     INSERT INTO nalixt.utilisateurs(login, nom, prenom, motDePasse, marque, modele) VALUES(p_login, p_nom, p_prenom, p_mdp, p_marque, p_modele);
     INSERT INTO nalixt.historique(login) VALUES(p_login);
-    INSERT INTO nalixt.favoris(login) VALUES(p_login);
 END; $$;
 
 
 CREATE OR REPLACE PROCEDURE SUPPRIMER_UTILISATEUR(p_login nalixt.utilisateurs.login%TYPE) LANGUAGE plpgsql AS $$
 BEGIN
-    DELETE FROM nalixt.favoris WHERE login = p_login;
     DELETE FROM nalixt.historique WHERE login = p_login;
     DELETE FROM nalixt.utilisateurs WHERE login = p_login;
 END; $$;
@@ -51,30 +49,30 @@ BEGIN
 END; $$;
 
 
-CREATE OR REPLACE PROCEDURE AJOUTER_FAVORIS(p_login nalixt.utilisateurs.login%TYPE, p_idTrajet INTEGER) LANGUAGE plpgsql AS $$
-DECLARE
-    isItnull integer;
-    isAlreadyFavorite integer;
-BEGIN
-    SELECT COUNT(*) INTO isItnull FROM nalixt.favoris WHERE login = p_login;
-    SELECT COUNT(*) INTO isAlreadyFavorite FROM nalixt.favoris WHERE login = p_login AND favoris @> ARRAY[p_idTrajet];
-    IF isItnull = 0 THEN
-        UPDATE nalixt.favoris SET favoris = ARRAY[p_idTrajet]
-        WHERE login = p_login;
-    ELSE
-        IF isAlreadyFavorite = 0 THEN
-            UPDATE nalixt.favoris SET favoris = array_append(favoris, p_idTrajet)
-            WHERE login = p_login;
-        END IF;
-    END IF;
-END; $$;
-
-
-CREATE OR REPLACE PROCEDURE SUPPRIMER_FAVORIS(p_login nalixt.utilisateurs.login%TYPE, p_idTrajet INTEGER) LANGUAGE plpgsql AS $$
-BEGIN
-    UPDATE nalixt.favoris SET favoris = array_remove(favoris, p_idTrajet)
-    WHERE login = p_login;
-END; $$;
+-- CREATE OR REPLACE PROCEDURE AJOUTER_FAVORIS(p_login nalixt.utilisateurs.login%TYPE, p_idTrajet INTEGER) LANGUAGE plpgsql AS $$
+-- DECLARE
+--     isItnull integer;
+--     isAlreadyFavorite integer;
+-- BEGIN
+--     SELECT COUNT(*) INTO isItnull FROM nalixt.favoris WHERE login = p_login;
+--     SELECT COUNT(*) INTO isAlreadyFavorite FROM nalixt.favoris WHERE login = p_login AND favoris @> ARRAY[p_idTrajet];
+--     IF isItnull = 0 THEN
+--         UPDATE nalixt.favoris SET favoris = ARRAY[p_idTrajet]
+--         WHERE login = p_login;
+--     ELSE
+--         IF isAlreadyFavorite = 0 THEN
+--             UPDATE nalixt.favoris SET favoris = array_append(favoris, p_idTrajet)
+--             WHERE login = p_login;
+--         END IF;
+--     END IF;
+-- END; $$;
+--
+--
+-- CREATE OR REPLACE PROCEDURE SUPPRIMER_FAVORIS(p_login nalixt.utilisateurs.login%TYPE, p_idTrajet INTEGER) LANGUAGE plpgsql AS $$
+-- BEGIN
+--     UPDATE nalixt.favoris SET favoris = array_remove(favoris, p_idTrajet)
+--     WHERE login = p_login;
+-- END; $$;
 
 
 CREATE OR REPLACE PROCEDURE AJOUTER_TRAJET(p_trajets nalixt.trajets.trajets%TYPE, p_json nalixt.trajets.json%TYPE) LANGUAGE plpgsql AS $$

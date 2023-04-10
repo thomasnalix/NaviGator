@@ -39,7 +39,7 @@ function placePoint(commune, id) {
     fetch(url)
         .then(response => response.json())
         .then(data => {
-            addPointOnMap(id, data.long, data.lat, commune);
+            addPointOnMap(id+"", data.long, data.lat, commune);
         })
         .catch(error => console.log(error));
 }

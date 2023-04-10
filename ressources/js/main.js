@@ -23,7 +23,7 @@ function debounce(callback, wait) {
 // If all field input of the fox formDestination are filled, addDestination is affiched
 formDestination.addEventListener('input', e => {
     e.target.parentElement.children[2].value = '';
-    removePointOnMap(e.target.name);
+    removePointOnMap(e.target.parentElement.children[4].getAttribute('data-id'));
     changeAddStepButton();
 });
 
@@ -63,6 +63,7 @@ form.addEventListener("submit", async e => {
     }
 });
 
+
 /** toggle button and input field with disable status or not and depending on the boolean value
  * @param type
  */
@@ -80,52 +81,18 @@ function toggleLoading(type) {
 }
 
 /**
- * When redirecting from the history page, the map is loaded with the data of the selected path
- */
-window.addEventListener('load', async function () {
-    const trajet = JSON.parse(localStorage.getItem('trajet'));
-    if (trajet === null) return;
-    toggleLoading(true);
-    const response = await fetch('./voiture', {method: 'GET'});
-    const datasReponse = await response.json();
-    const carData = await getFirstCar({make: datasReponse.marque, model: datasReponse.modele});
-
-    toggleLoading(false);
-    printResult(trajet, carData);
-    printItinary(trajet.chemin);
-    for (let i = 0; i < trajet.noeudsList.length; i++)
-        placePointByGid(trajet.noeudsList[i].nomCommune, trajet.noeudsList[i].gid, "commune" + i);
-
-    // set all the fields with the data of the selected path
-    if (trajet.noeudsList.length > 2) {
-        formDestination.children[0].children[0].value = "Chargement...";
-        formDestination.children[1].children[0].value = "Chargement...";
-        for (let i = 0; i < trajet.noeudsList.length - 2; i++) {
-            addField();
-            formDestination.children[i + 1].children[0].value = "Chargement...";
-        }
-    }
-    for (let i = 0; i < trajet.noeudsList.length; i++) {
-        let field = formDestination.children[i].children[0];
-        field.value = trajet.noeudsList[i].nomCommune;
-        field.parentElement.children[2].value = trajet.noeudsList[i].gid;
-    }
-    localStorage.removeItem('trajet');
-});
-
-/**
  * Place a point on the map by requesting the server with a gid and not a city name
  * @param nomCommune
  * @param gid
  * @param id
  */
-function placePointByGid(nomCommune,gid = "", id) {
+function placePointByGid(nomCommune, gid = "", id) {
     // should send a request to the server to get the coordinates of the city and place a marker on the map
-    const url = './communes/coord/'+ gid;
+    const url = './communes/coord/' + gid;
     fetch(url)
         .then(response => response.json())
         .then(data => {
-            addPointOnMap(id, data.long, data.lat, nomCommune);
+            addPointOnMap(id+"", data.long, data.lat, nomCommune);
         })
         .catch(error => console.log(error));
 }
@@ -186,120 +153,6 @@ map.on('pointerdrag', function () {
 map.on('pointerup', function () {
     navBox.style.display = 'flex';
 });
-
-
-/**
- * Add event listener on add destination button and add new field in formDestination
- */
-addDestination.addEventListener('click', addField);
-
-function addField() {
-    let nbChild = formDestination.childElementCount;
-    if (nbChild < 10 && verifyFillField()) {
-        const div = document.createElement('div');
-        div.classList.add('input-box');
-
-        const dataList = document.createElement('datalist');
-        dataList.id = `auto-completion-${nbChild - 1}`;
-
-        const input = document.createElement('input');
-        input.type = 'text';
-        input.placeholder = 'Commune de transition';
-        input.classList.add('commune');
-        input.name = `commune${nbChild - 1}`;
-        input.id = `commune${nbChild - 1}`;
-        input.setAttribute('list', dataList.id);
-        input.required = true;
-        input.addEventListener('input', debounce(e => autocomplete(input.list, e.target.value), 200));
-        input.oninput = e => checkForValidInput(e.target);
-
-        div.appendChild(input);
-        div.appendChild(dataList);
-
-        const gidInput = document.createElement('input');
-        gidInput.type = 'hidden';
-        gidInput.name = `gid${nbChild - 1}`;
-        gidInput.id = `gid${nbChild - 1}`;
-        div.appendChild(gidInput);
-
-        const iconRight = document.createElement('span');
-        iconRight.classList.add('material-symbols-outlined', 'locate-button');
-        iconRight.textContent = 'my_location';
-        div.appendChild(iconRight);
-
-        const iconDelete = document.createElement('span');
-        iconDelete.classList.add('material-symbols-outlined', 'close');
-        iconDelete.textContent = 'close';
-        div.appendChild(iconDelete);
-
-
-        // if nbItem = 2, add more point
-        if (nbChild === 2) {
-            for (let i = 0; i < 2; i++) {
-                let point = document.createElement('span');
-                point.classList.add('point');
-                // append child end - 1
-                flagBox.insertBefore(point, flagBox.children[flagBox.childElementCount - 1]);
-            }
-        }
-
-        const iconEtape = document.createElement('span');
-        iconEtape.classList.add('material-symbols-outlined', 'etape');
-        iconEtape.textContent = 'fiber_manual_record';
-        // append child end - 1
-        flagBox.insertBefore(iconEtape, flagBox.children[flagBox.childElementCount - 1]);
-
-        for (let i = 0; i < 2; i++) {
-            let point = document.createElement('span');
-            point.classList.add('point');
-            // append child end - 1
-            flagBox.insertBefore(point, flagBox.children[flagBox.childElementCount - 1]);
-        }
-
-
-        // add new field in formDestination before end - 1
-        formDestination.insertBefore(div, formDestination.children[formDestination.childElementCount - 1]);
-        nbField.setAttribute('value', nbChild + 1);
-        updateWhenAdd(nbChild - 1)
-        verifyChild();
-        updateIdInput();
-        changeAddStepButton();
-        initDeleteButtons();
-        initLocateButtons();
-    } else {
-        addDestination.classList.add('disabled');
-    }
-}
-
-/**
- * Init delete button event listener
- * When click on close class icon, remove the parent field
- */
-function initDeleteButtons() {
-    for (let i = 0; i < close.length; i++) {
-        close[i].onclick = function () {
-            let nbChild = formDestination.childElementCount;
-            if (nbChild > 2) {
-                removePointOnMap(this.parentElement.children[0].name);
-                updateWhenDelete(this.parentElement.children[0].name)
-                this.parentElement.remove();
-                // remove point last - 1 point in flagBox
-                for (let i = 0; i < 3; i++) {
-                    flagBox.children[flagBox.childElementCount - 2].remove();
-                }
-                if (nbChild === 3) {
-                    flagBox.children[flagBox.childElementCount - 2].remove();
-                    flagBox.children[flagBox.childElementCount - 2].remove();
-                }
-            }
-            nbField.setAttribute('value', nbChild - 1);
-            // set all id of field
-            updateIdInput(false);
-            verifyChild();
-            changeAddStepButton();
-        }
-    }
-}
 
 /**
  * Update all id of children of input-box and point on map
