@@ -55,6 +55,7 @@ function addPointOnMap(target, lon, lat, nomCommune = "") {
  * @param name
  */
 function removePointOnMap(name) {
+    name = name + "";
     let layer = map.getLayers().getArray();
     for (let i = 0; i < layer.length; i++) {
         if (layer[i].get('name') === name) {

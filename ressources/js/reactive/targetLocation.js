@@ -1,5 +1,5 @@
 import {reactive, startReactiveDom} from "./reactive.js";
-import {cross} from "./deleteCross.js";
+
 export {buttonLocation};
 
 let buttonLocation = reactive({
@@ -19,11 +19,7 @@ buttonLocation.click = function (i) {
         let coord = ol.proj.transform(evt.coordinate, 'EPSG:3857', 'EPSG:4326');
         let lon = coord[0];
         let lat = coord[1];
-        let target = find;
-        getNearestNode(lon, lat, target);
-
-        // if there is already a point according to e.target.parentElement.children[0].value, remove it and add new point
-        addPointOnMap(target.children[0].name, lon, lat);
+        getNearestNode(lon, lat, find);
         document.body.style.cursor = 'default';
     });
 }

@@ -39,7 +39,6 @@ function startReactiveDom(doc = document) {
     for (let elementClickable of doc.querySelectorAll("[data-onclick]")) {
         const [nomObjet, methode] = elementClickable.dataset.onclick.split(/[.()]+/);
         elementClickable.addEventListener("click", (event) => {
-            //get the "data-bouton-id" attribute of the clicked button
             const boutonId = event.target.getAttribute("data-id");
             const objet = objectByName.get(nomObjet);
             objet[methode](boutonId);

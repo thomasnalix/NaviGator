@@ -17,8 +17,6 @@ cross.click = function (i) {
     let index = 0;
     for (let j = 0; j < cross.crosses.length; j++) {
         if (cross.crosses[j] === crossHTML) {
-            console.log(cross.crosses[j])
-            console.log(crossHTML)
             index = j;
             break;
         }
@@ -26,11 +24,7 @@ cross.click = function (i) {
 
     let nbChild = formDestination.childElementCount;
     if (nbChild > 2) {
-        //Je dois refaire ces deux fonctions par contre pcq ça ça marche pas mais c'est la partie graphique
-        console.log("Removing the point on map: " + cross.crosses[index].parentElement.children[0].name);
-        console.log(cross.crosses[index].parentElement);
-        removePointOnMap(cross.crosses[index].parentElement.children[0].name);
-        updateWhenDelete(cross.crosses[index].parentElement.children[0].name);
+        removePointOnMap(i);
         cross.crosses[index].parentElement.remove();
 
         // remove point last - 1 point in flagBox

@@ -111,25 +111,6 @@ function updateIdInput(add = true) {
         formDestination.children[i].children[1].setAttribute('id', `auto-completion-${i}`);
         formDestination.children[i].children[2].setAttribute('id', `gid${i}`);
         formDestination.children[i].children[2].setAttribute('name', `gid${i}`);
-        // if(i !== 9) {
-        //     formDestination.children[i].children[3].setAttribute('data-onclick', `buttonLoc.click(${i + 1})`);
-        //     formDestination.children[i].children[4].setAttribute('data-onclick', `crossX.click(${i + 1})`);
-        // }
-    }
-}
-
-/**
- * When delete a field, update the name of all layer on map
- * @param nomCommune
- */
-function updateWhenDelete(nomCommune) {
-    let layer = map.getLayers().getArray();
-    let numCommune = Number(nomCommune);
-    let nbChild = formDestination.childElementCount;
-    for (let i = numCommune; i < nbChild - 1; i++) {
-        if (layer.find(layer => layer.get('name') === `commune${i}`)) {
-            layer[i].set('name', `commune${i}`);
-        }
     }
 }
 
@@ -206,7 +187,9 @@ async function getNearestNode(long, lat, target) {
 
     target.children[0].value = data.nom_comm + ' - ' + data.departement + ' (Périphérie)';
     target.children[2].value = data.gid;
-    addPointOnMap(target.children[0].name, data.long, data.lat, data.nom_comm);
+
+
+    addPointOnMap(target.children[4].getAttribute('data-id'), data.long, data.lat, data.nom_comm);
     changeAddStepButton();
 }
 
