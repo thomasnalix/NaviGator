@@ -48,7 +48,7 @@ class UtilisateurRepository extends AbstractRepository implements UtilisateurRep
 
     public function ajouter(Utilisateur $utilisateur): bool {
         $requeteSQL = <<<SQL
-            CALL CREER_UTILISATEUR(
+            CALL nalixt.CREER_UTILISATEUR(
                 :login_tag,
                 :nom_tag,
                 :prenom_tag,
@@ -79,7 +79,7 @@ class UtilisateurRepository extends AbstractRepository implements UtilisateurRep
 
     public function supprimer(string $login): bool {
         $requeteSQL = <<<SQL
-            CALL SUPPRIMER_UTILISATEUR(
+            CALL nalixt.SUPPRIMER_UTILISATEUR(
                 :login
             );
         SQL;
@@ -97,7 +97,7 @@ class UtilisateurRepository extends AbstractRepository implements UtilisateurRep
 
     public function mettreAJour($utilisateur): bool {
         $requeteSQL = <<<SQL
-            CALL MODIFIER_UTILISATEUR(
+            CALL nalixt.MODIFIER_UTILISATEUR(
                 :login_tag,
                 :nom_tag,
                 :prenom_tag,

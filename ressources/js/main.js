@@ -51,7 +51,7 @@ form.addEventListener("submit", async e => {
 
     const [pathData, carData] = await Promise.all([path, car]);
     toggleLoading(false);
-
+    console.log(pathData);
     printResult(pathData, carData);
     if (pathData.distance !== -1) {
         printItinary(pathData.chemin);
