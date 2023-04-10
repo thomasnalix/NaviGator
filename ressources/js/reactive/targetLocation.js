@@ -1,23 +1,17 @@
-import {applyAndRegister, reactive, startReactiveDom} from "./reactive.js";
+import {reactive, startReactiveDom} from "./reactive.js";
 import {cross} from "./deleteCross.js";
 export {buttonLocation};
 
 let buttonLocation = reactive({
     buttonNumber: 1,
-    buttons: document.getElementById('formDestination').children
 }, "buttonLoc");
 
 buttonLocation.click = function (i) {
     i = parseInt(i);
-    if(i === 10) i = buttonLocation.buttons.length;
-
-    console.log(`DOING THE ${i} BUTTON`);
-    console.log(buttonLocation.buttons);
-    console.log(buttonLocation.buttons[i-1]);
 
     document.body.style.cursor = 'crosshair';
 
-    let find = buttonLocation.buttons[i-1];
+    let find = document.querySelectorAll(`[data-id="${i}"]`)[0].parentElement;
 
     // use loc the find variable on click
     map.once('click', function (evt) {
@@ -32,16 +26,9 @@ buttonLocation.click = function (i) {
         addPointOnMap(target.children[0].name, lon, lat);
         document.body.style.cursor = 'default';
     });
-
-    console.log("ButtonNumber : " + buttonLocation.buttonNumber)
-    console.log("CrossNumber : " + cross.crossNumber)
-    console.log("---------------------")
 }
 
 buttonLocation.refresh = function () {
-    // console.log("APPLYING ON click(" + buttonLocation.buttonNumber + ")");
-    // console.log(document.getElementById('formDestination').children[buttonLocation.buttonNumber-1]);
-    buttonLocation.buttons = document.getElementById('formDestination').children;
     startReactiveDom(document.getElementById('formDestination').children[buttonLocation.buttonNumber-1]);
 }
 

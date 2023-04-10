@@ -36,21 +36,23 @@ function reactive(passiveObject, name) {
 }
 
 function startReactiveDom(doc = document) {
-    for (let elementClickable of doc.querySelectorAll("[data-onclick]")){
-        const [nomObjet, methode, argument] = elementClickable.dataset.onclick.split(/[.()]+/);
-        elementClickable.addEventListener('click', (event) => {
+    for (let elementClickable of doc.querySelectorAll("[data-onclick]")) {
+        const [nomObjet, methode] = elementClickable.dataset.onclick.split(/[.()]+/);
+        elementClickable.addEventListener("click", (event) => {
+            //get the "data-bouton-id" attribute of the clicked button
+            const boutonId = event.target.getAttribute("data-id");
             const objet = objectByName.get(nomObjet);
-            objet[methode](argument);
-        })
-    }
-
-    for (let elementClickable of doc.querySelectorAll("[data-htmlfun]")){
-        const [obj, fun, arg] = elementClickable.dataset.htmlfun.split(/[.()]+/);
-        applyAndRegister(()=>{
-            elementClickable.innerHTML = objectByName.get(obj)[fun](arg)
-            startReactiveDom(elementClickable);
+            objet[methode](boutonId);
         });
     }
+
+    // for (let elementClickable of doc.querySelectorAll("[data-htmlfun]")){
+    //     const [obj, fun, arg] = elementClickable.dataset.htmlfun.split(/[.()]+/);
+    //     applyAndRegister(()=>{
+    //         elementClickable.innerHTML = objectByName.get(obj)[fun](arg)
+    //         startReactiveDom(elementClickable);
+    //     });
+    // }
 
     // for (let rel of doc.querySelectorAll("[data-textfun]")) {
     //     const [obj, fun, arg] = rel.dataset.textfun.split(/[.()]+/);

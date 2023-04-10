@@ -1,24 +1,22 @@
-import {applyAndRegister, reactive, startReactiveDom} from "./reactive.js";
+import {reactive} from "./reactive.js";
 import {buttonLocation} from "./targetLocation.js";
 
 export {cross};
 
 let cross = reactive({
-    crossNumber: 1,
-    crosses: document.getElementsByClassName('close')
 }, "crossX");
 
 cross.click = function (i) {
-    console.log(i)
     i = parseInt(i);
-    console.log(`DOING THE ${i} CROSS`);
-    console.log(cross.crosses[i-1]);
+
+    let cross = document.querySelectorAll(`[data-id="${i}"]`)[0];
 
     let nbChild = formDestination.childElementCount;
     if (nbChild > 2) {
-        removePointOnMap(cross.crosses[i-1].parentElement.children[0].name);
-        updateWhenDelete(cross.crosses[i-1].parentElement.children[0].name);
-        cross.crosses[i-1].parentElement.remove();
+        //Je dois refaire ces deux fonctions par contre pcq ça ça marche pas mais c'est la partie graphique
+        removePointOnMap(cross.parentElement.children[0].name);
+        updateWhenDelete(cross.parentElement.children[0].name);
+        cross.parentElement.remove();
 
         // remove point last - 1 point in flagBox
         for (let i = 0; i < 3; i++) {
@@ -37,5 +35,4 @@ cross.click = function (i) {
     changeAddStepButton();
 
     buttonLocation.buttonNumber--;
-    cross.crossNumber--;
 }

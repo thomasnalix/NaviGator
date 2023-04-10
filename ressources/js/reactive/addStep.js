@@ -2,6 +2,8 @@ import {applyAndRegister, reactive, startReactiveDom} from "./reactive.js";
 import {buttonLocation} from "./targetLocation.js";
 import {cross} from "./deleteCross.js";
 
+let idData = 2;
+
 let buttonAddDestination = reactive({
 }, "buttonAdd");
 
@@ -9,7 +11,7 @@ buttonAddDestination.add = function () {
     let nbChild = formDestination.childElementCount;
     if (nbChild < 10 && verifyFillField()) {
         buttonLocation.buttonNumber++;
-        cross.crossNumber++;
+        idData++;
 
         const div = document.createElement('div');
         div.classList.add('input-box');
@@ -40,13 +42,15 @@ buttonAddDestination.add = function () {
         const iconRight = document.createElement('span');
         iconRight.classList.add('material-symbols-outlined', 'locate-button');
         iconRight.textContent = 'my_location';
-        iconRight.setAttribute('data-onclick', 'buttonLoc.click(' + buttonLocation.buttonNumber + ')');
+        iconRight.setAttribute('data-onclick', 'buttonLoc.click()');
+        iconRight.setAttribute('data-id', `${idData}`);
         div.appendChild(iconRight);
 
         const iconDelete = document.createElement('span');
         iconDelete.classList.add('material-symbols-outlined', 'close');
         iconDelete.textContent = 'close';
-        iconDelete.setAttribute('data-onclick', 'crossX.click(' + cross.crossNumber + ')');
+        iconDelete.setAttribute('data-onclick', 'crossX.click()');
+        iconDelete.setAttribute('data-id', `${idData}`);
         div.appendChild(iconDelete);
 
 
