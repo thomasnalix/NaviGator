@@ -111,8 +111,10 @@ function updateIdInput(add = true) {
         formDestination.children[i].children[1].setAttribute('id', `auto-completion-${i}`);
         formDestination.children[i].children[2].setAttribute('id', `gid${i}`);
         formDestination.children[i].children[2].setAttribute('name', `gid${i}`);
-        formDestination.children[i].children[3].setAttribute('data-onclick', `buttonLoc.click(${i+1})`);
-        formDestination.children[i].children[4].setAttribute('data-onclick', `crossX.click(${i+1})`);
+        // if(i !== 9) {
+        //     formDestination.children[i].children[3].setAttribute('data-onclick', `buttonLoc.click(${i + 1})`);
+        //     formDestination.children[i].children[4].setAttribute('data-onclick', `crossX.click(${i + 1})`);
+        // }
     }
 }
 

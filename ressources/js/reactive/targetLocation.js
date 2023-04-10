@@ -8,11 +8,13 @@ let buttonLocation = reactive({
 }, "buttonLoc");
 
 buttonLocation.click = function (i) {
-    console.log(i)
     i = parseInt(i);
+    if(i === 10) i = buttonLocation.buttons.length;
+
     console.log(`DOING THE ${i} BUTTON`);
     console.log(buttonLocation.buttons);
     console.log(buttonLocation.buttons[i-1]);
+
     document.body.style.cursor = 'crosshair';
 
     let find = buttonLocation.buttons[i-1];
