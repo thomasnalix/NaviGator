@@ -5,9 +5,8 @@ CREATE TABLE nalixt.utilisateurs(
    nom VARCHAR(2000) NOT NULL,
    prenom VARCHAR(2000) NOT NULL,
    motDePasse text NOT NULL,
-   email VARCHAR(100) NOT NULL,
-   imageProfil VARCHAR(64),
-   voiture HSTORE,
+   marque VARCHAR(50),
+   modele VARCHAR(50),
    PRIMARY KEY(login)
 );
 
@@ -46,7 +45,6 @@ SELECT
     st_y(st_astext(nr2.geom)::geometry) AS noeud_arrivee_lat,
     tr.gid AS troncon_gid,
     tr.longueur AS longueur_troncon,
-    tr.geom AS troncon_coord,
     "left"(nc.insee_comm::text, 2) AS num_departement_depart,
     "left"(nc2.insee_comm::text, 2) AS num_departement_arrivee,
     CASE

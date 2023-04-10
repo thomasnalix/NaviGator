@@ -24,7 +24,7 @@ class TrajetsService implements TrajetsServiceInterface {
     /**
      * @throws ServiceException
      */
-    public function getTrajet($idTrajet):array {
+    public function getTrajet($idTrajet):string {
         $result = $this->trajetsRepository->getTrajet($idTrajet);
         if ($result == null) {
             throw new ServiceException("Erreur lors de la récupération du trajet");

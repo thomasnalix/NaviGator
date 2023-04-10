@@ -3,19 +3,21 @@
 {% block page_title %}NaviGator{% endblock %}
 
 {% block page_content %}
-    <script defer src="../ressources/js/history.js"></script>
-    <div class="mt-5"></div>
-    <div id="history" class="bg-form flex-col">
-        <h1 class="title">Liste des trajets</h1>
-        {#    foreach on variable historique #}
-        {% for trajet in trajets %}
-            <div class="box-blur w-full" id="{{ trajet.getIdTrajet }}">
-                <p>
-                    {% for ville in trajet.getTrajets %}
-                        {{ ville }}
-                    {% endfor %}
-                </p>
+    <script defer src="{{ assistantUrl("../ressources/js/history.js") }}"></script>
+    <div class="background">
+        <div class="absolute form-box gap-10">
+            <div id="history" class="flex flex-col gap-4">
+                {#    foreach on variable historique #}
+                {% for trajet in trajets %}
+                    <div class="history-child" id="{{ trajet.getIdTrajet }}">
+                        <p class="crop-text">
+                            {% for ville in trajet.getTrajets %}
+                                {{ ville }} {% if not loop.last %} > {% endif %}
+                            {% endfor %}
+                        </p>
+                    </div>
+                {% endfor %}
             </div>
-        {% endfor %}
+        </div>
     </div>
 {% endblock %}

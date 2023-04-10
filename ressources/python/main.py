@@ -16,7 +16,7 @@ if not os.path.exists(output_dir):
 
 sqlQuery = '''
             SELECT *
-            FROM nalixt.vitesses_route_test
+            FROM nalixt.vitesse
             WHERE num_departement_depart = %s
             OR
             num_departement_arrivee = %s;

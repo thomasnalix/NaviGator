@@ -3,7 +3,6 @@
 namespace Navigator\Service;
 
 interface HistoriqueServiceInterface {
-    public function recupererHistorique(): array;
 
-    public function ajouterTrajet($login, $trajet, $json);
+    public function ajouterHistorique($login, $trajet, $json);
 }

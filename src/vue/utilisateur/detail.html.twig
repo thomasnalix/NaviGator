@@ -3,16 +3,30 @@
 {% block page_title %}NaviGator{% endblock %}
 
 {% block page_content %}
-<div class="detail">
-    <p>
-        Utilisateur <?= "$prenomHTML $nomHTML" ?> de login <?= $loginHTML ?>
-        {{ utilisateur.login }}
-    </p>
+    <script defer src="{{ assistantUrl("../ressources/js/car.js") }}"></script>
+    <div class="background">
 
-    <div id="voitureUser" class="flex flex-col gap-4 mb-10">
-        <input type="text" value="{{ voiture.marque }}" placeholder="Marque de votre voiture" name="marque" id="marque">
-        <input type="text" value="{{ voiture.modele }}" placeholder="Modèle de votre voiture" name="modele" id="modele">
+        <div class="absolute form-box gap-10">
+
+            <p class="text text-center">
+                Actuellement connecté en temps que {{ utilisateur.prenom }} {{ utilisateur.nom }}
+                ({{ utilisateur.login }})
+            </p>
+
+            <div class="flex flex-col gap-4 mb-10 input-box">
+                <p class="text">Ma voiture :</p>
+                <form id="voiture">
+                    <input class="input-detail" type="text" value="{{ voiture.marque }}"
+                           placeholder="Marque de votre voiture" name="marque" id="marque">
+                    <input class="input-detail" type="text" value="{{ voiture.modele }}"
+                           placeholder="Modèle de votre voiture" name="modele" id="modele">
+                    <img src="{{ assistantUrl("../ressources/img/load.gif") }}" id="loading" class="hidden"
+                         alt="loading...">
+                    <p id="message" class="text"></p>
+                    <input class="button-box text-center" value="Modifier" type="submit"/>
+                </form>
+            </div>
+
+        </div>
     </div>
-
-</div>
 {% endblock %}

@@ -1,17 +1,18 @@
 @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@100;200;300;400;500;600;700;800;900&display=swap');
 
 
-
 [data-theme="light"] {
     --blur-color: rgba(255, 255, 255, 0.59);
     --text-color: #171717;
     --input-color: rgba(255, 255, 255, 0.66);
+    --bg-color: #f6f6f6;
 }
 
 [data-theme="dark"] {
     --blur-color: rgba(0, 0, 0, 0.72);
     --text-color: #f6f6f6;
     --input-color: rgba(0, 0, 0, 0.48);
+    --bg-color: #171717;
 }
 
 * {
@@ -22,7 +23,7 @@
 }
 
 body {
-    background: #fff;
+    background: var(--bg-color);
 }
 
 /* =========================
@@ -44,7 +45,7 @@ nav {
     border-radius: 10px;
     margin: 12px;
     position: absolute;
-    top : 0;
+    top: 0;
     z-index: 100;
 }
 
@@ -99,21 +100,21 @@ section {
     min-height: 100vh;
 }
 
-section:nth-child(1){
+section:nth-child(1) {
     color: #fff;
     background-color: #0ac876;
 }
 
-section:nth-child(2){
+section:nth-child(2) {
     color: #0ac876;
 }
 
-section:nth-child(3){
+section:nth-child(3) {
     color: #fff;
     background-color: #0ac876;
 }
 
-section:nth-child(4){
+section:nth-child(4) {
     color: #0ac876;
 }
 
@@ -129,7 +130,7 @@ section h1 {
     font-size: 80px;
 }
 
-section h2{
+section h2 {
     font-size: 40px;
     text-align: center;
     text-transform: uppercase;
@@ -158,14 +159,14 @@ section .cards .text-card img {
     border-radius: 15px;
 }
 
-.reveal{
+.reveal {
     position: relative;
     transform: translateY(150px);
     opacity: 0;
     transition: all 2s ease;
 }
 
-.reveal.active{
+.reveal.active {
     transform: translateY(0px);
     opacity: 1;
 }
@@ -194,6 +195,35 @@ button a {
            Maps
   ======================= */
 
+.pastille {
+    padding: 5px;
+    border-radius: 10px;
+    background: var(--input-color);
+    color: var(--text-color);
+}
+
+#info {
+    font-size: 12px;
+    font-style: italic;
+}
+
+#calcul:disabled {
+    background: #ccc;
+    cursor: default;
+}
+
+#calcul:hover {
+    background: #07b36a;
+}
+
+#calcul:hover:disabled {
+    background: #ccc;
+}
+
+#calcul {
+    transition-duration: 0.1s;
+}
+
 #load {
     display: none;
     position: absolute;
@@ -209,35 +239,36 @@ button a {
     width: 100vw;
     top: 0;
     z-index: -1;
+    background: #fff;
 }
 
 .itinerary-box {
-    width: 370px;
+    width: 400px;
 }
 
 .ol-zoom {
-    right: 0.5em!important;
-    transform: translate(-50%)!important;
-    left: inherit!important;
-    background: none!important;
+    right: 0.5em !important;
+    transform: translate(-50%) !important;
+    left: inherit !important;
+    background: none !important;
 }
 
 .ol-zoom .ol-zoom-in {
-    background: var(--blur-color)!important;
-    backdrop-filter: blur(15px) saturate(250%)!important;
-    -webkit-backdrop-filter: blur(15px) saturate(250%)!important;
-    -moz-backdrop-filter: blur(15px) saturate(250%)!important;
-    color: var(--text-color)!important;
-    border-radius: 5px 5px 0 0!important;
+    background: var(--blur-color) !important;
+    backdrop-filter: blur(15px) saturate(250%) !important;
+    -webkit-backdrop-filter: blur(15px) saturate(250%) !important;
+    -moz-backdrop-filter: blur(15px) saturate(250%) !important;
+    color: var(--text-color) !important;
+    border-radius: 5px 5px 0 0 !important;
 }
 
 .ol-zoom .ol-zoom-out {
-    background: var(--blur-color)!important;
-    backdrop-filter: blur(15px) saturate(250%)!important;
-    -webkit-backdrop-filter: blur(15px) saturate(250%)!important;
-    -moz-backdrop-filter: blur(15px) saturate(250%)!important;
-    color: var(--text-color)!important;
-    border-radius: 0 0 5px 5px!important;
+    background: var(--blur-color) !important;
+    backdrop-filter: blur(15px) saturate(250%) !important;
+    -webkit-backdrop-filter: blur(15px) saturate(250%) !important;
+    -moz-backdrop-filter: blur(15px) saturate(250%) !important;
+    color: var(--text-color) !important;
+    border-radius: 0 0 5px 5px !important;
 }
 
 .ol-attribution.ol-uncollapsible {
@@ -261,7 +292,9 @@ form {
     gap: 2px;
 }
 
-.material-symbols-outlined { user-select: none; }
+.material-symbols-outlined {
+    user-select: none;
+}
 
 .button-box {
     background: rgba(10, 200, 118, 0.71);
@@ -302,7 +335,7 @@ input[type="text"]:focus {
 }
 
 .disabled {
-    cursor: default!important;
+    cursor: default !important;
     color: #a9a9a9;
 }
 
@@ -331,12 +364,13 @@ input[type="text"]:focus {
     cursor: pointer;
     height: 40px;
 }
+
 .locate-button:hover {
     backdrop-filter: opacity(0.4);
 }
 
 .etape {
-    font-size: 15px!important;
+    font-size: 15px !important;
 }
 
 #result {
@@ -375,7 +409,7 @@ input[type="text"]:focus {
 }
 
 .form-box input {
-    border-radius: 10px!important;
+    border-radius: 10px !important;
 }
 
 /* =========================
@@ -389,17 +423,98 @@ input[type="text"]:focus {
     padding: 10px;
 }
 
+.input-detail {
+    border-radius: 10px !important;
+}
+
+#loading {
+    margin: auto;
+    width: 15%;
+}
+
+
+/* =========================
+           History
+  ======================= */
+
+#history {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    padding: 10px;
+    height: 500px;
+    overflow-y: auto;
+    scrollbar-width: thin;
+}
+
+.history-child {
+    padding: 5px;
+    border-radius: 10px;
+    background: var(--input-color);
+    color: var(--text-color);
+    min-height: 2.5em;
+    overflow: hidden;
+    cursor: pointer;
+    width: 100%;
+    display: flex;
+    align-items: center;
+}
+
+.crop-text {
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    overflow: hidden;
+    transition-duration: .1s;
+}
+
+.overflowed-text {
+}
+.overflowed-text:hover {
+    text-overflow: initial;
+    overflow: initial;
+    /*animation: marquee 5s linear infinite;*/
+}
+
+@keyframes marquee {
+    from {
+        transform: translateX(0%);
+    }
+    to {
+        transform: translateX(-100%);
+    }
+}
+
+
+
+
+
+/* When crop-text is over, the text forward slowly to the left ONLY if the text is too long */
+
+
 
 /* =========================
            General
   ======================= */
 
+*::-webkit-scrollbar {
+    width: 10px;
+}
+
+*::-webkit-scrollbar-track {
+    border-radius: 8px;
+    background-color: transparent;
+}
+
+*::-webkit-scrollbar-thumb {
+    border-radius: 8px;
+    background-color: var(--blur-color);
+}
 
 .background {
     width: 100vw;
     height: 100vh;
-    background-image: url(../img/test.png);
     background-size: cover;
+    background-image: url("https://picsum.photos/1920/1080");
 }
 
 .title {
@@ -421,16 +536,15 @@ input[type="text"]:focus {
 .box-blur {
     background: var(--blur-color);
     color: var(--text-color);
-    margin : 12px 12px 0 12px;
+    margin: 12px 12px 0 12px;
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
     padding: 10px;
     border-radius: 10px;
-    width: 370px;
+    width: 400px;
     backdrop-filter: blur(15px) saturate(250%);
     -webkit-backdrop-filter: blur(15px) saturate(250%);
     -moz-backdrop-filter: blur(15px) saturate(250%);
 }
-
 
 
 /* Bootstrap alerts */
@@ -474,25 +588,94 @@ input[type="text"]:focus {
 }
 
 /* Tailwind */
-.flex { display: flex }
-.flex-col { flex-direction: column }
-.gap-4 { gap: 10px }
-.space-between { justify-content: space-between }
-.p-4 { padding: 10px }
-.items-center { align-items: center }
-.justify-start { justify-content: flex-start }
-.w-full { width: 100% }
-.mb-10 { margin-bottom: 10px }
-.mb-6 { margin-bottom: 6px }
-.absolute { position: absolute }
-.z-100 { z-index: 100 }
-.align-middle { vertical-align: middle }
-.none { display: none }
-.text-center { text-align: center }
-.text-left { text-align: left }
-.hidden { display: none }
-.cursor-pointer { cursor: pointer }
-.mt-5 { margin-top: 5rem }
-.space-around { justify-content: space-around }
-.gap-10 { gap: 25px }
-.justify-center { justify-content: center }
+
+.flex {
+    display: flex
+}
+
+.flex-col {
+    flex-direction: column
+}
+
+.gap-4 {
+    gap: 10px
+}
+
+.space-between {
+    justify-content: space-between
+}
+
+.p-4 {
+    padding: 10px
+}
+
+.items-center {
+    align-items: center
+}
+
+.justify-start {
+    justify-content: flex-start
+}
+
+.w-full {
+    width: 100%
+}
+
+.mb-10 {
+    margin-bottom: 10px
+}
+
+.mb-6 {
+    margin-bottom: 6px
+}
+
+.absolute {
+    position: absolute
+}
+
+.z-100 {
+    z-index: 100
+}
+
+.align-middle {
+    vertical-align: middle
+}
+
+.none {
+    display: none
+}
+
+.text-center {
+    text-align: center
+}
+
+.text-left {
+    text-align: left
+}
+
+.hidden {
+    display: none
+}
+
+.cursor-pointer {
+    cursor: pointer
+}
+
+.mt-5 {
+    margin-top: 5rem
+}
+
+.space-around {
+    justify-content: space-around
+}
+
+.gap-10 {
+    gap: 25px
+}
+
+.justify-center {
+    justify-content: center
+}
+.overflow-hidden {
+    overflow: hidden
+}

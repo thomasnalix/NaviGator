@@ -9,11 +9,9 @@ function reveal() {
         var revealtop = reveals[i].getBoundingClientRect().top;
         var revealpoint = 150;
 
-        if (revealtop < windowheight - revealpoint) {
+        if (revealtop < windowheight - revealpoint)
             reveals[i].classList.add('active');
-        }
-        else {
+        else
             reveals[i].classList.remove('active');
-        }
     }
 }

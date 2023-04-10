@@ -1,4 +1,5 @@
 <?php
+
 namespace Navigator\Controleur;
 
 use Navigator\Configuration\ConfigurationBDDPostgreSQL;
@@ -13,10 +14,12 @@ use Navigator\Modele\Repository\NoeudRoutierRepository;
 use Navigator\Modele\Repository\TrajetsRepository;
 use Navigator\Modele\Repository\UtilisateurRepository;
 use Navigator\Service\HistoriqueService;
-use Navigator\Service\NoeudCommuneService;
 use Navigator\Service\NoeudRoutierService;
+use Navigator\Service\PlusCourtCheminService;
 use Navigator\Service\TrajetsService;
 use Navigator\Service\UtilisateurService;
+use Symfony\Component\DependencyInjection\ContainerBuilder;
+use Symfony\Component\DependencyInjection\Reference;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\HttpFoundation\Response;
@@ -30,8 +33,6 @@ use Symfony\Component\Routing\Matcher\UrlMatcher;
 use Symfony\Component\Routing\RequestContext;
 use Symfony\Component\Routing\Route;
 use Symfony\Component\Routing\RouteCollection;
-use Symfony\Component\DependencyInjection\ContainerBuilder;
-use Symfony\Component\DependencyInjection\Reference;
 use Twig\Environment;
 use Twig\Loader\FilesystemLoader;
 use Twig\TwigFunction;
@@ -52,65 +53,65 @@ class RouteurURL {
         $connexionBaseService->setArguments([new Reference('config_bdd')]);
 
         /* ------------------------------ NOEUD COMMUNE ------------------------------ */
-        $noeudCommuneRepositoryService = $conteneur->register('noeud_commune_repository',NoeudCommuneRepository::class);
+        $noeudCommuneRepositoryService = $conteneur->register('noeud_commune_repository', NoeudCommuneRepository::class);
         $noeudCommuneRepositoryService->setArguments([new Reference('connexion_base')]);
 
         $noeudCommuneService = $conteneur->register('noeud_commune_service');
         $noeudCommuneService->setArguments([new Reference('noeud_commune_repository')]);
 
-        $noeudCommuneControleurService = $conteneur->register('noeud_commune_controleur',ControleurNoeudCommune::class);
-
+        $noeudCommuneControleurService = $conteneur->register('noeud_commune_controleur', ControleurNoeudCommune::class);
 
         /* ------------------------------- NOEUD ROUTIER ------------------------------- */
-        $noeudRoutierRepositoryService = $conteneur->register('noeud_routier_repository',NoeudRoutierRepository::class);
+        $noeudRoutierRepositoryService = $conteneur->register('noeud_routier_repository', NoeudRoutierRepository::class);
         $noeudRoutierRepositoryService->setArguments([new Reference('connexion_base')]);
 
-        $noeudRoutierService = $conteneur->register('noeud_routier_service',NoeudRoutierService::class);
+        $noeudRoutierService = $conteneur->register('noeud_routier_service', NoeudRoutierService::class);
         $noeudRoutierService->setArguments([new Reference('noeud_routier_repository'), new Reference('noeud_commune_repository')]);
 
-        $noeudRoutierControleurService = $conteneur->register('noeud_routier_controleur',ControleurNoeudRoutierAPI::class);
-        $noeudRoutierControleurService->setArguments([new Reference('noeud_routier_service')]);
+        $plusCourtCheminService = $conteneur->register('plus_court_chemin_service', PlusCourtCheminService::class);
+        $plusCourtCheminService->setArguments([new Reference('noeud_routier_service')]);
+
+        $noeudRoutierControleurService = $conteneur->register('noeud_routier_controleur', ControleurNoeudRoutierAPI::class);
+        $noeudRoutierControleurService->setArguments([new Reference('plus_court_chemin_service'), new Reference('noeud_routier_service')]);
 
         /* -------------------------------  UTILISATEUR  ------------------------------ */
 
-        $utilisateurSessionService = $conteneur->register('utilisateur_session',ConnexionUtilisateurSession::class);
-        $utilisateurJWTService = $conteneur->register('utilisateur_jwt',ConnexionUtilisateurJWT::class);
+        $utilisateurSessionService = $conteneur->register('utilisateur_session', ConnexionUtilisateurSession::class);
+        $utilisateurJWTService = $conteneur->register('utilisateur_jwt', ConnexionUtilisateurJWT::class);
 
-        $utilisateurRepositoryService = $conteneur->register('utilisateur_repository',UtilisateurRepository::class);
+        $utilisateurRepositoryService = $conteneur->register('utilisateur_repository', UtilisateurRepository::class);
         $utilisateurRepositoryService->setArguments([new Reference('connexion_base')]);
 
-        $utilisateurService = $conteneur->register('utilisateur_service',UtilisateurService::class);
+        $utilisateurService = $conteneur->register('utilisateur_service', UtilisateurService::class);
         $utilisateurService->setArguments([new Reference('utilisateur_session'), new Reference('utilisateur_repository')]);
 
-        $utilisateurControleurService = $conteneur->register('utilisateur_controleur',ControleurUtilisateur::class);
+        $utilisateurControleurService = $conteneur->register('utilisateur_controleur', ControleurUtilisateur::class);
         $utilisateurControleurService->setArguments([new Reference('utilisateur_service'), new Reference('utilisateur_session'), new Reference('utilisateur_jwt')]);
 
-        $utilisateurControleurService = $conteneur->register('utilisateur_controleur_api',ControleurUtilisateurAPI::class);
+        $utilisateurControleurService = $conteneur->register('utilisateur_controleur_api', ControleurUtilisateurAPI::class);
         $utilisateurControleurService->setArguments([new Reference('utilisateur_service'), new Reference('utilisateur_jwt')]);
 
         /* -------------------------------  HISTORIQUE & TRAJET ------------------------------ */
 
 //        Historique
 
-        $historiqueRepositoryService = $conteneur->register('historique_repository',HistoriqueRepository::class);
+        $historiqueRepositoryService = $conteneur->register('historique_repository', HistoriqueRepository::class);
         $historiqueRepositoryService->setArguments([new Reference('connexion_base')]);
 
-        $historiqueService = $conteneur->register('historique_service',HistoriqueService::class);
+        $historiqueService = $conteneur->register('historique_service', HistoriqueService::class);
         $historiqueService->setArguments([new Reference('historique_repository')]);
 
 //        Trajet
 
-        $trajetRepositoryService = $conteneur->register('trajet_repository',TrajetsRepository::class);
+        $trajetRepositoryService = $conteneur->register('trajet_repository', TrajetsRepository::class);
         $trajetRepositoryService->setArguments([new Reference('connexion_base')]);
 
-        $trajetService = $conteneur->register('trajet_service',TrajetsService::class);
+        $trajetService = $conteneur->register('trajet_service', TrajetsService::class);
         $trajetService->setArguments([new Reference('trajet_repository')]);
 
 
-        $historiqueControleurService = $conteneur->register('historique_controleur',ControleurHistorique::class);
+        $historiqueControleurService = $conteneur->register('historique_controleur', ControleurHistorique::class);
         $historiqueControleurService->setArguments([new Reference('historique_service'), new Reference('trajet_service')]);
-
-
 
 
         /* =========================================================================== */
@@ -158,6 +159,16 @@ class RouteurURL {
         $routes->add("pagePerso", $route);
         $route->setMethods(["GET"]);
 
+        // Route update voiture
+        $route = new Route("/voiture", ["_controller" => "utilisateur_controleur::updateVoiture"]);
+        $routes->add("updateVoiture", $route);
+        $route->setMethods(["POST"]);
+
+        // Route update voiture
+        $route = new Route("/voiture", ["_controller" => "utilisateur_controleur::getVoiture"]);
+        $routes->add("getVoiture", $route);
+        $route->setMethods(["GET"]);
+
         /* =========================================================================== */
         /* =============================== API ROUTES ================================ */
         /* =========================================================================== */
@@ -199,6 +210,10 @@ class RouteurURL {
 
         $route = new Route("/getTrajet/{idTrajet}", ["_controller" => "historique_controleur::getTrajet"]);
         $routes->add("getTrajet", $route);
+        $route->setMethods(["GET"]);
+
+        $route = new Route("/mapTrajet/{idTrajet}", ["_controller" => "historique_controleur::getTrajet"]);
+        $routes->add("getMapByTrajet", $route);
         $route->setMethods(["GET"]);
 
         // login et password en POST
@@ -273,7 +288,7 @@ class RouteurURL {
         } catch (NotFoundHttpException $exception) {
             $reponse = ControleurGenerique::afficherErreur($exception->getMessage(), 404);
         } catch (\Exception $exception) {
-            $reponse = ControleurGenerique::afficherErreur($exception->getMessage()) ;
+            $reponse = ControleurGenerique::afficherErreur($exception->getMessage());
         }
         return $reponse;
 

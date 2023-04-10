@@ -52,16 +52,7 @@ create index vitesses_route_idx_departement_depart
 create index vitesses_route_idx_departement_arrivee
     on nalixt.vitesses_route (num_departement_arrivee);
 
-create index vitesses_route_idx_depart_gid
-    on nalixt.vitesses_route (noeud_depart_gid);
-
-create index vitesses_route_idx_arrivee_gid
-    on nalixt.vitesses_route (noeud_arrivee_gid);
-
 
 -- VUE NOEUD_GID_DEP
-create index noeuds_from_troncon_idx_departement
-    on nalixt.noeud_gid_dep (num_departement);
-
 create index noeuds_from_troncon_idx_gid
     on nalixt.noeud_gid_dep (gid);

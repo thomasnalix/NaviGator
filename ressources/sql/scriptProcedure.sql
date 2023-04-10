@@ -3,11 +3,10 @@ p_login nalixt.utilisateurs.login%TYPE,
 p_nom nalixt.utilisateurs.nom%TYPE,
 p_prenom nalixt.utilisateurs.prenom%TYPE,
 p_mdp nalixt.utilisateurs.motDePasse%TYPE,
-p_email nalixt.utilisateurs.email%TYPE,
-p_img nalixt.utilisateurs.imageProfil%TYPE,
-p_voiture nalixt.utilisateurs.voiture%TYPE) LANGUAGE plpgsql AS $$
+p_marque nalixt.utilisateurs.marque%TYPE,
+p_modele nalixt.utilisateurs.modele%TYPE) LANGUAGE plpgsql AS $$
 BEGIN
-    INSERT INTO nalixt.utilisateurs(login, nom, prenom, motDePasse, email, imageProfil, voiture) VALUES(p_login, p_nom, p_prenom, p_mdp, p_email, p_img, p_voiture);
+    INSERT INTO nalixt.utilisateurs(login, nom, prenom, motDePasse, marque, modele) VALUES(p_login, p_nom, p_prenom, p_mdp, p_marque, p_modele);
     INSERT INTO nalixt.historique(login) VALUES(p_login);
     INSERT INTO nalixt.favoris(login) VALUES(p_login);
 END; $$;
@@ -26,12 +25,11 @@ p_login nalixt.utilisateurs.login%TYPE,
 p_nom nalixt.utilisateurs.nom%TYPE,
 p_prenom nalixt.utilisateurs.prenom%TYPE,
 p_mdp nalixt.utilisateurs.motDePasse%TYPE,
-p_email nalixt.utilisateurs.email%TYPE,
-p_img nalixt.utilisateurs.imageProfil%TYPE,
-p_voiture nalixt.utilisateurs.voiture%TYPE) LANGUAGE plpgsql AS $$
+p_marque nalixt.utilisateurs.marque%TYPE,
+p_modele nalixt.utilisateurs.modele%TYPE) LANGUAGE plpgsql AS $$
 BEGIN
     UPDATE nalixt.utilisateurs
-    SET nom = p_nom, prenom = p_prenom, motDePasse = p_mdp, email = p_email, imageProfil = p_img, voiture = p_voiture
+    SET nom = p_nom, prenom = p_prenom, motDePasse = p_mdp, marque = p_marque, modele = p_modele
     WHERE login = p_login;
 END; $$;
 

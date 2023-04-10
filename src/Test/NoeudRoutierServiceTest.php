@@ -8,7 +8,8 @@ use Navigator\Service\Exception\ServiceException;
 use Navigator\Service\NoeudRoutierService;
 use PHPUnit\Framework\TestCase;
 
-class NoeudRoutierServiceTest extends TestCase {
+class NoeudRoutierServiceTest extends TestCase
+{
 
     private $service;
     private $noeudRoutierRepositoryMock;
@@ -30,7 +31,7 @@ class NoeudRoutierServiceTest extends TestCase {
             "lat" => "41.37078490043116",
             "long" => "9.206668253947754"
         ]);
-        $result = $this->service->getNoeudRoutierProche(1,1);
+        $result = $this->service->getNoeudRoutierProche(1, 1);
         $this->assertEquals([
             "gid" => 6,
             "departement" => "2A",
@@ -78,6 +79,9 @@ class NoeudRoutierServiceTest extends TestCase {
         $this->service->getCoordNoeudCommune("pellierMont");
     }
 
+    /**
+     * @throws ServiceException
+     */
     public function testGetNomCommunes() {
         $this->noeudCommuneRepositoryMock->method('getNomCommunes')->willReturn([
             "Montpellier (34172)",
@@ -93,10 +97,55 @@ class NoeudRoutierServiceTest extends TestCase {
         ], $result);
     }
 
+    /**
+     * @throws ServiceException
+     */
     public function testGetNomCommunesEmpty() {
         $this->noeudCommuneRepositoryMock->method('getNomCommunes')->willReturn([]);
         $this->service->getNomCommunes("PellierMont");
         $this->assertEquals([], $this->service->getNomCommunes("PellierMont"));
+    }
+
+    /**
+     * @throws ServiceException
+     */
+    public function testGetCoordNoeudByGid() {
+        $this->noeudRoutierRepositoryMock->method('getCoordNoeudByGid')->willReturn([
+            "lat" => "43.59917864959453",
+            "long" => "3.894125217456986"
+        ]);
+
+        $result = $this->service->getCoordNoeudByGid(1);
+        $this->assertEquals([
+            "lat" => "43.59917864959453",
+            "long" => "3.894125217456986"
+        ], $result);
+    }
+
+    public function testGetCoordNoeudByGidException() {
+        $this->noeudRoutierRepositoryMock->method('getCoordNoeudByGid')->willReturn(null);
+        $this->expectException(ServiceException::class);
+        $this->service->getCoordNoeudByGid(1);
+    }
+
+    /**
+     * @throws ServiceException
+     */
+    public function testGetNoeudsRoutierDepartement() {
+
+        $noeudsRoutierDepartement = json_decode(file_get_contents('C:\xampp\htdocs\NaviGator\ressources\data\2A.json'), true);
+        $this->noeudRoutierRepositoryMock->method('getNoeudsRoutierDepartement')->willReturn($noeudsRoutierDepartement);
+
+        $result = $this->service->getNoeudsRoutierDepartement(1);
+        $this->assertIsArray($result, "Le résultat doit être un tableau");
+        $this->assertNotEmpty($result, "Le tableau ne doit pas être vide");
+        $this->assertEquals($noeudsRoutierDepartement, $result);
+    }
+
+    public function testGetNoeudsRoutierDepartementException() {
+        $this->noeudRoutierRepositoryMock->method('getNoeudsRoutierDepartement')->willReturn([]);
+        $this->expectException(ServiceException::class);
+        $this->service->getNoeudsRoutierDepartement(1746867584);
     }
 
 }

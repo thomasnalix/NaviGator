@@ -12,8 +12,6 @@ class Utilisateur extends AbstractDataObject implements \JsonSerializable {
         private string $nom,
         private string $prenom,
         private string $motDePasse,
-        private string $email,
-        private ?string $imageProfil,
         private ?string $marqueVehicule,
         private ?string $modeleVehicule
     ) {
@@ -26,8 +24,6 @@ class Utilisateur extends AbstractDataObject implements \JsonSerializable {
             $tableauFormulaire["nom"],
             $tableauFormulaire["prenom"],
             MotDePasse::hacher($tableauFormulaire["mdp"]),
-            $tableauFormulaire["email"],
-            $tableauFormulaire["imageProfil"],
             $tableauFormulaire["marqueVehicule"],
             $tableauFormulaire["modeleVehicule"]
         );
@@ -38,8 +34,6 @@ class Utilisateur extends AbstractDataObject implements \JsonSerializable {
             "login" => $this->login,
             "nom" => $this->nom,
             "prenom" => $this->prenom,
-            "email" => $this->email,
-            "imageProfil" => $this->imageProfil,
             "marqueVehicule" => $this->marqueVehicule,
             "modeleVehicule" => $this->modeleVehicule
         ];
@@ -115,10 +109,8 @@ class Utilisateur extends AbstractDataObject implements \JsonSerializable {
             "nom_tag" => $this->nom,
             "prenom_tag" => $this->prenom,
             "motDePasse_tag" => $this->motDePasse,
-            "email_tag" => $this->email,
-            "imageProfil_tag" => $this->imageProfil,
-            "voiture_tag" => $this->marqueVehicule,
-            "modeleVehicule_tag" => "' \"modele\"=>\"" . $this->modeleVehicule . "\", \"marque\"=>\"" . $this->marqueVehicule . "\" '"
+            "marque_tag" => $this->marqueVehicule,
+            "modele_tag" => $this->modeleVehicule
         );
     }
 }

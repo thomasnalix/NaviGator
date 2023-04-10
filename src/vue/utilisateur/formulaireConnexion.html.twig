@@ -4,24 +4,24 @@
 
 {% block page_content %}
     <div class="background">
-    <div class=" absolute form-box gap-10">
-        <div class="flex space-around items-center">
-            <div class="flex gap-4">
-                <span class="text material-symbols-outlined">person</span>
-                <p class="text">Se connecter</p>
+        <div class="absolute form-box gap-10">
+            <div class="flex space-around items-center">
+                <div class="flex gap-4">
+                    <span class="text material-symbols-outlined">person</span>
+                    <p class="text">Se connecter</p>
+                </div>
+                <a class="flex gap-4 active-button" href="{{ generateurUrl("afficherFormulaireCreation") }}">
+                    <span class="material-symbols-outlined">person_add</span>
+                    S'inscrire
+                </a>
             </div>
-            <a class="flex gap-4 active-button" href="{{ generateurUrl("afficherFormulaireCreation") }}">
-                <span class="material-symbols-outlined">person_add</span>
-                S'inscrire
-            </a>
+            <form method="POST" class="flex-col flex gap-10 w-full" action="./connexion">
+                <div class="flex-col flex gap-4">
+                    <input type="text" value="" placeholder="Login" name="login" id="login_id" required>
+                    <input type="password" value="" placeholder="Mot de passe" name="mdp" id="mdp_id" required>
+                </div>
+                <input class="button-box text-center w-full" type="submit" value="Connexion"/>
+            </form>
         </div>
-        <form method="POST" class="flex-col flex gap-10 w-full" action="./connexion">
-            <div class="flex-col flex gap-4">
-                <input type="text" value="" placeholder="Login" name="login" id="login_id" required>
-                <input type="password" value="" placeholder="Mot de passe" name="mdp" id="mdp_id" required>
-            </div>
-            <input class="button-box text-center w-full" type="submit" value="Connexion"/>
-        </form>
-    </div>
     </div>
 {% endblock %}

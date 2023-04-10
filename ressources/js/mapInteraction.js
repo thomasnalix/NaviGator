@@ -81,7 +81,7 @@ function printItinary(path) {
     if (path.length === 0) {
         return;
     }
-    path.forEach(function(coord) {
+    path.forEach(function (coord) {
         geometries.push(new ol.format.WKB().readGeometry(coord, {
             dataProjection: 'EPSG:4326',  // Projection de la coordonnée d'entrée
             featureProjection: 'EPSG:3857'  // Projection de la carte (Web Mercator)
@@ -116,8 +116,6 @@ function printItinary(path) {
         let view = map.getView();
         let source = map.getLayers().getArray()[1].getSource();
         let extent = source.getExtent();
-        view.fit(extent, {maxZoom: 20, duration: 2000, padding: [150, 150, 150, 150]});
+        view.fit(extent, {maxZoom: 20, duration: 2000, padding: [300, 300, 300, 300]});
     }
-
-
 }
