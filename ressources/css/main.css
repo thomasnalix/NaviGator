@@ -83,12 +83,9 @@ nav a {
 
 .navigator-title {
     font-size: 130px;
-    /*color: #1a1a1a;*/
     color: #0ac876;
-    /*text-shadow: 2px 0 #1a1a1a, -2px 0 #1a1a1a, 0 2px #1a1a1a, 0 -2px #1a1a1a,*/
-    /*1px 1px #1a1a1a, -1px -1px #1a1a1a, 1px -1px #1a1a1a, -1px 1px #1a1a1a;*/
-    text-shadow: 2px 0 #fff, -2px 0 #fff, 0 2px #fff, 0 -2px #fff,
-    1px 1px #fff, -1px -1px #fff, 1px -1px #fff, -1px 1px #fff;
+    text-shadow: 2px 0 #00b668, -2px 0 #00b668, 0 2px #00b668, 0 -2px #00b668,
+    1px 1px #00b668, -1px -1px #00b668, 1px -1px #00b668, -1px 1px #00b668;
 }
 
 .navigator {
@@ -488,14 +485,6 @@ input[type="text"]:focus {
         transform: translateX(-100%);
     }
 }
-
-
-
-
-
-/* When crop-text is over, the text forward slowly to the left ONLY if the text is too long */
-
-
 
 /* =========================
            General

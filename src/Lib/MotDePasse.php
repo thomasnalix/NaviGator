@@ -27,6 +27,3 @@ class MotDePasse {
         return substr(base64_encode($octetsAleatoires), 0, $nbCaracteres);
     }
 }
-
-// Pour créer votre poivre (une seule fois)
-// var_dump(MotDePasse::genererChaineAleatoire());
