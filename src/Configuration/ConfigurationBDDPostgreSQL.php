@@ -20,7 +20,7 @@ class ConfigurationBDDPostgreSQL implements ConfigurationBDDInterface {
     }
 
     public function getDSN() : string {
-        return "pgsql:host={$this->hostname};dbname={$this->nomBDD};options='--client_encoding=UTF8'";
+        return "pgsql:host={$this->hostname};port=5673;dbname={$this->nomBDD};options='--client_encoding=UTF8'";
     }
 
     public function getOptions() : array {
