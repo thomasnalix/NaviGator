@@ -9,6 +9,7 @@ NaviGator est un projet de développement d'une application Web codée en PHP po
 - [Technologies utilisées](#technologies-utilisées)
 - [Installation](#installation)
 - [Utilisation](#utilisation)
+- [Images](#images)
 - [Contributions](#Contributions)
 
 ## Présentation
@@ -50,6 +51,8 @@ Ce projet est une application Web développée en PHP qui permet de calculer l'i
 5. Afficher le résultat avec l'itinéraire le plus court, la distance, le temps estimé et la consommation en carburant.
 6. Consulter l'historique des trajets effectués.
 
+## Images
+![CalculNaviGator](Navigator1.png)
 
 ## Contributions
 
